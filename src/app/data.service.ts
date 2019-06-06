@@ -15,7 +15,11 @@ export class DataService {
   getData(key = 'opt') {
     return this
       .http
-      .get<any>(`${this.url}/${key}`);
+      .get<any>(`${this.url}/${key}`)
+      .pipe(map(ddd => {
+        console.log(ddd);
+        return ddd;
+      }));
   }
   sendData(key = 'opt') {
     const options = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
