@@ -21,11 +21,11 @@ export class DataService {
         return ddd;
       }));
   }
-  sendData(key = 'opt') {
+  sendData(key = 'opt', sendObject = {}) {
     const options = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
     return this
       .http
-      .post<any>(`${this.url}/${key}`, { n: 1 }, options)
+      .post<any>(`${this.url}/${key}`, sendObject, options)
       .pipe(map(ddd => {
         console.log(ddd);
         return ddd;
