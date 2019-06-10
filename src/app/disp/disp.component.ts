@@ -47,7 +47,7 @@ export class DispComponent implements OnInit {
     this.displayData.w.forEach((d, i) => {
       picData.push({
         name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
-        w: this.displayData.w[i], i: this.displayData.initial[i],
+        w: this.displayData.w[i], i: this.displayData.initial === undefined ? 0 : this.displayData.initial[i],
         trade: (this.displayData.w[i] - this.displayData.initial[i])
       });
     });
