@@ -25,6 +25,7 @@ export class DispComponent implements OnInit {
       .subscribe(ddd => {
         this.displayData = ddd;
         this.picture();
+        this.filename = this.displayData.file;
       });
   }
   getDat() {
@@ -33,6 +34,7 @@ export class DispComponent implements OnInit {
     this.dataService.getData()
       .subscribe(ddd => {
         this.displayData = ddd;
+        this.filename = this.displayData.file;
         this.picture();
       });
   }
@@ -61,34 +63,24 @@ export class DispComponent implements OnInit {
       .attr('y', 0)
       .attr('width', ww)
       .attr('height', hh);
-    svg.append('text')
+    svg.selectAll('trades').data(picData).enter()
+      .append('text')
       .attr('class', 'trades')
       .attr('x', 0)
       .attr('y', 0)
       .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
-      .call((d: d3.Selection<SVGTextElement, {
-        name: string;
-        w: number;
-        i: number;
-        trade: number;
-      }, HTMLElement, {
-        name: string;
-        w: number;
-        i: number;
-        trade: number;
-      }[]>, ii, jj) => {
-        const keys = Object.keys(picData[0]);
-        picData.forEach((dd, i) => {
-          for (let kk = 0; kk < keys.length; ++kk) {
-            const t = (kk + 1) / keys.length;
-            d.append('tspan')
-              .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
-              .attr('x', xPos(kk))
-              .attr('y', yPos(i))
-              .text(format(dd[keys[kk]]));
-          }
-        });
-      });
+      .call(d => d.each((dd, i, j) => {
+        const keys = Object.keys(dd);
+        const here = d3.select(j[i]);
+        for (let kk = 0; kk < keys.length; ++kk) {
+          const t = (kk + 1) / keys.length;
+          here.append('tspan')
+            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('x', xPos(kk))
+            .attr('y', yPos(i))
+            .text(format(dd[keys[kk]]));
+        }
+      }));
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
       'rgb(244,244,50)', 'rgb(50,244,244)']);
     const config = {
