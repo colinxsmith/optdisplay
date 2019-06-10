@@ -1,9 +1,10 @@
-.trades{
+text.trades{
     font-size: 15px;
+}
+rect.trades{
     stroke: grey;
     fill: grey;
     fill-opacity: 0.5;
-    overflow: scroll;
 }
 circle.gridCircle {
     fill: rgb(255, 155, 97);

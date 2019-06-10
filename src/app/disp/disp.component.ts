@@ -52,7 +52,8 @@ export class DispComponent implements OnInit {
       });
     });
     d3.select('app-disp').selectAll('svg').remove();
-    const hhh = 20, www = 100;
+    const fontSize = 15;
+    const hhh = fontSize + 5, www = fontSize * 9;
     const ww = www * Object.keys(picData[0]).length, hh = this.displayData.n * hhh;
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
     const svg = d3.select('app-disp').attr('class', 'main').append('svg').attr('width', ww).attr('height', hh);
@@ -69,6 +70,7 @@ export class DispComponent implements OnInit {
       .attr('class', 'trades')
       .attr('x', 0)
       .attr('y', 0)
+      .style('font-size', `${fontSize}px`)
       .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
       .call(d => d.each((dd, i, j) => {
         const keys = Object.keys(dd);
