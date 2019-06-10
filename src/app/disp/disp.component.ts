@@ -45,10 +45,12 @@ export class DispComponent implements OnInit {
   picture() {
     const picData: { name: string, w: number, i: number, trade: number }[] = [];
     this.displayData.w.forEach((d, i) => {
+      const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
       picData.push({
         name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
-        w: this.displayData.w[i], i: this.displayData.initial === undefined ? 0 : this.displayData.initial[i],
-        trade: (this.displayData.w[i] - this.displayData.initial[i])
+        w: this.displayData.w[i],
+        i: init,
+        trade: (this.displayData.w[i] - init)
       });
     });
     d3.select('app-disp').selectAll('svg').remove();
