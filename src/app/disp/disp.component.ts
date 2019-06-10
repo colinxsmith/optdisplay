@@ -46,7 +46,8 @@ export class DispComponent implements OnInit {
     const picData: { name: string, w: number, i: number, trade: number }[] = [];
     this.displayData.w.forEach((d, i) => {
       picData.push({
-        name: `Stock${i + 1}`, w: this.displayData.w[i], i: this.displayData.initial[i],
+        name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
+        w: this.displayData.w[i], i: this.displayData.initial[i],
         trade: (this.displayData.w[i] - this.displayData.initial[i])
       });
     });
@@ -87,7 +88,10 @@ export class DispComponent implements OnInit {
       w: ww * 2, h: hh, margin: { top: 20, right: 100, bottom: 150, left: 100 }, maxValue: 0,
       levels: 3, roundStrokes: true, colour: radarBlobColour
     };
-    const radarData = [picData.map((d) => ({ axis: '', value: d.trade }))];
+    const radarData = [picData.map((d) => ({
+      axis: Math.abs(d.trade) > 1e-3
+        && d.name !== undefined ? d.name : '', value: d.trade
+    }))];
     this.RadarChart('app-disp', radarData, config);
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {

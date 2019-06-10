@@ -24,7 +24,8 @@
     "tslib": "^1.9.0",
     "@types/d3": "^5.7.2",
     "d3": "^5.9.2",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
