@@ -21,6 +21,11 @@ text.tooltipRadar {
     font-size: 30px;
 }
 
+text.axis {
+    stroke-width: 4px;
+    font-size: 25px;
+}
+
 text.legendRadar.left {
     font-size: 10px;
     fill: rgb(51, 51, 51);
@@ -42,6 +47,11 @@ text.legendRadar {
     text-align: center;
 }
 
+line.line {
+    stroke: rgb(248, 230, 230);
+    stroke-width: 1.5px;
+    background-color: azure;
+}
 text.axisRadar {
     font-size: 15px;
     font-stretch: expanded;

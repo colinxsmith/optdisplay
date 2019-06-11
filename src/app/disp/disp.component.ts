@@ -58,7 +58,11 @@ export class DispComponent implements OnInit {
     const hhh = fontSize + 5, www = fontSize * 9;
     const ww = www * Object.keys(picData[0]).length, hh = this.displayData.n * hhh;
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
-    const svg = d3.select('app-disp').attr('class', 'main').append('svg').attr('width', ww).attr('height', hh);
+    const svgs = d3.select('app-disp').attr('class', 'main').append('svg');
+    svgs.attr('width', ww)
+      .attr('height', hh)
+      .attr('class', 'picture' + 'app-disp');
+    const svg = svgs.append('g');
     const xPos = d3.scaleLinear().domain([0, 4]).range([0, ww]);
     const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
     svg.append('rect')
@@ -89,7 +93,7 @@ export class DispComponent implements OnInit {
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
       'rgb(244,244,50)', 'rgb(50,244,244)']);
     const config = {
-      w: ww * 2, h: hh, margin: { top: 20, right: 100, bottom: 150, left: 100 }, maxValue: 0,
+      w: ww, h: hh, margin: { top: 100, right: 100, bottom: 150, left: 100 }, maxValue: 0,
       levels: 3, roundStrokes: true, colour: radarBlobColour
     };
     const radarData = [picData.map((d) => ({
@@ -145,8 +149,6 @@ export class DispComponent implements OnInit {
       svg
         .attr('width', cfg.w + cfg.margin.left + cfg.margin.right)
         .attr('height', cfg.h + cfg.margin.top + cfg.margin.bottom)
-        .attr('x', 0)
-        .attr('y', 0)
         .attr('class', 'radar' + id);
     }
     const baseSvg = svg.append('g')
