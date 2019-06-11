@@ -102,7 +102,7 @@ export class DispComponent implements OnInit {
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
       'rgb(244,244,50)', 'rgb(50,244,244)']);
     mHW = 700;
-    const margin = mHW / 8;
+    const margin = mHW / 5;
     const config = {
       w: mHW - 2 * margin, h: mHW - 2 * margin, margin: { top: margin, right: margin, bottom: margin, left: margin }, maxValue: 0,
       levels: 3, roundStrokes: true, colour: radarBlobColour
