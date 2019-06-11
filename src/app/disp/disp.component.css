@@ -91,3 +91,8 @@ rect.weightSingleMinus.over {
 .portfolioFlower.dim {
     fill-opacity: 0.05;
 }
+#scr {
+    display: block;
+    width: 100%;
+    height: 100%;
+}

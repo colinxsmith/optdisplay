@@ -54,11 +54,20 @@ export class DispComponent implements OnInit {
       });
     });
     d3.select('app-disp').selectAll('svg').remove();
+    d3.select('app-disp').selectAll('#outer').remove();
     const fontSize = 15;
     const hhh = fontSize + 5, www = fontSize * 9;
-    const ww = www * Object.keys(picData[0]).length, hh = this.displayData.n * hhh;
+    const ww = www * Object.keys(picData[0]).length;
+    let hh = this.displayData.n * hhh;
+    const mHW = Math.max(Math.min(ww, hh), 1000), margin = mHW / 8;
+    hh = Math.max(hh, mHW);
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
-    const svgs = d3.select('app-disp').attr('class', 'main').append('svg');
+    const divs = d3.select('app-disp').append('div')
+      .attr('id', 'outer')
+      .attr('style', `overflow:auto;width:${ww}px;height:${mHW}px`)
+      .append('div')
+      .attr('id', 'scr');
+    const svgs = d3.select('#scr').attr('class', 'main').append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)
       .attr('class', 'picture' + 'app-disp');
@@ -93,7 +102,7 @@ export class DispComponent implements OnInit {
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
       'rgb(244,244,50)', 'rgb(50,244,244)']);
     const config = {
-      w: ww, h: hh, margin: { top: 100, right: 100, bottom: 150, left: 100 }, maxValue: 0,
+      w: mHW - 2 * margin, h: mHW - 2 * margin, margin: { top: margin, right: margin, bottom: margin, left: margin }, maxValue: 0,
       levels: 3, roundStrokes: true, colour: radarBlobColour
     };
     const radarData = [picData.map((d) => ({
