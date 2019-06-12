@@ -156,7 +156,11 @@ export class DispComponent implements OnInit {
     this.RadarChart('.divradar', radarData, config);
 
     d3.select('app-disp').select('.innerScrolled').selectAll('text')
-      .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
+      .on('mouseover', (d, i, j) => {
+        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
+        here.scrollTo(0, i * hhh);
+        d3.select(j[i]).classed('touch', true);
+      })
       .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
 
 
@@ -168,6 +172,10 @@ export class DispComponent implements OnInit {
       .on('mouseover', (d: string, i, j) => {
         d3.select(d3.select('app-disp').select('.innerScrolled')
           .selectAll('text').nodes()[nameInvert[d]]).classed('touch', true);
+        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
+          .selectAll('text').nodes()[nameInvert[d]]).node();
+        (next as SVGAElement).parentElement.parentElement.
+          parentElement.scrollTo(0, hhh * nameInvert[d]);
         d3.select(j[i]).classed('touch', true);
       })
       .on('mouseout', (d: string, i, j) => {

@@ -57,10 +57,8 @@ text.legendRadar {
 }
 
 text.legendRadar.touch {
-    font-size: 20px;
-    fill: rgb(51, 51, 51);
-    text-anchor: middle;
-    /*    text-align: center;*/
+    font-size: 12px;
+    fill: rgb(197, 11, 11);
 }
 
 line.line {
