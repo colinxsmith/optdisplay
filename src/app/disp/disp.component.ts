@@ -43,37 +43,72 @@ export class DispComponent implements OnInit {
     this.getDat();
   }
   picture() {
-    const picData: { name: string, w: number, i: number, trade: number }[] = [];
+    const picData: { Name: string, Weight: number, Initial: number, Trade: number }[] = [];
     this.displayData.w.forEach((d, i) => {
       const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
       picData.push({
-        name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
-        w: this.displayData.w[i],
-        i: init,
-        trade: (this.displayData.w[i] - init)
+        Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
+        Weight: this.displayData.w[i],
+        Initial: init,
+        Trade: (this.displayData.w[i] - init)
       });
     });
-    d3.select('app-disp').selectAll('svg').remove();
-    d3.select('app-disp').selectAll('.outer').remove();
+    d3.select('app-disp').selectAll('.divradar').remove();
+    d3.select('app-disp').selectAll('.outerScrolled').remove();
+    d3.select('app-disp').selectAll('.notScrolled').remove();
     const fontSize = 15;
     const hhh = fontSize + 5, www = fontSize * 9;
-    const ww = www * Object.keys(picData[0]).length;
-    let hh = this.displayData.n * hhh;
-    let mHW = (Math.min(ww, hh), 200);
+    const ww = www * Object.keys(picData[0]).length, newDim = 700, rim = newDim / 10;
+    let hh = (this.displayData.n + 1) * hhh;
+    let mHW = (Math.min(ww, hh), newDim - rim * 2);
     hh = Math.max(hh, mHW);
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
-    const divs = d3.select('app-disp').append('div')
-      .attr('class', 'outer')
-      .attr('style', `overflow:auto;width:${ww}px;height:${mHW}px`)
+    const divScrolled = d3.select('app-disp').append('div')
+      .attr('class', 'outerScrolled')
+      .attr('style', `position:relative;top:${rim}px;left:${rim}px;width:${ww}px;height:${mHW}px`)
       .append('div')
-      .attr('class', 'inner');
-    const svgs = d3.select('.inner').attr('class', 'main').append('svg');
+      .attr('class', 'innerScrolled')
+      .attr('style', `position:relative;overflow:auto;top:${hhh};width:${ww}px;height:${mHW}px`)
+      ;
+    d3.select('app-disp')
+      .append('div')
+      .attr('class', 'notScrolled')
+      .attr('style', `position:relative;left:${rim}px;top:${-mHW + rim - hhh}px;width:${ww}px;height:${hhh}px`);
+    const svgs = d3.select('.innerScrolled').append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)
       .attr('class', 'picture' + 'app-disp');
     const svg = svgs.append('g');
     const xPos = d3.scaleLinear().domain([0, 4]).range([0, ww]);
     const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
+    d3.select('.notScrolled').append('svg')
+      .append('rect')
+      .attr('class', 'trades')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', ww)
+      .attr('height', hhh);
+    d3.select('.notScrolled').select('svg')
+      .attr('width', ww)
+      .attr('height', hhh)
+      .attr('class', 'picture' + 'app-disp').append('text')
+      .attr('class', 'trades')
+      .attr('x', 0)
+      .attr('y', 0)
+      .style('font-size', `${fontSize}px`)
+      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
+      .call(dd => {
+        const keys = Object.keys(picData[0]);
+        const here = dd;
+        for (let kk = 0; kk < keys.length; ++kk) {
+          const t = (kk + 1) / keys.length;
+          here.append('tspan')
+            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('x', xPos(kk))
+            .attr('y', yPos(0))
+            .text(format(keys[kk]));
+        }
+      });
     svg.append('rect')
       .attr('class', 'trades')
       .attr('x', 0)
@@ -101,17 +136,45 @@ export class DispComponent implements OnInit {
       }));
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
       'rgb(244,244,50)', 'rgb(50,244,244)']);
-    mHW = 700;
+    const divRadar = d3.select('app-disp').append('div')
+      .attr('style', `position:relative;left:${ww + rim}px;top:${-mHW}px;width:${newDim}px;height:${newDim}px`)
+      .attr('class', 'divradar');
+    mHW = newDim;
     const margin = mHW / 5;
     const config = {
       w: mHW - 2 * margin, h: mHW - 2 * margin, margin: { top: margin, right: margin, bottom: margin, left: margin }, maxValue: 0,
       levels: 3, roundStrokes: true, colour: radarBlobColour
     };
     const radarData = [picData.map((d) => ({
-      axis: Math.abs(d.trade) > 1e-3
-        && d.name !== undefined ? d.name : '', value: d.trade
+      axis: Math.abs(d.Trade) > 1e-3
+        && d.Name !== undefined ? d.Name : '', value: d.Trade
     }))];
-    this.RadarChart('app-disp', radarData, config);
+    const nameInvert = {};
+    picData.forEach((d, i) => {
+      nameInvert[d.Name] = i;
+    });
+    this.RadarChart('.divradar', radarData, config);
+
+    d3.select('app-disp').select('.innerScrolled').selectAll('text')
+      .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
+      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+
+
+    d3.select('app-disp').select('.notScrolled').selectAll('text')
+      .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
+      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+
+    d3.select('app-disp').selectAll('.divradar').selectAll('text')
+      .on('mouseover', (d: string, i, j) => {
+        d3.select(d3.select('app-disp').select('.innerScrolled')
+          .selectAll('text').nodes()[nameInvert[d]]).classed('touch', true);
+        d3.select(j[i]).classed('touch', true);
+      })
+      .on('mouseout', (d: string, i, j) => {
+        d3.select(d3.select('app-disp').select('.innerScrolled')
+          .selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
+        d3.select(j[i]).classed('touch', false);
+      });
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
@@ -152,7 +215,7 @@ export class DispComponent implements OnInit {
     const rScale = d3.scaleLinear<number, number>()
       .range([0, radius])
       .domain([pMin, pMax]);
-    const svg = d3.select(id).attr('class', 'main').append('svg'), doView = false;
+    const svg = d3.select(id).append('svg'), doView = false;
     if (doView) {
       svg.attr('viewBox', `0 0 ${cfg.w + cfg.margin.left + cfg.margin.right} ${cfg.h + cfg.margin.top + cfg.margin.bottom}`)
         .attr('class', 'radar' + id);

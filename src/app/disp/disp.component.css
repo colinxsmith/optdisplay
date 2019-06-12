@@ -1,11 +1,19 @@
-text.trades{
+text.trades {
     font-size: 15px;
+    opacity: 0.5;
 }
-rect.trades{
+
+text.trades.touch {
+    font-size: 30px;
+    opacity: 1;
+}
+
+rect.trades {
     stroke: grey;
     fill: grey;
     fill-opacity: 0.5;
 }
+
 circle.gridCircle {
     fill: rgb(255, 155, 97);
     stroke: rgba(255, 155, 97, 0.25);
@@ -17,6 +25,7 @@ path.gridZero {
     stroke-dasharray: 15, 15;
     stroke-width: 5px;
 }
+
 text.tooltipRadar {
     font-size: 30px;
 }
@@ -30,21 +39,28 @@ text.legendRadar.left {
     font-size: 10px;
     fill: rgb(51, 51, 51);
     text-anchor: end;
- /*   text-align: right;*/
+    /*   text-align: right;*/
 }
 
 text.legendRadar.right {
     font-size: 10px;
     fill: rgb(51, 51, 51);
     text-anchor: start;
- /*   text-align: left;*/
+    /*   text-align: left;*/
 }
 
 text.legendRadar {
     font-size: 10px;
     fill: rgb(51, 51, 51);
     text-anchor: middle;
-/*    text-align: center;*/
+    /*    text-align: center;*/
+}
+
+text.legendRadar.touch {
+    font-size: 20px;
+    fill: rgb(51, 51, 51);
+    text-anchor: middle;
+    /*    text-align: center;*/
 }
 
 line.line {
@@ -52,6 +68,7 @@ line.line {
     stroke-width: 1.5px;
     background-color: azure;
 }
+
 text.axisRadar {
     font-size: 15px;
     font-stretch: expanded;
@@ -91,6 +108,7 @@ rect.weightSingleMinus.over {
 .portfolioFlower.dim {
     fill-opacity: 0.05;
 }
+
 .inner {
     display: block;
     width: 100%;
