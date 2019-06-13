@@ -68,7 +68,7 @@ export class DispComponent implements OnInit {
       .attr('style', `position:relative;top:${rim}px;left:${rim}px;width:${ww}px;height:${mHW}px`)
       .append('div')
       .attr('class', 'innerScrolled')
-      .attr('style', `position:relative;overflow:auto;top:${hhh};width:${ww}px;height:${mHW}px`)
+      .attr('style', `position:relative;overflow-y:scroll;top:${hhh};width:${ww}px;height:${mHW}px`)
       ;
     d3.select('app-disp')
       .append('div')
@@ -175,12 +175,12 @@ export class DispComponent implements OnInit {
                   .selectAll('text').nodes()[nameInvert[d]]).node();
                 (next as SVGAElement).parentElement.parentElement.
                   parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
-        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
         d3.select(j[i]).classed('touch', true);
+        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
+        //  (divScrolled.node()).scrollIntoView(true);
       })
       .on('mouseout', (d: string, i, j) => {
-        d3.select(d3.select('app-disp').select('.innerScrolled')
-          .selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
+        d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
         d3.select(j[i]).classed('touch', false);
       });
   }
@@ -354,6 +354,7 @@ export class DispComponent implements OnInit {
         d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', true);
         d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
         (divScrolled.node() as HTMLDivElement)
+     //   .scrollIntoView(true);
           .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
         localTiptool
           .attr('x', parseFloat((j[i]).getAttribute('cx')) - 10)

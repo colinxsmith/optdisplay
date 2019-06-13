@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 })
 export class DataService {
   constructor(private http: HttpClient) { }
-  url = 'http://localhost:3000';
+  url = environment.serverUrl;
 
 
   getData(key = 'opt') {
