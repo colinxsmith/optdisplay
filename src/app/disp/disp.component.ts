@@ -157,8 +157,8 @@ export class DispComponent implements OnInit {
 
     d3.select('app-disp').select('.innerScrolled').selectAll('text')
       .on('mouseover', (d, i, j) => {
-        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
-        here.scrollTo(0, i * hhh);
+        /*        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
+                here.scrollTo(0, i * hhh); Only do this if we use dispatch from the other mouserover instead of classed*/
         d3.select(j[i]).classed('touch', true);
       })
       .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
@@ -170,12 +170,12 @@ export class DispComponent implements OnInit {
 
     d3.select('app-disp').selectAll('.divradar').selectAll('text')
       .on('mouseover', (d: string, i, j) => {
-        d3.select(d3.select('app-disp').select('.innerScrolled')
-          .selectAll('text').nodes()[nameInvert[d]]).classed('touch', true);
-        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
-          .selectAll('text').nodes()[nameInvert[d]]).node();
-        (next as SVGAElement).parentElement.parentElement.
-          parentElement.scrollTo(0, hhh * nameInvert[d]);
+        d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
+        /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
+                  .selectAll('text').nodes()[nameInvert[d]]).node();
+                (next as SVGAElement).parentElement.parentElement.
+                  parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
+        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
         d3.select(j[i]).classed('touch', true);
       })
       .on('mouseout', (d: string, i, j) => {
@@ -306,52 +306,11 @@ export class DispComponent implements OnInit {
         d3.select(jj[i])
           .transition().duration(2)
           .attr('class', 'portfolioFlower over');
-        d3.selectAll(`rect.weightSinglePlus`).nodes().forEach(hh => {
-          const h = d3.select(hh);
-          if (+h.attr('picId') === i) {
-            h.classed('over', true);
-          }
-        });
-        d3.selectAll(`rect.weightSingleMinus`).nodes().forEach(hh => {
-          const h = d3.select(hh);
-          if (+h.attr('picId') === i) {
-            h.classed('over', true);
-          }
-        });
-        d3.selectAll(`.users`).nodes().forEach(hh => {
-          const h = d3.select(hh);
-          if (+h.attr('picId') === i) {
-            h.classed('over', true);
-          }
-        });
-        d3.selectAll(`.rmessage`).nodes().forEach(hh => {
-          const h = d3.select(hh);
-          if (+h.attr('picId') === i) {
-            h.classed('over', true);
-          }
-        });
-        d3.selectAll(`.totals`).nodes().forEach(hh => {
-          const h = d3.select(hh);
-          if (+h.attr('picId') === i) {
-            h.classed('over', true);
-          }
-        });
       })
       .on('mouseout', () => {
-        d3.selectAll(`.users`).nodes().forEach(hh => {
-          d3.select(hh).classed('over', false);
-        });
-        d3.selectAll(`.rmessage`).nodes().forEach(hh => {
-          d3.select(hh).classed('over', false);
-        });
         d3.selectAll('.portfolioFlower')
           .transition().duration(10)
           .attr('class', 'portfolioFlower');
-        d3.selectAll('rect.weightSinglePlus')
-          .classed('over', false);
-        d3.selectAll('rect.weightSingleMinus')
-          .classed('over', false);
-        d3.selectAll('.totals').classed('over', false);
       }
       );
     blobWrapper.append('path')
@@ -391,37 +350,11 @@ export class DispComponent implements OnInit {
       .style('fill-opacity', 0)
       .style('pointer-events', 'all')
       .on('mouseover', (d, i, j) => {
-        const ppp: d3.CustomEventParameters | MouseEvent = d3.event;
-        const dataId = ((j[i]).parentNode as SVGGElement).getAttribute('data-index');
-        console.log(isObject(ppp.detail), ppp);
-        if (!isObject(ppp.detail)) {
-          d3.select('app-users').selectAll('rect.totals').each((tt, ii,
-            jj: SVGRectElement[] | d3.ArrayLike<SVGRectElement>) => {
-            const hereTot = jj[ii]; // Show how to use DOM since we know we've got a rect element.
-            const facId: string =
-              this.displayData[0].factors.map(
-                (dk: { axis: string; value: number; }) => dk.axis)[ii % this.displayData[0].factors.length];
-            if (facId === d.axis && hereTot.getAttribute('picId') === dataId) {
-              hereTot.setAttribute('class', hereTot.getAttribute('class') + ' select');
-              // Testing passing arguments to dispatch
-              const passArgs: d3.CustomEventParameters = {
-                bubbles: true,    // If true, the event is dispatched to ancestors in reverse tree order
-                cancelable: true, // If true, event.preventDefault is allowed
-                detail: {
-                  factorName: facId,
-                  dataIndex: hereTot.getAttribute('picId')
-                }
-              };
-              d3.select(hereTot).dispatch('myselect', passArgs);
-            }
-          });
-          ['rect.weightSinglePlus', 'rect.weightSingleMinus', 'text.users'].forEach(ss => {
-            d3.select('app-users').selectAll(ss).classed('over', (tt, ii,
-              jj: SVGTextElement[] | SVGRectElement[] | d3.ArrayLike<SVGTextElement> | d3.ArrayLike<SVGRectElement>) =>
-              (jj[ii].getAttribute('lineindex') === d.axis && jj[ii].getAttribute('picId') === dataId) ? true : false
-            );
-          });
-        }
+        const divScrolled = d3.select('app-disp').select('.innerScrolled');
+        d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', true);
+        d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
+        (divScrolled.node() as HTMLDivElement)
+          .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
         localTiptool
           .attr('x', parseFloat((j[i]).getAttribute('cx')) - 10)
           .attr('y', parseFloat((j[i]).getAttribute('cy')) - 10)
@@ -431,11 +364,10 @@ export class DispComponent implements OnInit {
           .transition().duration(200)
           .style('fill', (j[i]).style['fill']);
       })
-      .on('mouseout', () => {
-        d3.select('app-users').selectAll('rect.totals').classed('select', false);
-        ['rect.weightSinglePlus', 'rect.weightSingleMinus', 'text.users'].forEach(ss => {
-          d3.select('app-users').selectAll(ss).classed('over', false);
-        });
+      .on('mouseout', (d, i) => {
+        const divScrolled = d3.select('app-disp').select('.innerScrolled');
+        d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', false);
+        d3.select(axis.selectAll('text').nodes()[i]).classed('touch', false);
         localTiptool.transition().duration(200).style('fill', 'none');
       }
       );
