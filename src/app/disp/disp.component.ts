@@ -65,10 +65,10 @@ export class DispComponent implements OnInit {
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
     const divScrolled = d3.select('app-disp').append('div')
       .attr('class', 'outerScrolled')
-      .attr('style', `position:relative;top:${rim}px;left:${rim}px;width:${ww}px;height:${mHW}px`)
+      .attr('style', `position:relative;top:${rim}px;left:${rim}px`)
       .append('div')
       .attr('class', 'innerScrolled')
-      .attr('style', `position:relative;overflow-y:scroll;top:${hhh};width:${ww}px;height:${mHW}px`)
+      .attr('style', `position:relative;overflow-y:scroll;width:${ww}px;height:${mHW}px`)
       ;
     d3.select('app-disp')
       .append('div')
@@ -82,6 +82,7 @@ export class DispComponent implements OnInit {
     const xPos = d3.scaleLinear().domain([0, 4]).range([0, ww]);
     const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
     d3.select('.notScrolled').append('svg')
+      .attr('class', 'picture' + 'app-disp')
       .append('rect')
       .attr('class', 'trades')
       .attr('x', 0)
@@ -91,7 +92,7 @@ export class DispComponent implements OnInit {
     d3.select('.notScrolled').select('svg')
       .attr('width', ww)
       .attr('height', hhh)
-      .attr('class', 'picture' + 'app-disp').append('text')
+      .append('text')
       .attr('class', 'trades')
       .attr('x', 0)
       .attr('y', 0)
@@ -176,8 +177,8 @@ export class DispComponent implements OnInit {
                 (next as SVGAElement).parentElement.parentElement.
                   parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
         d3.select(j[i]).classed('touch', true);
-        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
-        //  (divScrolled.node()).scrollIntoView(true);
+        //        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
+        (divScrolled.node()).scrollTop = hhh * nameInvert[d];
       })
       .on('mouseout', (d: string, i, j) => {
         d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
@@ -354,8 +355,8 @@ export class DispComponent implements OnInit {
         d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', true);
         d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
         (divScrolled.node() as HTMLDivElement)
-     //   .scrollIntoView(true);
-          .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
+          //  .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
+          .scrollTop = (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i;
         localTiptool
           .attr('x', parseFloat((j[i]).getAttribute('cx')) - 10)
           .attr('y', parseFloat((j[i]).getAttribute('cy')) - 10)
