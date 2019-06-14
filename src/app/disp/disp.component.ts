@@ -136,7 +136,7 @@ export class DispComponent implements OnInit {
         }
       }));
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
-      'rgb(244,244,50)', 'rgb(50,244,244)']);
+      'rgb(150,150,50)', 'rgb(50,244,244)']);
     const divRadar = d3.select('app-disp').append('div')
       .attr('style', `position:relative;left:${ww + rim}px;top:${-mHW}px;width:${newDim}px;height:${newDim}px`)
       .attr('class', 'divradar');
@@ -147,6 +147,12 @@ export class DispComponent implements OnInit {
       levels: 3, roundStrokes: true, colour: radarBlobColour
     };
     const radarData = [picData.map((d) => ({
+      axis: Math.abs(d.Trade) > 1e-3
+        && d.Name !== undefined ? d.Name : '', value: d.Weight
+    })), picData.map((d) => ({
+      axis: Math.abs(d.Trade) > 1e-3
+        && d.Name !== undefined ? d.Name : '', value: d.Initial
+    })), picData.map((d) => ({
       axis: Math.abs(d.Trade) > 1e-3
         && d.Name !== undefined ? d.Name : '', value: d.Trade
     }))];
@@ -287,7 +293,14 @@ export class DispComponent implements OnInit {
     }
     const blobChooser = (k: number) =>
       // tslint:disable-next-line:max-line-length
-      `M${cfg.margin.right / 2 + radius} ${-cfg.margin.right / 2 - radius + k * radius / 10}l${radius / 10} 0l0 ${radius / 10}l-${radius / 10} 0z`;
+      `M${cfg.margin.right / 2 + radius} ${-cfg.margin.bottom / 2 - radius + k * radius / 10}l${radius / 10} 0l0 ${radius / 10}l-${radius / 10} 0z`;
+    const axisKeys = ['Weight', 'Initial', 'Trade'];
+    const blobChooserText = baseSvg.selectAll('.datakeys').data(axisKeys).enter()
+      .append('text')
+      .attr('class', 'datakeys')
+      .attr('transform', (d, k) => `translate(${radius * 0.95},${-cfg.margin.bottom / 2 - radius * 0.925 + k * radius / 10})`)
+      .text(d => d);
+
     const blobWrapper = baseSvg.selectAll('.radarWrapper')
       .data(data)
       .enter().append('g')
@@ -358,8 +371,8 @@ export class DispComponent implements OnInit {
           //  .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
           .scrollTop = (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i;
         localTiptool
-          .attr('x', parseFloat((j[i]).getAttribute('cx')) - 10)
-          .attr('y', parseFloat((j[i]).getAttribute('cy')) - 10)
+          .attr('x', +((j[i]).getAttribute('cx')) - 10)
+          .attr('y', +((j[i]).getAttribute('cy')) - 10)
           .style('fill', 'none')
           .style('opacity', 1)
           .text(tradeFormat(+d.value))
