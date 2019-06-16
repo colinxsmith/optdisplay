@@ -58,7 +58,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.notScrolled').remove();
     const fontSize = 15;
     const hhh = fontSize + 5, www = fontSize * 9;
-    const ww = www * Object.keys(picData[0]).length, newDim = 700, rim = newDim / 10;
+    const ww = www * Object.keys(picData[0]).length, newDim = 600, rim = newDim / 10;
     let hh = (this.displayData.n + 1) * hhh;
     let mHW = (Math.min(ww, hh), newDim - rim * 2);
     hh = Math.max(hh, mHW);
@@ -138,7 +138,7 @@ export class DispComponent implements OnInit {
     const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
       'rgb(150,150,50)', 'rgb(50,244,244)']);
     const divRadar = d3.select('app-disp').append('div')
-      .attr('style', `position:relative;left:${ww + rim}px;top:${-mHW}px;width:${newDim}px;height:${newDim}px`)
+      .attr('style', `position:relative;left:${ww + rim * 2}px;top:${-mHW - rim / 2}px;width:${newDim}px;height:${newDim}px`)
       .attr('class', 'divradar');
     mHW = newDim;
     const margin = mHW / 5;
@@ -412,8 +412,8 @@ export class DispComponent implements OnInit {
         return Math.abs(x) <= 1e-6 ? 'legendRadar' : x > 0 ? 'legendRadar right' : 'legendRadar left';
       })
       .attr('dy', '0.35em')
-      .attr('x', (d, i) => rScale(pMax * cfg.labelFactor) * Math.cos(angleScale(i) - Math.PI / 2))
-      .attr('y', (d, i) => rScale(pMax * cfg.labelFactor) * Math.sin(angleScale(i) - Math.PI / 2))
+      .attr('x', (d, i) => 1.0125 * rScale(pMax * cfg.labelFactor) * Math.cos(angleScale(i) - Math.PI / 2))
+      .attr('y', (d, i) => 1.0125 * rScale(pMax * cfg.labelFactor) * Math.sin(angleScale(i) - Math.PI / 2))
       .text(d => d)
       .call(this.wrapFunction, cfg.wrapWidth, cfg.lineHeight);
     axisGrid.selectAll('.axisLabel')
@@ -431,7 +431,7 @@ export class DispComponent implements OnInit {
   wrapFunction = (text1: any, width: number, lineHeight: number) =>  // Adapted from http://bl.ocks.org/mbostock/7555321
     text1.each((_kk, i, j) => {
       const text = d3.select(j[i]),
-        words = text.text().split(/\s+/).reverse(),
+        words = text.text().split(/\s+./).reverse(),
         y = text.attr('y'),
         x = text.attr('x'),
         dy = parseFloat(text.attr('dy'));

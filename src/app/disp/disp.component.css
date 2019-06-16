@@ -60,8 +60,9 @@ text.legendRadar {
 }
 
 text.legendRadar.touch {
-    font-size: 12px;
-    fill: rgb(197, 11, 11);
+    font-size: 10px;
+    stroke: rgb(197, 11, 11);
+    fill: rgb(11, 197, 11);
 }
 
 line.line {
