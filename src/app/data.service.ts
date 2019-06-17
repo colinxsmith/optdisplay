@@ -22,7 +22,10 @@ export class DataService {
       }));
   }
   sendData(key = 'opt', sendObject = {}) {
-    const options = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
+    const options = {
+      headers: new HttpHeaders()
+        .set('Content-Type', 'application/json')
+    };
     return this
       .http
       .post<any>(`${this.url}/${key}`, sendObject, options)

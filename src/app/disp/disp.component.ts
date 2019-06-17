@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
-import { isString, isObject } from 'util';
-import { rgb } from 'd3';
+import { isString } from 'util';
 @Component({
   selector: 'app-disp',
   templateUrl: './disp.component.html',
@@ -62,90 +61,25 @@ export class DispComponent implements OnInit {
     let hh = (this.displayData.n + 1) * hhh;
     let mHW = (Math.min(ww, hh), newDim - rim * 2);
     hh = Math.max(hh, mHW);
-    const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
-    const divScrolled = d3.select('app-disp').append('div')
-      .attr('class', 'outerScrolled')
-      .attr('style', `position:relative;top:${rim}px;left:${rim}px`)
-      .append('div')
-      .attr('class', 'innerScrolled')
-      .attr('style', `position:relative;overflow-y:scroll;width:${ww}px;height:${mHW}px`)
-      ;
-    d3.select('app-disp')
-      .append('div')
-      .attr('class', 'notScrolled')
-      .attr('style', `position:relative;left:${rim}px;top:${-mHW + rim - hhh}px;width:${ww}px;height:${hhh}px`);
-    const svgs = d3.select('.innerScrolled').append('svg');
-    svgs.attr('width', ww)
-      .attr('height', hh)
-      .attr('class', 'picture' + 'app-disp');
-    const svg = svgs.append('g');
-    const xPos = d3.scaleLinear().domain([0, 4]).range([0, ww]);
-    const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
-    d3.select('.notScrolled').append('svg')
-      .attr('class', 'picture' + 'app-disp')
-      .append('rect')
-      .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', ww)
-      .attr('height', hhh);
-    d3.select('.notScrolled').select('svg')
-      .attr('width', ww)
-      .attr('height', hhh)
-      .append('text')
-      .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
-      .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
-      .call(dd => {
-        const keys = Object.keys(picData[0]);
-        const here = dd;
-        for (let kk = 0; kk < keys.length; ++kk) {
-          const t = (kk + 1) / keys.length;
-          here.append('tspan')
-            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
-            .attr('x', xPos(kk))
-            .attr('y', yPos(0))
-            .text(format(keys[kk]));
-        }
-      });
-    svg.append('rect')
-      .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', ww)
-      .attr('height', hh);
-    svg.selectAll('trades').data(picData).enter()
-      .append('text')
-      .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
-      .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
-      .call(d => d.each((dd, i, j) => {
-        const keys = Object.keys(dd);
-        const here = d3.select(j[i]);
-        for (let kk = 0; kk < keys.length; ++kk) {
-          const t = (kk + 1) / keys.length;
-          here.append('tspan')
-            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
-            .attr('x', xPos(kk))
-            .attr('y', yPos(i))
-            .text(format(dd[keys[kk]]));
-        }
-      }));
-    const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
-      'rgb(150,150,50)', 'rgb(50,244,244)']);
+
+    this.tableDisplay(rim, ww, mHW, www, hhh, hh, picData, fontSize);
+
     const divRadar = d3.select('app-disp').append('div')
       .attr('style', `position:relative;left:${ww + rim * 2}px;top:${-mHW - rim / 2}px;width:${newDim}px;height:${newDim}px`)
       .attr('class', 'divradar');
     mHW = newDim;
-    const margin = mHW / 5;
-    const config = {
-      w: mHW - 2 * margin, h: mHW - 2 * margin, margin: { top: margin, right: margin, bottom: margin, left: margin }, maxValue: 0,
-      levels: 3, roundStrokes: true, colour: radarBlobColour
-    };
+    const margin = rim * 2;
+
+    const nameInvert = {};
+    picData.forEach((d, i) => {
+      nameInvert[d.Name] = i;
+    });
+    // -------------------------------------Data for Radar Plot Start
+    const radarBlobColour = d3.scaleOrdinal<number, string>().range(['rgb(200,50,50)', 'rgb(50,200,50)',
+      'rgb(150,150,50)', 'rgb(50,244,244)']); const config = {
+        w: mHW - 2 * margin, h: mHW - 2 * margin, margin: { top: margin, right: margin, bottom: margin, left: margin }, maxValue: 0,
+        levels: 3, roundStrokes: true, colour: radarBlobColour
+      };
     const radarData = [picData.map((d) => ({
       axis: Math.abs(d.Trade) > 1e-3
         && d.Name !== undefined ? d.Name : '', value: d.Weight
@@ -156,11 +90,10 @@ export class DispComponent implements OnInit {
       axis: Math.abs(d.Trade) > 1e-3
         && d.Name !== undefined ? d.Name : '', value: d.Trade
     }))];
-    const nameInvert = {};
-    picData.forEach((d, i) => {
-      nameInvert[d.Name] = i;
-    });
-    this.RadarChart('.divradar', radarData, config);
+    const plotKeys = Object.keys(picData[0]);
+    plotKeys.shift();
+    // -------------------------------------Data for Radar Plot End
+    this.RadarChart('.divradar', radarData, config, plotKeys);
 
     d3.select('app-disp').select('.innerScrolled').selectAll('text')
       .on('mouseover', (d, i, j) => {
@@ -177,6 +110,7 @@ export class DispComponent implements OnInit {
 
     d3.select('app-disp').selectAll('.divradar').selectAll('text')
       .on('mouseover', (d: string, i, j) => {
+        const divScrolled = d3.select('app-disp').select('.innerScrolled');
         d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
         /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
                   .selectAll('text').nodes()[nameInvert[d]]).node();
@@ -184,18 +118,40 @@ export class DispComponent implements OnInit {
                   parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
         d3.select(j[i]).classed('touch', true);
         //        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
-        (divScrolled.node()).scrollTop = hhh * nameInvert[d];
+        (divScrolled.node() as HTMLDivElement).scrollTop = hhh * nameInvert[d];
       })
       .on('mouseout', (d: string, i, j) => {
+        const divScrolled = d3.select('app-disp').select('.innerScrolled');
         d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
         d3.select(j[i]).classed('touch', false);
       });
+    const picData2: { Name: string, Weight: number, Benchmark: number, Beta: number, MCTR: number, MCAR: number }[] = [];
+
+    this.displayData.w.forEach((d, i) => {
+      picData2.push({
+        Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
+        Weight: this.displayData.w[i],
+        Benchmark: this.displayData.benchmark[i],
+        Beta: this.displayData.beta[i],
+        MCTR: this.displayData.MCTR[i],
+        MCAR: this.displayData.MCAR[i]
+      });
+    });
+    d3.select('app-disp').selectAll('.oDivRisk').remove();
+    d3.select('app-disp').selectAll('.nsDivRisk').remove();
+    const wwR = www * Object.keys(picData2[0]).length;
+    hh = (this.displayData.n + 1) * hhh;
+    mHW = (Math.min(wwR, hh), newDim - rim * 2);
+    hh = Math.max(hh, mHW);
+
+    this.tableDisplay(rim, wwR, mHW, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
     margin: { top: number; right: number; bottom: number; left: number; };
     maxValue: number; levels: number; roundStrokes: boolean; colour: d3.ScaleOrdinal<number, string>;
-  }) {
+  },
+    axisKeys: string[]) {
     const cfg = {
       w: 600,				// Width of the circle
       h: 600,				// Height of the circle
@@ -294,7 +250,6 @@ export class DispComponent implements OnInit {
     const blobChooser = (k: number) =>
       // tslint:disable-next-line:max-line-length
       `M${cfg.margin.right / 2 + radius} ${-cfg.margin.bottom / 2 - radius + k * radius / 10}l${radius / 10} 0l0 ${radius / 10}l-${radius / 10} 0z`;
-    const axisKeys = ['Weight', 'Initial', 'Trade'];
     const blobChooserText = baseSvg.selectAll('.datakeys').data(axisKeys).enter()
       .append('text')
       .attr('class', 'datakeys')
@@ -412,8 +367,8 @@ export class DispComponent implements OnInit {
         return Math.abs(x) <= 1e-6 ? 'legendRadar' : x > 0 ? 'legendRadar right' : 'legendRadar left';
       })
       .attr('dy', '0.35em')
-      .attr('x', (d, i) => 1.0125 * rScale(pMax * cfg.labelFactor) * Math.cos(angleScale(i) - Math.PI / 2))
-      .attr('y', (d, i) => 1.0125 * rScale(pMax * cfg.labelFactor) * Math.sin(angleScale(i) - Math.PI / 2))
+      .attr('x', (d, i) => rScale(pMax * cfg.labelFactor) * Math.cos(angleScale(i) - Math.PI / 2))
+      .attr('y', (d, i) => rScale(pMax * cfg.labelFactor) * Math.sin(angleScale(i) - Math.PI / 2))
       .text(d => d)
       .call(this.wrapFunction, cfg.wrapWidth, cfg.lineHeight);
     axisGrid.selectAll('.axisLabel')
@@ -431,7 +386,7 @@ export class DispComponent implements OnInit {
   wrapFunction = (text1: any, width: number, lineHeight: number) =>  // Adapted from http://bl.ocks.org/mbostock/7555321
     text1.each((_kk, i, j) => {
       const text = d3.select(j[i]),
-        words = text.text().split(/\s+./).reverse(),
+        words = text.text().split(/\s+\./).reverse(),
         y = text.attr('y'),
         x = text.attr('x'),
         dy = parseFloat(text.attr('dy'));
@@ -449,4 +404,81 @@ export class DispComponent implements OnInit {
         }
       }
     })
+  tableDisplay = (rim: number, ww: number, mHW: number, www: number,
+    hhh: number, hh: number, picData: {}[], fontSize: number, outerScrolled = 'outerScrolled', innerScrolled = 'innerScrolled',
+    notScrolled = 'notScrolled') => {
+    const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
+    const divScrolled = d3.select('app-disp').append('div')
+      .attr('class', outerScrolled)
+      .attr('style', `position:relative;top:${rim}px;left:${rim}px`)
+      .append('div')
+      .attr('class', innerScrolled)
+      .attr('style', `position:relative;overflow-y:scroll;width:${ww}px;height:${mHW}px`)
+      ;
+    d3.select('app-disp')
+      .append('div')
+      .attr('class', notScrolled)
+      .attr('style', `position:relative;left:${rim}px;top:${-mHW + rim - hhh}px;width:${ww}px;height:${hhh}px`);
+    const svgs = d3.select('.' + innerScrolled).append('svg');
+    svgs.attr('width', ww)
+      .attr('height', hh)
+      .attr('class', 'picture' + 'app-disp');
+    const svg = svgs.append('g');
+    const xPos = d3.scaleLinear().domain([0, Object.keys(picData[0]).length]).range([0, ww]);
+    const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
+    d3.select('.' + notScrolled).append('svg')
+      .attr('class', 'picture' + 'app-disp')
+      .append('rect')
+      .attr('class', 'trades')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', ww)
+      .attr('height', hhh);
+    d3.select('.' + notScrolled).select('svg')
+      .attr('width', ww)
+      .attr('height', hhh)
+      .append('text')
+      .attr('class', 'trades')
+      .attr('x', 0)
+      .attr('y', 0)
+      .style('font-size', `${fontSize}px`)
+      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
+      .call(dd => {
+        const keys = Object.keys(picData[0]);
+        const here = dd;
+        for (let kk = 0; kk < keys.length; ++kk) {
+          const t = (kk + 1) / keys.length;
+          here.append('tspan')
+            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('x', xPos(kk))
+            .attr('y', yPos(0))
+            .text(format(keys[kk]));
+        }
+      });
+    svg.append('rect')
+      .attr('class', 'trades')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', ww)
+      .attr('height', hh);
+    svg.selectAll('trades').data(picData).enter()
+      .append('text')
+      .attr('class', 'trades')
+      .attr('x', 0)
+      .attr('y', 0)
+      .style('font-size', `${fontSize}px`)
+      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
+      .call(d => d.each((dd, i, j) => {
+        const keys = Object.keys(dd);
+        const here = d3.select(j[i]);
+        for (let kk = 0; kk < keys.length; ++kk) {
+          const t = (kk + 1) / keys.length;
+          here.append('tspan')
+            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('x', xPos(kk))
+            .attr('y', yPos(i))
+            .text(format(dd[keys[kk]]));
+        }
+      }));
+  }
 }
