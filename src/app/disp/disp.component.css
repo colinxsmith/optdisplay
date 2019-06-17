@@ -8,7 +8,7 @@ text.trades.touch {
     opacity: 1;
 }
 text.datakeys{
-    font-size: 18px;
+    font-size: 15px;
     fill:rgb(90, 76, 59);
 }
 rect.trades {

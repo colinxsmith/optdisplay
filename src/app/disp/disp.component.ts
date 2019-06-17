@@ -55,17 +55,19 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.divradar').remove();
     d3.select('app-disp').selectAll('.outerScrolled').remove();
     d3.select('app-disp').selectAll('.notScrolled').remove();
+    d3.select('app-disp').selectAll('.oDivRisk').remove();
+    d3.select('app-disp').selectAll('.nsDivRisk').remove();
     const fontSize = 15;
     const hhh = fontSize + 5, www = fontSize * 9;
-    const ww = www * Object.keys(picData[0]).length, newDim = 600, rim = newDim / 10;
+    const ww = www * Object.keys(picData[0]).length, newDim = 500, rim = newDim / 10;
     let hh = (this.displayData.n + 1) * hhh;
-    let mHW = (Math.min(ww, hh), newDim - rim * 2);
+    let mHW = (Math.min(ww, hh), newDim - rim);
     hh = Math.max(hh, mHW);
 
-    this.tableDisplay(rim, ww, mHW, www, hhh, hh, picData, fontSize);
+    this.tableDisplay(0, rim, ww, mHW, www, hhh, hh, picData, fontSize);
 
     const divRadar = d3.select('app-disp').append('div')
-      .attr('style', `position:relative;left:${ww + rim * 2}px;top:${-mHW - rim / 2}px;width:${newDim}px;height:${newDim}px`)
+      .attr('style', `position:absolute;left:${ww + 2 * rim}px;top:${rim}px;width:${newDim}px;height:${newDim - rim}px`)
       .attr('class', 'divradar');
     mHW = newDim;
     const margin = rim * 2;
@@ -95,7 +97,34 @@ export class DispComponent implements OnInit {
     // -------------------------------------Data for Radar Plot End
     this.RadarChart('.divradar', radarData, config, plotKeys);
 
+    const picData2: { Name: string, Weight: number, Benchmark: number, Beta: number, MCTR: number, MCAR: number }[] = [];
+
+    this.displayData.w.forEach((d, i) => {
+      picData2.push({
+        Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
+        Weight: this.displayData.w[i],
+        Benchmark: this.displayData.benchmark[i],
+        Beta: this.displayData.beta[i],
+        MCTR: this.displayData.MCTR[i],
+        MCAR: this.displayData.MCAR[i]
+      });
+    });
+    const wwR = www * Object.keys(picData2[0]).length;
+    hh = (this.displayData.n + 1) * hhh;
+    mHW = (Math.min(wwR, hh), newDim - rim * 2);
+    hh = Math.max(hh, mHW);
+
+    this.tableDisplay(hhh, rim, wwR, mHW, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
+
     d3.select('app-disp').select('.innerScrolled').selectAll('text')
+      .on('mouseover', (d, i, j) => {
+        /*        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
+                here.scrollTo(0, i * hhh); Only do this if we use dispatch from the other mouserover instead of classed*/
+        d3.select(j[i]).classed('touch', true);
+      })
+      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+
+    d3.select('app-disp').select('.iDivRisk').selectAll('text')
       .on('mouseover', (d, i, j) => {
         /*        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
                 here.scrollTo(0, i * hhh); Only do this if we use dispatch from the other mouserover instead of classed*/
@@ -105,6 +134,9 @@ export class DispComponent implements OnInit {
 
 
     d3.select('app-disp').select('.notScrolled').selectAll('text')
+      .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
+      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+    d3.select('app-disp').select('.nsDivRisk').selectAll('text')
       .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
       .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
 
@@ -119,32 +151,24 @@ export class DispComponent implements OnInit {
         d3.select(j[i]).classed('touch', true);
         //        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
         (divScrolled.node() as HTMLDivElement).scrollTop = hhh * nameInvert[d];
+        const riskScrolled = d3.select('app-disp').select('.iDivRisk');
+        d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
+        /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
+                  .selectAll('text').nodes()[nameInvert[d]]).node();
+                (next as SVGAElement).parentElement.parentElement.
+                  parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
+        d3.select(j[i]).classed('touch', true);
+        //        (riskScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
+        (riskScrolled.node() as HTMLDivElement).scrollTop = hhh * nameInvert[d];
       })
       .on('mouseout', (d: string, i, j) => {
         const divScrolled = d3.select('app-disp').select('.innerScrolled');
         d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
         d3.select(j[i]).classed('touch', false);
+        const riskScrolled = d3.select('app-disp').select('.iDivRisk');
+        d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
+        d3.select(j[i]).classed('touch', false);
       });
-    const picData2: { Name: string, Weight: number, Benchmark: number, Beta: number, MCTR: number, MCAR: number }[] = [];
-
-    this.displayData.w.forEach((d, i) => {
-      picData2.push({
-        Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
-        Weight: this.displayData.w[i],
-        Benchmark: this.displayData.benchmark[i],
-        Beta: this.displayData.beta[i],
-        MCTR: this.displayData.MCTR[i],
-        MCAR: this.displayData.MCAR[i]
-      });
-    });
-    d3.select('app-disp').selectAll('.oDivRisk').remove();
-    d3.select('app-disp').selectAll('.nsDivRisk').remove();
-    const wwR = www * Object.keys(picData2[0]).length;
-    hh = (this.displayData.n + 1) * hhh;
-    mHW = (Math.min(wwR, hh), newDim - rim * 2);
-    hh = Math.max(hh, mHW);
-
-    this.tableDisplay(rim, wwR, mHW, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
@@ -158,7 +182,7 @@ export class DispComponent implements OnInit {
       margin: { top: 20, right: 20, bottom: 20, left: 20 }, // The margins of the SVG
       levels: 3,				// How many levels or inner circles should there be drawn
       maxValue: 0, 			// The value that the biggest circle will represent
-      labelFactor: 1.25, 	// How much farther than the radius of the outer circle should the labels be placed
+      labelFactor: 1.5, 	// How much farther than the radius of the outer circle should the labels be placed
       wrapWidth: 60, 		// The number of pixels after which a label needs to be given a new line
       lineHeight: 1.4, 		// Height for wrapped lines
       dotRadius: 4, 			// The size of the coloured circles of each blog
@@ -325,6 +349,12 @@ export class DispComponent implements OnInit {
         (divScrolled.node() as HTMLDivElement)
           //  .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
           .scrollTop = (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i;
+        const riskScrolled = d3.select('app-disp').select('.iDivRisk');
+        d3.select(riskScrolled.selectAll('text').nodes()[i]).classed('touch', true);
+        d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
+        (riskScrolled.node() as HTMLDivElement)
+          //  .scrollTo(0, (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
+          .scrollTop = (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i;
         localTiptool
           .attr('x', +((j[i]).getAttribute('cx')) - 10)
           .attr('y', +((j[i]).getAttribute('cy')) - 10)
@@ -337,6 +367,10 @@ export class DispComponent implements OnInit {
       .on('mouseout', (d, i) => {
         const divScrolled = d3.select('app-disp').select('.innerScrolled');
         d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', false);
+        d3.select(axis.selectAll('text').nodes()[i]).classed('touch', false);
+        localTiptool.transition().duration(200).style('fill', 'none');
+        const riskScrolled = d3.select('app-disp').select('.iDivRisk');
+        d3.select(riskScrolled.selectAll('text').nodes()[i]).classed('touch', false);
         d3.select(axis.selectAll('text').nodes()[i]).classed('touch', false);
         localTiptool.transition().duration(200).style('fill', 'none');
       }
@@ -404,21 +438,21 @@ export class DispComponent implements OnInit {
         }
       }
     })
-  tableDisplay = (rim: number, ww: number, mHW: number, www: number,
+  tableDisplay = (spacer: number, rim: number, ww: number, mHW: number, www: number,
     hhh: number, hh: number, picData: {}[], fontSize: number, outerScrolled = 'outerScrolled', innerScrolled = 'innerScrolled',
     notScrolled = 'notScrolled') => {
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
-    const divScrolled = d3.select('app-disp').append('div')
-      .attr('class', outerScrolled)
-      .attr('style', `position:relative;top:${rim}px;left:${rim}px`)
-      .append('div')
-      .attr('class', innerScrolled)
-      .attr('style', `position:relative;overflow-y:scroll;width:${ww}px;height:${mHW}px`)
-      ;
     d3.select('app-disp')
       .append('div')
       .attr('class', notScrolled)
-      .attr('style', `position:relative;left:${rim}px;top:${-mHW + rim - hhh}px;width:${ww}px;height:${hhh}px`);
+      .attr('style', `position:relative;left:${0}px;top:${spacer}px;width:${ww}px;height:${hhh}px`);
+    const divScrolled = d3.select('app-disp').append('div')
+      .attr('class', outerScrolled)
+      .attr('style', `position:relative;top:${spacer}px;left:${0}px`)
+      .append('div')
+      .attr('class', innerScrolled)
+      .attr('style', `overflow:scroll;width:${ww}px;height:${mHW}px`)
+      ;
     const svgs = d3.select('.' + innerScrolled).append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)
