@@ -60,7 +60,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
-    const fontSize = 15;
+    const fontSize = 10;
     const hhh = fontSize + 5, www = fontSize * 9, newDim = 900, rim = newDim / 10;
     let ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 1) * hhh;
@@ -69,7 +69,7 @@ export class DispComponent implements OnInit {
     picData.push({
       Name: '', Weight: '', Initial: '', Trade: this.displayData.turnover
     });
-    this.tableDisplay(hhh, rim, ww, mHW, www, hhh, hh, picData, fontSize);
+    this.tableDisplay(hhh, rim, ww, mHW / 2, www, hhh, hh, picData, fontSize);
 
     const divRadar = d3.select('app-disp').append('div')
       .attr('style', `left:${ww + 2 * rim}px;top:${0}px;width:${newDim}px;height:${newDim}px`)
@@ -129,7 +129,7 @@ export class DispComponent implements OnInit {
       Name: '', Weight: '', Benchmark: '', Beta: this.displayData.pbeta,
       MCTR: this.displayData.arisk, MCAR: this.displayData.risk, Active: ''
     });
-    this.tableDisplay(hhh * 2, rim, wwR, mHW, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
+    this.tableDisplay(hhh * 2, rim, wwR, mHW / 2, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
 
 
     const divRadar2 = d3.select('app-disp').append('div')
