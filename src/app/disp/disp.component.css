@@ -7,10 +7,12 @@ text.trades.touch {
     font-size: 30px;
     opacity: 1;
 }
-text.datakeys{
+
+text.datakeys {
     font-size: 15px;
-    fill:rgb(90, 76, 59);
+    fill: rgb(90, 76, 59);
 }
+
 rect.trades {
     stroke: grey;
     fill: grey;
@@ -115,4 +117,28 @@ rect.weightSingleMinus.over {
     display: block;
     width: 100%;
     height: 100%;
+}
+
+.divradar {
+    position: fixed;
+}
+
+.outerScrolled {
+    position: relative;
+}
+
+.notScrolled {
+    position: relative;
+}
+
+.nsDivRisk {
+    position: relative;
+}
+
+.oDivRisk {
+    position: relative;
+}
+
+.divradar2 {
+    position: fixed;
 }

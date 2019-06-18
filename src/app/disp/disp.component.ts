@@ -13,6 +13,8 @@ export class DispComponent implements OnInit {
   getLabel = 'Refresh';
   filename = '';
   displayData: any = {};
+  plotThresh = 1e-3;
+  extraScroll = -1;
   changeName(v: string) {
     console.log('input field returned', v);
     this.filename = v;
@@ -42,7 +44,7 @@ export class DispComponent implements OnInit {
     this.getDat();
   }
   picture() {
-    const picData: { Name: string, Weight: number, Initial: number, Trade: number }[] = [];
+    const picData: { Name: string, Weight: number | string, Initial: number | string, Trade: number }[] = [];
     this.displayData.w.forEach((d, i) => {
       const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
       picData.push({
@@ -53,21 +55,24 @@ export class DispComponent implements OnInit {
       });
     });
     d3.select('app-disp').selectAll('.divradar').remove();
+    d3.select('app-disp').selectAll('.divradar2').remove();
     d3.select('app-disp').selectAll('.outerScrolled').remove();
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
     const fontSize = 15;
-    const hhh = fontSize + 5, www = fontSize * 9;
-    const ww = www * Object.keys(picData[0]).length, newDim = 500, rim = newDim / 10;
+    const hhh = fontSize + 5, www = fontSize * 9, newDim = 900, rim = newDim / 10;
+    let ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 1) * hhh;
-    let mHW = (Math.min(ww, hh), newDim - rim);
+    let mHW = Math.max(Math.min(ww, hh), newDim);
     hh = Math.max(hh, mHW);
-
-    this.tableDisplay(0, rim, ww, mHW, www, hhh, hh, picData, fontSize);
+    picData.push({
+      Name: '', Weight: '', Initial: '', Trade: this.displayData.turnover
+    });
+    this.tableDisplay(hhh, rim, ww, mHW, www, hhh, hh, picData, fontSize);
 
     const divRadar = d3.select('app-disp').append('div')
-      .attr('style', `position:absolute;left:${ww + 2 * rim}px;top:${rim}px;width:${newDim}px;height:${newDim - rim}px`)
+      .attr('style', `left:${ww + 2 * rim}px;top:${0}px;width:${newDim}px;height:${newDim}px`)
       .attr('class', 'divradar');
     mHW = newDim;
     const margin = rim * 2;
@@ -82,14 +87,15 @@ export class DispComponent implements OnInit {
         w: mHW - 2 * margin, h: mHW - 2 * margin, margin: { top: margin, right: margin, bottom: margin, left: margin }, maxValue: 0,
         levels: 3, roundStrokes: true, colour: radarBlobColour
       };
+    picData.pop();
     const radarData = [picData.map((d) => ({
-      axis: Math.abs(d.Trade) > 1e-3
-        && d.Name !== undefined ? d.Name : '', value: d.Weight
+      axis: Math.abs(d.Trade) > this.plotThresh
+        && d.Name !== undefined ? d.Name : '', value: +d.Weight
     })), picData.map((d) => ({
-      axis: Math.abs(d.Trade) > 1e-3
-        && d.Name !== undefined ? d.Name : '', value: d.Initial
+      axis: Math.abs(d.Trade) > this.plotThresh
+        && d.Name !== undefined ? d.Name : '', value: +d.Initial
     })), picData.map((d) => ({
-      axis: Math.abs(d.Trade) > 1e-3
+      axis: Math.abs(d.Trade) > this.plotThresh
         && d.Name !== undefined ? d.Name : '', value: d.Trade
     }))];
     const plotKeys = Object.keys(picData[0]);
@@ -97,25 +103,56 @@ export class DispComponent implements OnInit {
     // -------------------------------------Data for Radar Plot End
     this.RadarChart('.divradar', radarData, config, plotKeys);
 
-    const picData2: { Name: string, Weight: number, Benchmark: number, Beta: number, MCTR: number, MCAR: number }[] = [];
+    const picData2: {
+      Name: string, Weight: number | string,
+      Benchmark: number | string, Beta: number, MCTR: number, MCAR: number, Active: number | string
+    }[] = [];
 
     this.displayData.w.forEach((d, i) => {
+      const bench = this.displayData.benchmark === undefined || this.displayData.benchmark.length === 0 ? 0 : this.displayData.benchmark[i];
       picData2.push({
         Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
         Weight: this.displayData.w[i],
-        Benchmark: this.displayData.benchmark[i],
+        Benchmark: bench,
         Beta: this.displayData.beta[i],
         MCTR: this.displayData.MCTR[i],
-        MCAR: this.displayData.MCAR[i]
+        MCAR: this.displayData.MCAR[i],
+        Active: this.displayData.w[i] - bench
       });
     });
     const wwR = www * Object.keys(picData2[0]).length;
     hh = (this.displayData.n + 1) * hhh;
-    mHW = (Math.min(wwR, hh), newDim - rim * 2);
+    mHW = Math.max(Math.min(wwR, hh), newDim);
     hh = Math.max(hh, mHW);
+    ww = wwR;
+    picData2.push({
+      Name: '', Weight: '', Benchmark: '', Beta: this.displayData.pbeta,
+      MCTR: this.displayData.arisk, MCAR: this.displayData.risk, Active: ''
+    });
+    this.tableDisplay(hhh * 2, rim, wwR, mHW, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
 
-    this.tableDisplay(hhh, rim, wwR, mHW, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
 
+    const divRadar2 = d3.select('app-disp').append('div')
+      .attr('style', `left:${ww + 2 * rim}px;top:${newDim}px;width:${newDim}px;height:${newDim}px`)
+      .attr('class', 'divradar2');
+    mHW = newDim;
+
+    // -------------------------------------Data for Radar Plot Start
+    picData2.pop();
+    const radarData2 = [picData2.map((d) => ({
+      axis: Math.abs(+d.Active) > this.plotThresh
+        && d.Name !== undefined ? d.Name : '', value: +d.Weight
+    })), picData2.map((d) => ({
+      axis: Math.abs(+d.Active) > this.plotThresh
+        && d.Name !== undefined ? d.Name : '', value: +d.Benchmark
+    })), picData2.map((d) => ({
+      axis: Math.abs(+d.Active) > this.plotThresh
+        && d.Name !== undefined ? d.Name : '', value: +d.Active
+    }))];
+
+    const plotKeys2 = ['Weight', 'Benchmark', 'Active'];
+    // -------------------------------------Data for Radar Plot End
+    this.RadarChart('.divradar2', radarData2, config, plotKeys2);
     d3.select('app-disp').select('.innerScrolled').selectAll('text')
       .on('mouseover', (d, i, j) => {
         /*        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
@@ -139,36 +176,37 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').select('.nsDivRisk').selectAll('text')
       .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
       .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
-
-    d3.select('app-disp').selectAll('.divradar').selectAll('text')
-      .on('mouseover', (d: string, i, j) => {
-        const divScrolled = d3.select('app-disp').select('.innerScrolled');
-        d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
-        /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
-                  .selectAll('text').nodes()[nameInvert[d]]).node();
-                (next as SVGAElement).parentElement.parentElement.
-                  parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
-        d3.select(j[i]).classed('touch', true);
-        //        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
-        (divScrolled.node() as HTMLDivElement).scrollTop = hhh * nameInvert[d];
-        const riskScrolled = d3.select('app-disp').select('.iDivRisk');
-        d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
-        /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
-                  .selectAll('text').nodes()[nameInvert[d]]).node();
-                (next as SVGAElement).parentElement.parentElement.
-                  parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
-        d3.select(j[i]).classed('touch', true);
-        //        (riskScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
-        (riskScrolled.node() as HTMLDivElement).scrollTop = hhh * nameInvert[d];
-      })
-      .on('mouseout', (d: string, i, j) => {
-        const divScrolled = d3.select('app-disp').select('.innerScrolled');
-        d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
-        d3.select(j[i]).classed('touch', false);
-        const riskScrolled = d3.select('app-disp').select('.iDivRisk');
-        d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
-        d3.select(j[i]).classed('touch', false);
-      });
+    ['.divradar', '.divradar2'].forEach(cls => {
+      d3.select('app-disp').selectAll(cls).selectAll('text')
+        .on('mouseover', (d: string, i, j) => {
+          const divScrolled = d3.select('app-disp').select('.innerScrolled');
+          d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
+          /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
+                    .selectAll('text').nodes()[nameInvert[d]]).node();
+                  (next as SVGAElement).parentElement.parentElement.
+                    parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
+          d3.select(j[i]).classed('touch', true);
+          //        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
+          (divScrolled.node() as HTMLDivElement).scrollTop = hhh * (nameInvert[d] + this.extraScroll);
+          const riskScrolled = d3.select('app-disp').select('.iDivRisk');
+          d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
+          /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
+                    .selectAll('text').nodes()[nameInvert[d]]).node();
+                  (next as SVGAElement).parentElement.parentElement.
+                    parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
+          d3.select(j[i]).classed('touch', true);
+          //        (riskScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
+          (riskScrolled.node() as HTMLDivElement).scrollTop = hhh * (nameInvert[d] + this.extraScroll);
+        })
+        .on('mouseout', (d: string, i, j) => {
+          const divScrolled = d3.select('app-disp').select('.innerScrolled');
+          d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
+          d3.select(j[i]).classed('touch', false);
+          const riskScrolled = d3.select('app-disp').select('.iDivRisk');
+          d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
+          d3.select(j[i]).classed('touch', false);
+        });
+    });
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
@@ -201,7 +239,7 @@ export class DispComponent implements OnInit {
     const allAxis = (data[0].map((i) => i.axis)),	// Names of each axis
       total = allAxis.length,					// The number of different axes
       radius = Math.min(cfg.w, cfg.h) / 2, 	// Radius of the outermost circle
-      tradeFormat = d3.format('0.1e');
+      tradeFormat = d3.format('0.5f');
     let pMin = Math.min(-maxValue, minValue);
     const pMax = Math.max(-minValue, maxValue);
     if (minValue >= -1e-15) {
@@ -345,16 +383,18 @@ export class DispComponent implements OnInit {
       .on('mouseover', (d, i, j) => {
         const divScrolled = d3.select('app-disp').select('.innerScrolled');
         d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', true);
-        d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
+        d3.select(axis.selectAll('text').nodes()[i])
+          .classed('touch', true);
         (divScrolled.node() as HTMLDivElement)
           //  .scrollTo(0, (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
-          .scrollTop = (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i;
+          .scrollTop = (divScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * (i + this.extraScroll);
         const riskScrolled = d3.select('app-disp').select('.iDivRisk');
-        d3.select(riskScrolled.selectAll('text').nodes()[i]).classed('touch', true);
+        d3.select(riskScrolled.selectAll('text').nodes()[i])
+          .classed('touch', true);
         d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
         (riskScrolled.node() as HTMLDivElement)
           //  .scrollTo(0, (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
-          .scrollTop = (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i;
+          .scrollTop = (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * (i + this.extraScroll);
         localTiptool
           .attr('x', +((j[i]).getAttribute('cx')) - 10)
           .attr('y', +((j[i]).getAttribute('cy')) - 10)
@@ -445,10 +485,10 @@ export class DispComponent implements OnInit {
     d3.select('app-disp')
       .append('div')
       .attr('class', notScrolled)
-      .attr('style', `position:relative;left:${0}px;top:${spacer}px;width:${ww}px;height:${hhh}px`);
+      .attr('style', `left:${0}px;top:${spacer}px;width:${ww}px;height:${hhh}px`);
     const divScrolled = d3.select('app-disp').append('div')
       .attr('class', outerScrolled)
-      .attr('style', `position:relative;top:${spacer}px;left:${0}px`)
+      .attr('style', `top:${spacer}px;left:${0}px`)
       .append('div')
       .attr('class', innerScrolled)
       .attr('style', `overflow:scroll;width:${ww}px;height:${mHW}px`)
