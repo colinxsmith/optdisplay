@@ -61,7 +61,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
     const fontSize = 20;
-    const hhh = fontSize + 5, www = fontSize * 9, newDim = 900, rim = newDim / 10;
+    const hhh = fontSize + 5, www = fontSize * 9, newDim = 600, rim = newDim / 10;
     const ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 2) * hhh;
     let mHW = Math.max(Math.min(ww, hh), newDim);
