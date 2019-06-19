@@ -60,20 +60,30 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
-    const fontSize = 10;
+    const fontSize = 20;
     const hhh = fontSize + 5, www = fontSize * 9, newDim = 900, rim = newDim / 10;
-    let ww = www * Object.keys(picData[0]).length;
-    let hh = (this.displayData.n + 1) * hhh;
+    const ww = www * Object.keys(picData[0]).length;
+    let hh = (this.displayData.n + 2) * hhh;
     let mHW = Math.max(Math.min(ww, hh), newDim);
     hh = Math.max(hh, mHW);
     picData.push({
       Name: '', Weight: '', Initial: '', Trade: this.displayData.turnover
     });
-    this.tableDisplay(hhh, rim, ww, mHW / 2, www, hhh, hh, picData, fontSize);
-
-    const divRadar = d3.select('app-disp').append('div')
-      .attr('style', `left:${ww + 2 * rim}px;top:${0}px;width:${newDim}px;height:${newDim}px`)
+    d3.select('app-disp').append('div')
+      .attr('style', `left:${0}px;top:${0}px;width:${newDim}px;height:${newDim}px`)
       .attr('class', 'divradar');
+    d3.select('app-disp').append('div')
+      .attr('class', 'notScrolled')
+      .attr('style', `left:${newDim + 5}px;top:${-3 * newDim / 4}px;width:${ww}px;height:${hhh}px`);
+    d3.select('app-disp').append('div')
+      .attr('class', 'outerScrolled')
+      .attr('style', `left:${newDim + 5}px;top:${-3 * newDim / 4}px`)
+      .append('div')
+      .attr('class', 'innerScrolled')
+      .attr('style', `overflow:scroll;width:${ww}px;height:${newDim / 2}px`)
+      ;
+    this.tableDisplay(ww, www, hhh, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
+
     mHW = newDim;
     const margin = rim * 2;
 
@@ -121,20 +131,29 @@ export class DispComponent implements OnInit {
       });
     });
     const wwR = www * Object.keys(picData2[0]).length;
-    hh = (this.displayData.n + 1) * hhh;
+    hh = (this.displayData.n + 2) * hhh;
     mHW = Math.max(Math.min(wwR, hh), newDim);
     hh = Math.max(hh, mHW);
-    ww = wwR;
     picData2.push({
       Name: '', Weight: '', Benchmark: '', Beta: this.displayData.pbeta,
       MCTR: this.displayData.arisk, MCAR: this.displayData.risk, Active: ''
     });
-    this.tableDisplay(hhh * 2, rim, wwR, mHW / 2, www, hhh, hh, picData2, fontSize, 'oDivRisk', 'iDivRisk', 'nsDivRisk');
-
-
-    const divRadar2 = d3.select('app-disp').append('div')
-      .attr('style', `left:${ww + 2 * rim}px;top:${newDim}px;width:${newDim}px;height:${newDim}px`)
+    const spacer = 0.625 * newDim;
+    d3.select('app-disp').append('div')
+      .attr('style', `left:${0}px;top:${-spacer}px;width:${newDim}px;height:${newDim}px`)
       .attr('class', 'divradar2');
+    d3.select('app-disp')
+      .append('div')
+      .attr('class', 'nsDivRisk')
+      .attr('style', `left:${newDim + 5}px;top:${-spacer - 3 * newDim / 4}px;width:${wwR}px;height:${hhh}px`);
+    d3.select('app-disp').append('div')
+      .attr('class', 'oDivRisk')
+      .attr('style', `left:${newDim + 5}px;top:${-spacer - 3 * newDim / 4}px`)
+      .append('div')
+      .attr('class', 'iDivRisk')
+      .attr('style', `overflow:scroll;width:${wwR}px;height:${newDim / 2}px`)
+      ;
+    this.tableDisplay(wwR, www, hhh, hh, picData2, fontSize, 'iDivRisk', 'nsDivRisk');
     mHW = newDim;
 
     // -------------------------------------Data for Radar Plot Start
@@ -478,21 +497,11 @@ export class DispComponent implements OnInit {
         }
       }
     })
-  tableDisplay = (spacer: number, rim: number, ww: number, mHW: number, www: number,
-    hhh: number, hh: number, picData: {}[], fontSize: number, outerScrolled = 'outerScrolled', innerScrolled = 'innerScrolled',
+  tableDisplay = (ww: number, www: number,
+    hhh: number, hh: number, picData: {}[], fontSize: number, innerScrolled = 'innerScrolled',
     notScrolled = 'notScrolled') => {
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i);
-    d3.select('app-disp')
-      .append('div')
-      .attr('class', notScrolled)
-      .attr('style', `left:${0}px;top:${spacer}px;width:${ww}px;height:${hhh}px`);
-    const divScrolled = d3.select('app-disp').append('div')
-      .attr('class', outerScrolled)
-      .attr('style', `top:${spacer}px;left:${0}px`)
-      .append('div')
-      .attr('class', innerScrolled)
-      .attr('style', `overflow:scroll;width:${ww}px;height:${mHW}px`)
-      ;
+
     const svgs = d3.select('.' + innerScrolled).append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)

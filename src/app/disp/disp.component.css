@@ -120,7 +120,7 @@ rect.weightSingleMinus.over {
 }
 
 .divradar {
-    position: absolute;
+    position: relative;
 }
 
 .outerScrolled {
@@ -140,5 +140,5 @@ rect.weightSingleMinus.over {
 }
 
 .divradar2 {
-    position: absolute;
+    position: relative;
 }
