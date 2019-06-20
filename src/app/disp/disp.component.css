@@ -74,7 +74,7 @@ line.line {
 }
 
 text.axisRadar {
-    font-size: 8px;
+    font-size: 10px;
     font-stretch: expanded;
     fill: black;
     text-anchor: start;

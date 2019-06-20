@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
+import { send } from 'q';
 @Component({
   selector: 'app-disp',
   templateUrl: './disp.component.html',
@@ -15,6 +16,7 @@ export class DispComponent implements OnInit {
   displayData: any = {};
   plotThresh = 1e-3;
   extraScroll = -1;
+  sendBack = {};
   changeName(v: string) {
     console.log('input field returned', v);
     this.filename = v;
@@ -22,12 +24,21 @@ export class DispComponent implements OnInit {
   changeDat() {
     console.log(`${this.updateLabel} Pressed`);
     console.log(this.dataService.url);
-    this.dataService.sendData('opt', { filename: this.filename })
+    Object.keys(this.sendBack).forEach(d => {
+      if (this.sendBack[d] === '') {
+        this.sendBack[d] = undefined;
+      }
+    });
+
+    this.dataService.sendData('opt', { filename: this.filename, desired: this.sendBack })
       .subscribe(ddd => {
         this.displayData = ddd;
         this.picture();
         this.filename = this.displayData.file;
       });
+  }
+  reset() {
+    this.sendBack = {};
   }
   getDat() {
     console.log(`${this.getLabel} Pressed`);
@@ -195,6 +206,24 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').select('.nsDivRisk').selectAll('text')
       .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
       .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+
+    d3.selectAll('.trades').selectAll('tspan')
+      .on('click', (d, iii, jjj) => {
+        console.log(this.sendBack);
+        d3.select((jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode).insert('input')
+          .attr('type', 'text')
+          .attr('size', '5')
+          .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
+          .on('change', (dk, i, j) => {
+            (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
+            this.sendBack[Object.keys(d)[iii]] = (j[i]).value;
+            if (Object.keys(d)[iii] === 'Beta') {
+              this.sendBack[Object.keys(d)[iii] + 'vec'] = this.displayData.beta;
+            }
+            d3.select(j[i]).remove();
+          });
+      });
+
     ['.divradar', '.divradar2'].forEach(cls => {
       d3.select('app-disp').selectAll(cls).selectAll('text')
         .on('mouseover', (d: string, i, j) => {
@@ -532,9 +561,9 @@ export class DispComponent implements OnInit {
         for (let kk = 0; kk < keys.length; ++kk) {
           const t = (kk + 1) / keys.length;
           here.append('tspan')
-            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
             .attr('x', xPos(kk))
             .attr('y', yPos(0))
+            .attr('style', () => `stroke:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`) // ignored on IE
             .text(format(keys[kk]));
         }
       });
