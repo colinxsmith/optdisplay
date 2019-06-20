@@ -255,6 +255,12 @@ export class DispComponent implements OnInit {
           d3.select(j[i]).classed('touch', false);
         });
     });
+
+    // Allways scroll to the end of the divs.
+    let pHH = (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement).scrollHeight;
+    (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement).scrollTop = (pHH * this.displayData.w.length - 2);
+    pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement).scrollHeight;
+    (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement).scrollTop = (pHH * this.displayData.w.length - 2);
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
