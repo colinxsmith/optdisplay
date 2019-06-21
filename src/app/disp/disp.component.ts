@@ -14,6 +14,7 @@ export class DispComponent implements OnInit {
   getLabel = 'Refresh';
   sendGamma = '';
   filename = '';
+  gammaFormat = d3.format('0.5f');
   displayData: any = {};
   plotThresh = 1e-3;
   extraScroll = -1;
