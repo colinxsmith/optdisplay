@@ -40,7 +40,6 @@ export class DispComponent implements OnInit {
         this.displayData = ddd;
         this.picture();
         this.filename = this.displayData.file;
-        this.sendGamma = this.displayData.ogamma;
       });
   }
   reset() {
