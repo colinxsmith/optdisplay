@@ -12,6 +12,7 @@ import { send } from 'q';
 export class DispComponent implements OnInit {
   updateLabel = 'Update';
   getLabel = 'Refresh';
+  sendGamma = '';
   filename = '';
   displayData: any = {};
   plotThresh = 1e-3;
@@ -20,6 +21,10 @@ export class DispComponent implements OnInit {
   changeName(v: string) {
     console.log('input field returned', v);
     this.filename = v;
+  }
+  newGamma(v: string) {
+    this.sendBack['gamma'] = v;
+    this.sendGamma = v;
   }
   changeDat() {
     console.log(`${this.updateLabel} Pressed`);
@@ -35,6 +40,7 @@ export class DispComponent implements OnInit {
         this.displayData = ddd;
         this.picture();
         this.filename = this.displayData.file;
+        this.sendGamma = this.displayData.ogamma;
       });
   }
   reset() {
@@ -233,7 +239,6 @@ export class DispComponent implements OnInit {
                     .selectAll('text').nodes()[nameInvert[d]]).node();
                   (next as SVGAElement).parentElement.parentElement.
                     parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
-          d3.select(j[i]).classed('touch', true);
           //        (divScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
           (divScrolled.node() as HTMLDivElement).scrollTop = hhh * (nameInvert[d] + this.extraScroll);
           const riskScrolled = d3.select('app-disp').select('.iDivRisk');
@@ -249,7 +254,6 @@ export class DispComponent implements OnInit {
         .on('mouseout', (d: string, i, j) => {
           const divScrolled = d3.select('app-disp').select('.innerScrolled');
           d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
-          d3.select(j[i]).classed('touch', false);
           const riskScrolled = d3.select('app-disp').select('.iDivRisk');
           d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
           d3.select(j[i]).classed('touch', false);
@@ -257,10 +261,10 @@ export class DispComponent implements OnInit {
     });
 
     // Allways scroll to the end of the divs.
-    let pHH = (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement).scrollHeight;
-    (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement).scrollTop = (pHH * this.displayData.w.length - 2);
-    pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement).scrollHeight;
-    (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement).scrollTop = (pHH * this.displayData.w.length - 2);
+    let pHH = (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement);
+    pHH.scrollTop = pHH.scrollHeight;
+    pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement);
+    pHH.scrollTop = pHH.scrollHeight;
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
