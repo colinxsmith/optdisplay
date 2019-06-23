@@ -564,7 +564,7 @@ export class DispComponent implements OnInit {
       .attr('x', 0)
       .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
+      .attr('transform', `translate(${www*3/4},${hhh * 0.75})`)
       .call(dd => {
         const keys = Object.keys(picData[0]);
         const here = dd;
@@ -573,7 +573,7 @@ export class DispComponent implements OnInit {
           here.append('tspan')
             .attr('x', xPos(kk))
             .attr('y', yPos(0))
-            .attr('style', () => `stroke:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`) // ignored on IE
+            .attr('style', () => `text-anchor: end;stroke:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`) // ignored on IE
             .text(format(keys[kk]));
         }
       });
@@ -589,14 +589,14 @@ export class DispComponent implements OnInit {
       .attr('x', 0)
       .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${www / 4},${hhh * 0.75})`)
+      .attr('transform', `translate(${www*3/4},${hhh * 0.75})`)
       .call(d => d.each((dd, i, j) => {
         const keys = Object.keys(dd);
         const here = d3.select(j[i]);
         for (let kk = 0; kk < keys.length; ++kk) {
           const t = (kk + 1) / keys.length;
           here.append('tspan')
-            .style('stroke', () => `rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('style', () => `text-anchor: end;fill:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
             .text(format(dd[keys[kk]]));
