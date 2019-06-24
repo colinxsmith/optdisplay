@@ -3,6 +3,7 @@ import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
 import { send } from 'q';
+import { keys } from 'd3';
 @Component({
   selector: 'app-disp',
   templateUrl: './disp.component.html',
@@ -97,7 +98,7 @@ export class DispComponent implements OnInit {
       .attr('style', `left:${newDim + 5}px;top:${-3 * newDim / 4}px`)
       .append('div')
       .attr('class', 'innerScrolled')
-      .attr('style', `overflow:scroll;width:${ww}px;height:${newDim / 2}px`)
+      .attr('style', `overflow-x:hidden;overflow-y:auto;width:${ww}px;height:${newDim / 2}px`)
       ;
     this.tableDisplay(ww, www, hhh, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
 
@@ -168,7 +169,7 @@ export class DispComponent implements OnInit {
       .attr('style', `left:${newDim + 5}px;top:${-spacer - 3 * newDim / 4}px`)
       .append('div')
       .attr('class', 'iDivRisk')
-      .attr('style', `overflow:scroll;width:${wwR}px;height:${newDim / 2}px`)
+      .attr('style', `overflow-x:hidden;overflow-y:auto;width:${wwR}px;height:${newDim / 2}px`)
       ;
     this.tableDisplay(wwR, www, hhh, hh, picData2, fontSize, 'iDivRisk', 'nsDivRisk');
     mHW = newDim;
@@ -564,17 +565,18 @@ export class DispComponent implements OnInit {
       .attr('x', 0)
       .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${www*3/4},${hhh * 0.75})`)
+      .attr('transform', `translate(${ww / (Object.keys(picData[0]).length + 1)},${hhh * 0.75})`)
       .call(dd => {
-        const keys = Object.keys(picData[0]);
+        const keys1 = Object.keys(picData[0]);
         const here = dd;
-        for (let kk = 0; kk < keys.length; ++kk) {
-          const t = (kk + 1) / keys.length;
+        for (let kk = 0; kk < keys1.length; ++kk) {
+          const t = (kk + 1) / keys1.length;
           here.append('tspan')
             .attr('x', xPos(kk))
             .attr('y', yPos(0))
-            .attr('style', () => `text-anchor: end;stroke:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`) // ignored on IE
-            .text(format(keys[kk]));
+            .attr('class', 'spacer')
+            .attr('style', () => `fill:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`) // ignored on IE
+            .text(format(keys1[kk]));
         }
       });
     svg.append('rect')
@@ -589,17 +591,18 @@ export class DispComponent implements OnInit {
       .attr('x', 0)
       .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${www*3/4},${hhh * 0.75})`)
+      .attr('transform', `translate(${ww / (Object.keys(picData[0]).length + 1)},${hhh * 0.75})`)
       .call(d => d.each((dd, i, j) => {
-        const keys = Object.keys(dd);
+        const keys1 = Object.keys(dd);
         const here = d3.select(j[i]);
-        for (let kk = 0; kk < keys.length; ++kk) {
-          const t = (kk + 1) / keys.length;
+        for (let kk = 0; kk < keys1.length; ++kk) {
+          const t = (kk + 1) / keys1.length;
           here.append('tspan')
-            .attr('style', () => `text-anchor: end;fill:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('class', 'spacer')
+            .attr('style', () => `fill:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
-            .text(format(dd[keys[kk]]));
+            .text(format(dd[keys1[kk]]));
         }
       }));
   }

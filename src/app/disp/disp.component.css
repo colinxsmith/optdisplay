@@ -142,3 +142,7 @@ rect.weightSingleMinus.over {
 .divradar2 {
     position: relative;
 }
+
+tspan.spacer {
+    text-anchor: end;
+}
