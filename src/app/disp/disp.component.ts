@@ -2,8 +2,6 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
-import { send } from 'q';
-import { keys } from 'd3';
 @Component({
   selector: 'app-disp',
   templateUrl: './disp.component.html',
@@ -575,7 +573,7 @@ export class DispComponent implements OnInit {
             .attr('x', xPos(kk))
             .attr('y', yPos(0))
             .attr('class', 'spacer')
-            .attr('style', () => `fill:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`) // ignored on IE
+            .attr('style', () => `fill: ${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .text(format(keys1[kk]));
         }
       });
@@ -599,7 +597,7 @@ export class DispComponent implements OnInit {
           const t = (kk + 1) / keys1.length;
           here.append('tspan')
             .attr('class', 'spacer')
-            .attr('style', () => `fill:rgb(${200 * (1 - t)},${t / 2 * 255},${200 * t})`)
+            .attr('style', () => `fill: ${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
             .text(format(dd[keys1[kk]]));
