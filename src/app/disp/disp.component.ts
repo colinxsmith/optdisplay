@@ -554,16 +554,16 @@ export class DispComponent implements OnInit {
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', ww)
-      .attr('height', hhh);
+      .attr('height', yPos(1));
     d3.select('.' + notScrolled).select('svg')
       .attr('width', ww)
-      .attr('height', hhh)
+      .attr('height', yPos(1))
       .append('text')
       .attr('class', 'trades')
       .attr('x', 0)
       .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${ww / (picKeys.length + 1)},${hhh * 0.75})`)
+      .attr('transform', `translate(${xPos(0.75)},${yPos(0.75)})`)
       .call(dd => {
         const here = dd;
         for (let kk = 0; kk < picKeys.length; ++kk) {
@@ -572,7 +572,7 @@ export class DispComponent implements OnInit {
             .attr('x', xPos(kk))
             .attr('y', yPos(0))
             .attr('class', 'spacer')
-            .attr('style', () => `fill: ${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
+            .style('fill', () => `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .text(format(picKeys[kk]));
         }
       });
@@ -588,14 +588,14 @@ export class DispComponent implements OnInit {
       .attr('x', 0)
       .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${ww / (picKeys.length + 1)},${hhh * 0.75})`)
+      .attr('transform', `translate(${xPos(0.75)},${yPos(0.75)})`)
       .call(d => d.each((dd, i, j) => {
         const here = d3.select(j[i]);
         for (let kk = 0; kk < picKeys.length; ++kk) {
           const t = (kk + 1) / picKeys.length;
           here.append('tspan')
             .attr('class', 'spacer')
-            .attr('style', () => `fill: ${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
+            .style('fill', () => `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
             .text(format(dd[picKeys[kk]]));
