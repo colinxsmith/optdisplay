@@ -76,8 +76,8 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
-    const fontSize = 20;
-    const hhh = fontSize + 5, www = fontSize * 9, newDim = 600, rim = newDim / 10;
+    const fontSize = 12;
+    const hhh = fontSize + 5, www = fontSize * 12, newDim = 600, rim = newDim / 10;
     const ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 2) * hhh;
     let mHW = Math.max(Math.min(ww, hh), newDim);
@@ -98,7 +98,7 @@ export class DispComponent implements OnInit {
       .attr('class', 'innerScrolled')
       .attr('style', `overflow-x:hidden;overflow-y:auto;width:${ww}px;height:${newDim / 2}px`)
       ;
-    this.tableDisplay(ww, hhh, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
+    this.tableDisplay(ww, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
 
     mHW = newDim;
     const margin = rim * 2;
@@ -169,7 +169,7 @@ export class DispComponent implements OnInit {
       .attr('class', 'iDivRisk')
       .attr('style', `overflow-x:hidden;overflow-y:auto;width:${wwR}px;height:${newDim / 2}px`)
       ;
-    this.tableDisplay(wwR, hhh, hh, picData2, fontSize, 'iDivRisk', 'nsDivRisk');
+    this.tableDisplay(wwR, hh, picData2, fontSize, 'iDivRisk', 'nsDivRisk');
     mHW = newDim;
 
     // -------------------------------------Data for Radar Plot Start
@@ -535,8 +535,7 @@ export class DispComponent implements OnInit {
         }
       }
     })
-  tableDisplay = (ww: number,
-    hhh: number, hh: number, picData: {}[], fontSize: number, innerScrolled = 'innerScrolled',
+  tableDisplay = (ww: number, hh: number, picData: {}[], fontSize: number, innerScrolled = 'innerScrolled',
     notScrolled = 'notScrolled') => {
     const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i), picKeys = Object.keys(picData[0]);
 
@@ -545,7 +544,7 @@ export class DispComponent implements OnInit {
       .attr('height', hh)
       .attr('class', 'picture' + 'app-disp');
     const svg = svgs.append('g');
-    const xPos = d3.scaleLinear().domain([0, picKeys.length]).range([0, ww]);
+    const xPos = d3.scaleLinear().domain([0, picKeys.length]).range([0, ww * 0.95]);
     const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
     d3.select('.' + notScrolled).append('svg')
       .attr('class', 'picture' + 'app-disp')
@@ -560,10 +559,8 @@ export class DispComponent implements OnInit {
       .attr('height', yPos(1))
       .append('text')
       .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${xPos(0.75)},${yPos(0.75)})`)
+      .attr('transform', `translate(${xPos(1)},${yPos(0.75)})`)
       .call(dd => {
         const here = dd;
         for (let kk = 0; kk < picKeys.length; ++kk) {
@@ -585,19 +582,19 @@ export class DispComponent implements OnInit {
     svg.selectAll('trades').data(picData).enter()
       .append('text')
       .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
+      .attr('width', ww)
+      .attr('height', hh)
       .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${xPos(0.75)},${yPos(0.75)})`)
+      .attr('transform', `translate(${xPos(1)},${yPos(0.75)})`)
       .call(d => d.each((dd, i, j) => {
         const here = d3.select(j[i]);
         for (let kk = 0; kk < picKeys.length; ++kk) {
           const t = (kk + 1) / picKeys.length;
           here.append('tspan')
-            .attr('class', 'spacer')
-            .style('fill', () => `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
+            .attr('class', 'spacer')
+            .style('fill', () => `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .text(format(dd[picKeys[kk]]));
         }
       }));
