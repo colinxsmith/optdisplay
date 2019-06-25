@@ -44,6 +44,7 @@ export class DispComponent implements OnInit {
   }
   reset() {
     this.sendBack = {};
+    this.sendGamma = '';
   }
   getDat() {
     console.log(`${this.getLabel} Pressed`);
@@ -70,6 +71,7 @@ export class DispComponent implements OnInit {
         Trade: (this.displayData.w[i] - init)
       });
     });
+    this.sendGamma = this.displayData.gamma === undefined ? '' : this.displayData.gamma;
     d3.select('app-disp').selectAll('.divradar').remove();
     d3.select('app-disp').selectAll('.divradar2').remove();
     d3.select('app-disp').selectAll('.outerScrolled').remove();
