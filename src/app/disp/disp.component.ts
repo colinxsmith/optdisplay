@@ -77,7 +77,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
     const fontSize = 15;
-    const hhh = fontSize + 5, www = fontSize * 12, newDim = 600, rim = newDim / 10;
+    const hhh = fontSize + 3, www = fontSize * 12, newDim = 600, margin = newDim / 5;
     const ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 2) * hhh;
     let mHW = Math.max(Math.min(ww, hh), newDim);
@@ -101,7 +101,6 @@ export class DispComponent implements OnInit {
     this.tableDisplay(ww, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
 
     mHW = newDim;
-    const margin = rim * 2;
 
     const nameInvert = {};
     picData.forEach((d, i) => {
