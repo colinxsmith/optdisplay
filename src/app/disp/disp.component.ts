@@ -76,7 +76,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
-    const fontSize = 12;
+    const fontSize = 15;
     const hhh = fontSize + 5, www = fontSize * 12, newDim = 600, rim = newDim / 10;
     const ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 2) * hhh;
@@ -569,7 +569,7 @@ export class DispComponent implements OnInit {
             .attr('x', xPos(kk))
             .attr('y', yPos(0))
             .attr('class', 'spacer')
-            .style('fill', () => `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
+            .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .text(format(picKeys[kk]));
         }
       });
@@ -594,7 +594,7 @@ export class DispComponent implements OnInit {
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
             .attr('class', 'spacer')
-            .style('fill', () => `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
+            .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .text(format(dd[picKeys[kk]]));
         }
       }));
