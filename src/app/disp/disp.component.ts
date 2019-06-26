@@ -62,7 +62,7 @@ export class DispComponent implements OnInit {
   }
   picture() {
     const picData: { Name: string, Weight: number | string, Initial: number | string, Trade: number }[] = [];
-    this.displayData.w.forEach((d, i) => {
+    this.displayData.w.forEach((d, i: number) => {
       const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
       picData.push({
         Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
@@ -79,7 +79,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
     const fontSize = 15;
-    const hhh = fontSize + 3, www = fontSize * 12, newDim = 600, margin = newDim / 5;
+    const hhh = fontSize + 3, www = fontSize * 10, newDim = 600, margin = newDim / 5;
     const ww = www * Object.keys(picData[0]).length;
     let hh = (this.displayData.n + 2) * hhh;
     let mHW = Math.max(Math.min(ww, hh), newDim);
@@ -98,7 +98,7 @@ export class DispComponent implements OnInit {
       .attr('style', `left:${newDim + 5}px;top:${-3 * newDim / 4}px`)
       .append('div')
       .attr('class', 'innerScrolled')
-      .attr('style', `overflow-x:hidden;overflow-y:auto;width:${ww}px;height:${newDim / 2}px`)
+      .attr('style', `width:${ww}px;height:${newDim / 2}px`)
       ;
     this.tableDisplay(ww, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
 
@@ -168,7 +168,7 @@ export class DispComponent implements OnInit {
       .attr('style', `left:${newDim + 5}px;top:${-spacer - 3 * newDim / 4}px`)
       .append('div')
       .attr('class', 'iDivRisk')
-      .attr('style', `overflow-x:hidden;overflow-y:auto;width:${wwR}px;height:${newDim / 2}px`)
+      .attr('style', `width:${wwR}px;height:${newDim / 2}px`)
       ;
     this.tableDisplay(wwR, hh, picData2, fontSize, 'iDivRisk', 'nsDivRisk');
     mHW = newDim;
@@ -536,10 +536,10 @@ export class DispComponent implements OnInit {
         }
       }
     })
-  tableDisplay = (ww: number, hh: number, picData: {}[], fontSize: number, innerScrolled = 'innerScrolled',
+  tableDisplay = (ww: number, hh: number, picData: {}[], fontSize = 12, innerScrolled = 'innerScrolled',
     notScrolled = 'notScrolled') => {
-    const format = (i: any) => isString(i) ? i : d3.format('0.5f')(i), picKeys = Object.keys(picData[0]);
-
+    const tableFormat = (i: number | string) =>
+      isString(i as string) ? i as string : d3.format('0.5f')(i as number), picKeys = Object.keys(picData[0]);
     const svgs = d3.select('.' + innerScrolled).append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)
@@ -571,7 +571,7 @@ export class DispComponent implements OnInit {
             .attr('y', yPos(0))
             .attr('class', 'spacer')
             .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
-            .text(format(picKeys[kk]));
+            .text(tableFormat(picKeys[kk]));
         }
       });
     svg.append('rect')
@@ -596,7 +596,7 @@ export class DispComponent implements OnInit {
             .attr('y', yPos(i))
             .attr('class', 'spacer')
             .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
-            .text(format(dd[picKeys[kk]]));
+            .text(tableFormat(dd[picKeys[kk]]));
         }
       }));
   }

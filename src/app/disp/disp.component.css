@@ -101,45 +101,39 @@ rect.weightSingleMinus.over {
     fill-opacity: 1;
 }
 
-.portfolioFlower {
+path.portfolioFlower {
     fill-opacity: 0.35;
 }
 
-.portfolioFlower.over {
+path.portfolioFlower.over {
     fill-opacity: 0.75;
 }
 
-.portfolioFlower.dim {
+path.portfolioFlower.dim {
     fill-opacity: 0.05;
 }
 
-.inner {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-.divradar {
+div.divradar {
     position: relative;
 }
 
-.outerScrolled {
+div.outerScrolled {
     position: relative;
 }
 
-.notScrolled {
+div.notScrolled {
     position: relative;
 }
 
-.nsDivRisk {
+div.nsDivRisk {
     position: relative;
 }
 
-.oDivRisk {
+div.oDivRisk {
     position: relative;
 }
 
-.divradar2 {
+div.divradar2 {
     position: relative;
 }
 
@@ -147,6 +141,14 @@ tspan.spacer {
     text-anchor: end;
 }
 
-.innerScrolled {
+div.innerScrolled {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+div.iDivRisk {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
