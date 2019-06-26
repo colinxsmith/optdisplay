@@ -545,7 +545,7 @@ export class DispComponent implements OnInit {
       .attr('height', hh)
       .attr('class', 'picture' + 'app-disp');
     const svg = svgs.append('g');
-    const xPos = d3.scaleLinear().domain([0, picKeys.length]).range([0, ww * 0.95]);
+    const xPos = d3.scaleLinear().domain([0, picKeys.length]).range([0, ww - fontSize * 2]);
     const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
     d3.select('.' + notScrolled).append('svg')
       .attr('class', 'picture' + 'app-disp')
