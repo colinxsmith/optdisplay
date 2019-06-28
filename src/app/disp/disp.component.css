@@ -75,10 +75,8 @@ line.line {
 
 text.axisRadar {
     font-size: 10px;
-    font-stretch: expanded;
     fill: black;
     text-anchor: start;
-    text-align: center;
 }
 
 rect.weightSinglePlus {

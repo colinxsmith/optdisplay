@@ -27,8 +27,6 @@ export class DispComponent implements OnInit {
     this.sendGamma = v;
   }
   changeDat() {
-    console.log(`${this.updateLabel} Pressed`);
-    console.log(this.dataService.url);
     Object.keys(this.sendBack).forEach(d => {
       if (this.sendBack[d] === '') {
         this.sendBack[d] = undefined;
@@ -47,8 +45,6 @@ export class DispComponent implements OnInit {
     this.sendGamma = '';
   }
   getDat() {
-    console.log(`${this.getLabel} Pressed`);
-    console.log(this.dataService.url);
     this.dataService.getData()
       .subscribe(ddd => {
         this.displayData = ddd;
@@ -61,23 +57,23 @@ export class DispComponent implements OnInit {
     this.getDat();
   }
   picture() {
-    const picData: { Name: string, Weight: number | string, Initial: number | string, Trade: number }[] = [];
-    this.displayData.w.forEach((d, i: number) => {
-      const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
-      picData.push({
-        Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
-        Weight: this.displayData.w[i],
-        Initial: init,
-        Trade: (this.displayData.w[i] - init)
-      });
-    });
-    this.sendGamma = this.displayData.gamma === undefined ? '' : this.displayData.gamma;
     d3.select('app-disp').selectAll('.divradar').remove();
     d3.select('app-disp').selectAll('.divradar2').remove();
     d3.select('app-disp').selectAll('.outerScrolled').remove();
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
+    const picData: { Name: string, Weight: number | string, Initial: number | string, Trade: number }[] = [];
+    this.displayData.w.forEach((d: number, i: number) => {
+      const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
+      picData.push({
+        Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
+        Weight: d,
+        Initial: init,
+        Trade: (d - init)
+      });
+    });
+    this.sendGamma = this.displayData.gamma === undefined ? '' : this.displayData.gamma;
     const fontSize = 15;
     const hhh = fontSize + 3, www = fontSize * 10, newDim = 600, margin = newDim / 5;
     const ww = www * Object.keys(picData[0]).length;
@@ -101,9 +97,7 @@ export class DispComponent implements OnInit {
       .attr('style', `width:${ww}px;height:${newDim / 2}px`)
       ;
     this.tableDisplay(ww, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
-
     mHW = newDim;
-
     const nameInvert = {};
     picData.forEach((d, i) => {
       nameInvert[d.Name] = i;
@@ -129,22 +123,20 @@ export class DispComponent implements OnInit {
     plotKeys.shift();
     // -------------------------------------Data for Radar Plot End
     this.RadarChart('.divradar', radarData, config, plotKeys);
-
     const picData2: {
       Name: string, Weight: number | string,
       Benchmark: number | string, Beta: number, MCTR: number, MCAR: number, Active: number | string
     }[] = [];
-
-    this.displayData.w.forEach((d, i) => {
+    this.displayData.w.forEach((d: number, i: number) => {
       const bench = this.displayData.benchmark === undefined || this.displayData.benchmark.length === 0 ? 0 : this.displayData.benchmark[i];
       picData2.push({
         Name: this.displayData.names === undefined ? `Stock ${i}` : this.displayData.names[i],
-        Weight: this.displayData.w[i],
+        Weight: d,
         Benchmark: bench,
         Beta: this.displayData.beta[i],
         MCTR: this.displayData.MCTR[i],
         MCAR: this.displayData.MCAR[i],
-        Active: this.displayData.w[i] - bench
+        Active: d - bench
       });
     });
     const wwR = www * Object.keys(picData2[0]).length;
@@ -449,7 +441,8 @@ export class DispComponent implements OnInit {
         const riskScrolled = d3.select('app-disp').select('.iDivRisk');
         d3.select(riskScrolled.selectAll('text').nodes()[i])
           .classed('touch', true);
-        d3.select(axis.selectAll('text').nodes()[i]).classed('touch', true);
+        d3.select(axis.selectAll('text').nodes()[i])
+          .classed('touch', true);
         (riskScrolled.node() as HTMLDivElement)
           //  .scrollTo(0, (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
           .scrollTop = (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * (i + this.extraScroll);
