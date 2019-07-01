@@ -47,9 +47,11 @@ export class DispComponent implements OnInit {
   getDat() {
     this.dataService.getData()
       .subscribe(ddd => {
-        this.displayData = ddd;
-        this.filename = this.displayData.file;
-        this.picture();
+        if (ddd.file !== undefined) {
+          this.displayData = ddd;
+          this.filename = this.displayData.file;
+          this.picture();
+        }
       });
   }
   constructor(private dataService: DataService) { }
