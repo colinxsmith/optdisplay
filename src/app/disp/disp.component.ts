@@ -271,6 +271,44 @@ export class DispComponent implements OnInit {
         });
         return back;
       });
+    // New Gauge chart=========================================
+    const rimData = [1, 1, 1, 1];
+    const innerNumbers = [34, 56, 67];
+    const rimColours = ['red', 'blue', 'green', 'brown'];
+    const rimDef = 30, rimFont = 30;
+    const arcScale = d3.scaleLinear()
+      .domain([0, 1])
+      .range([(180 + rimDef) / 360 * Math.PI * 2, (180 + 360 - rimDef) / 360 * Math.PI * 2]);
+    let sumRim = 0, sofar = 0;
+    rimData.forEach(d => {
+      sumRim += d;
+    });
+    const gaugeW = 300, gaugeH = 300;
+    const gaugeSVG = d3.select('#gauge');
+    gaugeSVG.attr('width', gaugeW).attr('height', gaugeH);
+    gaugeSVG.selectAll('.rims').data(rimData).enter()
+      .append('path')
+      .attr('class', 'gauge')
+      .attr('transform', `translate(${gaugeW / 2},${gaugeH / 2})`)
+      .style('fill', (d, i) => rimColours[i])
+      .attr('d', (d, i) => {
+        const s = sofar;
+        const e = rimData[i] / sumRim;
+        sofar += e;
+        return d3.arc()({
+          innerRadius: gaugeH / 2 * 0.78,
+          outerRadius: gaugeH / 2 * 0.8,
+          startAngle: arcScale(s),
+          endAngle: arcScale(sofar)
+        });
+      });
+    gaugeSVG.selectAll('.ineers').data(innerNumbers).enter()
+      .append('text')
+      .attr('class', 'gauge')
+      .style('font-size', `${rimFont}px`)
+      .attr('transform', (d, i) => `translate(${gaugeW / 2},${gaugeH / 2 - rimFont * 2 * (i - 1)})`)
+      .text(d => d);
+    // ==============================================================
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
