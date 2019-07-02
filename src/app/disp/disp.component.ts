@@ -36,27 +36,29 @@ export class DispComponent implements OnInit {
     this.dataService.sendData('opt', { filename: this.filename, desired: this.sendBack })
       .subscribe(ddd => {
         this.displayData = ddd;
-        this.picture();
         this.filename = this.displayData.file;
+        this.picture();
       });
   }
   reset() {
     this.sendBack = {};
     this.sendGamma = '';
   }
-  getDat() {
+  displayServerData() {
     this.dataService.getData()
       .subscribe(ddd => {
+        console.log('In subscribe');
         if (ddd.file !== undefined) {
           this.displayData = ddd;
           this.filename = this.displayData.file;
           this.picture();
         }
       });
+      console.log('After subscribe');
   }
   constructor(private dataService: DataService) { }
   ngOnInit() {
-    this.getDat();
+    this.displayServerData();
   }
   picture() {
     d3.select('app-disp').selectAll('.divradar').remove();
@@ -209,7 +211,6 @@ export class DispComponent implements OnInit {
 
     d3.selectAll('.trades').selectAll('tspan')
       .on('click', (d, iii, jjj) => {
-        console.log(this.sendBack);
         d3.select((jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode).insert('input')
           .attr('type', 'text')
           .attr('size', '5')
