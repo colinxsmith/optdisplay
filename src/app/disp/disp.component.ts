@@ -26,13 +26,12 @@ export class DispComponent implements OnInit {
     this.sendBack['gamma'] = v;
     this.sendGamma = v;
   }
-  changeDat() {
+  sendDataToServer() {
     Object.keys(this.sendBack).forEach(d => {
       if (this.sendBack[d] === '') {
         this.sendBack[d] = undefined;
       }
     });
-
     this.dataService.sendData('opt', { filename: this.filename, desired: this.sendBack })
       .subscribe(ddd => {
         this.displayData = ddd;
@@ -54,7 +53,7 @@ export class DispComponent implements OnInit {
           this.picture();
         }
       });
-      console.log('After subscribe');
+    console.log('After subscribe');
   }
   constructor(private dataService: DataService) { }
   ngOnInit() {
@@ -260,6 +259,16 @@ export class DispComponent implements OnInit {
     pHH.scrollTop = pHH.scrollHeight;
     pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement);
     pHH.scrollTop = pHH.scrollHeight;
+    console.log(this.sendBack);
+    d3.select('#SB').text(() => {
+      let back = '';
+      Object.keys(this.sendBack).forEach(d => {
+        if (d.indexOf('vec') <= 1) {
+          back += d + ':' + this.sendBack[d] + ' ';
+        }
+      });
+      return back;
+    });
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
