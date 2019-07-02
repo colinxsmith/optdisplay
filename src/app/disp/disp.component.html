@@ -1,9 +1,10 @@
 <div style="color:rgb(1,200,210);background-color:white">
-    <button style="color:inherit" (click)="changeDat()">{{updateLabel}}</button>
-    <button style="color:inherit" (click)="getDat()">{{getLabel}}</button>
+    <button style="color:inherit" (click)="sendDataToServer()">{{updateLabel}}</button>
+    <button style="color:inherit" (click)="displayServerData()">{{getLabel}}</button>
     <button style="color:inherit" (click)="reset()">Reset</button>Data filename:
     <input (change)="changeName($event.target.value)" size="100" maxlength="120" value={{filename}}>Gamma:
     <input (change)="newGamma($event.target.value)" size="10" maxlength="12" value={{sendGamma}}>
     <p style="font-size: 10px;color: blueviolet">Returned gamma:{{displayData.ogamma===undefined?'':gammaFormat(displayData.ogamma)}}</p>
+    <p id="SB"></p>
     <h1>{{displayData.returnmessage}}</h1>
 </div>
