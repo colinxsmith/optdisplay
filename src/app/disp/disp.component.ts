@@ -260,15 +260,17 @@ export class DispComponent implements OnInit {
     pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement);
     pHH.scrollTop = pHH.scrollHeight;
     console.log(this.sendBack);
-    d3.select('#SB').text(() => {
-      let back = '';
-      Object.keys(this.sendBack).forEach(d => {
-        if (d.indexOf('vec') <= 1) {
-          back += d + ':' + this.sendBack[d] + ' ';
-        }
+    d3.selectAll('#SB')
+      .attr('class', 'sendback')
+      .text(() => {
+        let back = '';
+        Object.keys(this.sendBack).forEach(d => {
+          if (d.indexOf('vec') <= 1) {
+            back += d + ':' + this.sendBack[d] + ' ';
+          }
+        });
+        return back;
       });
-      return back;
-    });
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;

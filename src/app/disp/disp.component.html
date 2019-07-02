@@ -5,6 +5,6 @@
     <input (change)="changeName($event.target.value)" size="100" maxlength="120" value={{filename}}>Gamma:
     <input (change)="newGamma($event.target.value)" size="10" maxlength="12" value={{sendGamma}}>
     <p style="font-size: 10px;color: blueviolet">Returned gamma:{{displayData.ogamma===undefined?'':gammaFormat(displayData.ogamma)}}</p>
-    <p class="sendback" id="SB"></p>
+    <p id="SB"></p>
     <h1>{{displayData.returnmessage}}</h1>
 </div>
