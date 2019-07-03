@@ -281,15 +281,15 @@ export class DispComponent implements OnInit {
       const rimColours = ['red', 'blue', 'green', 'brown'];
       const gTitle = 'RISK';
       const rimDef = 30, rimFont = 30;
-      const arcScale = d3.scaleLinear()
-        .domain([0, 1])
-        .range([(180 + rimDef) / 360 * Math.PI * 2, (180 + 360 - rimDef) / 360 * Math.PI * 2]);
       let sumRim = 0, sofar = 0;
       rimData.forEach(d => {
         sumRim += d;
       });
+      const arcScale = d3.scaleLinear()
+        .domain([0, sumRim])
+        .range([(180 + rimDef) / 360 * Math.PI * 2, (180 + 360 - rimDef) / 360 * Math.PI * 2]);
       const gaugeR = 300;
-      d3.select('#scl').attr('style', 'overflow:auto;height:350px;width:350px'); // Only scrolls if gaugeW etc are bigger than 350
+      d3.select('#scl').attr('style', 'overflow:auto;height:350px;width:350px'); // Only scrolls if gaugeR is bigger than 350
       const gaugeSVG = d3.select('#scl').select('#gauge');
       gaugeSVG.attr('width', gaugeR).attr('height', gaugeR);
       gaugeSVG.selectAll('path').remove();
@@ -299,9 +299,9 @@ export class DispComponent implements OnInit {
         .attr('class', 'gauge')
         .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
-        .attr('d', (d, i) => {
+        .attr('d', d => {t
           const s = sofar;
-          sofar += rimData[i] / sumRim;
+          sofar += d;
           return d3.arc()({
             innerRadius: gaugeR / 2 * 0.78,
             outerRadius: gaugeR / 2 * 0.8,
