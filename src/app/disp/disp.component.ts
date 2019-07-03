@@ -266,13 +266,13 @@ export class DispComponent implements OnInit {
         let back = '';
         Object.keys(this.sendBack).forEach(d => {
           if (d.indexOf('vec') <= 1) {
-            back += d + ':' + this.sendBack[d] + ' ';
+            back += `${d}:${this.sendBack[d]} `;
           }
         });
         return back;
       });
     // New Gauge chart=========================================
-    const showGauge = false;
+    const showGauge = true;
     if (!showGauge) {
       d3.select('#scl').remove();
     } else {
@@ -292,6 +292,8 @@ export class DispComponent implements OnInit {
       d3.select('#scl').attr('style', 'overflow:auto;height:350px;width:350px'); // Only scrolls if gaugeW etc are bigger than 350
       const gaugeSVG = d3.select('#scl').select('#gauge');
       gaugeSVG.attr('width', gaugeW).attr('height', gaugeH);
+      gaugeSVG.selectAll('path').remove();
+      gaugeSVG.selectAll('text').remove();
       gaugeSVG.selectAll('.rims').data(rimData).enter()
         .append('path')
         .attr('class', 'gauge')
@@ -299,8 +301,7 @@ export class DispComponent implements OnInit {
         .style('fill', (d, i) => rimColours[i])
         .attr('d', (d, i) => {
           const s = sofar;
-          const e = rimData[i] / sumRim;
-          sofar += e;
+          sofar += rimData[i] / sumRim;
           return d3.arc()({
             innerRadius: gaugeH / 2 * 0.78,
             outerRadius: gaugeH / 2 * 0.8,
@@ -313,7 +314,7 @@ export class DispComponent implements OnInit {
         .append('text')
         .attr('class', 'gauge')
         .style('font-size', `${rimFont}px`)
-        .attr('transform', (d, i) => `translate(${gaugeW / 2},${gaugeH / 2 - rimFont * 2 * (i - 1)})`)
+        .attr('transform', (d, i) => `translate(${gaugeW / 2},${gaugeH / 2 + rimFont * 2 * (i - 1)})`)
         .text(d => d);
       const tit = gaugeSVG.append('text')
         .attr('class', 'gaugeT')
