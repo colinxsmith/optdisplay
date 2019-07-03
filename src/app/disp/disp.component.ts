@@ -299,28 +299,35 @@ export class DispComponent implements OnInit {
         .attr('class', 'gauge')
         .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
-        .attr('d', d => {
+        .transition().duration(5000)
+        .attrTween('d', d => {
           const s = sofar;
           sofar += d;
-          return d3.arc()({
-            innerRadius: gaugeR / 2 * 0.78,
-            outerRadius: gaugeR / 2 * 0.8,
-            padAngle: 1e-2,
-            startAngle: arcScale(s),
-            endAngle: arcScale(sofar)
-          });
+          return (t) => {
+            return d3.arc()({
+              innerRadius: gaugeR / 2 * 0.78 * t * t,
+              outerRadius: gaugeR / 2 * 0.8,
+              padAngle: 1e-2,
+              startAngle: arcScale(s) * t,
+              endAngle: arcScale(sofar) * t
+            });
+          };
         });
       gaugeSVG.selectAll('.ineers').data(innerNumbers).enter()
         .append('text')
         .attr('class', 'gauge')
         .style('font-size', `${rimFont}px`)
-        .attr('transform', (d, i) => `translate(${gaugeR / 2},${gaugeR / 2 + rimFont * 2 * (i - 1)})`)
+        .transition().duration(5000).ease(d3.easeBounce)
+        .attrTween('transform', (d, i) => (t) => `translate(${gaugeR / 2},${gaugeR / 2 + t * t * rimFont * 2 * (i - 1)})`)
         .text(d => d);
       const tit = gaugeSVG.append('text')
         .attr('class', 'gaugeT')
         .attr('transform', `translate(${gaugeR / 2},${gaugeR - rimFont})`)
         .text(gTitle);
-      tit.attr('transform', `translate(${gaugeR / 2},${gaugeR - +tit.style('font-size').replace('px', '') / 4})`);
+      tit
+        .transition().duration(5000)
+        .attrTween('transform', () => (t) =>
+          `translate(${gaugeR / 2},${gaugeR * t - +tit.style('font-size').replace('px', '') / 4}) rotate(${360 * t})`);
     }
     // ==============================================================
   }
