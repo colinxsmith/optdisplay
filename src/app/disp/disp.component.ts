@@ -288,23 +288,23 @@ export class DispComponent implements OnInit {
       rimData.forEach(d => {
         sumRim += d;
       });
-      const gaugeW = 300, gaugeH = 300;
+      const gaugeR = 300;
       d3.select('#scl').attr('style', 'overflow:auto;height:350px;width:350px'); // Only scrolls if gaugeW etc are bigger than 350
       const gaugeSVG = d3.select('#scl').select('#gauge');
-      gaugeSVG.attr('width', gaugeW).attr('height', gaugeH);
+      gaugeSVG.attr('width', gaugeR).attr('height', gaugeR);
       gaugeSVG.selectAll('path').remove();
       gaugeSVG.selectAll('text').remove();
       gaugeSVG.selectAll('.rims').data(rimData).enter()
         .append('path')
         .attr('class', 'gauge')
-        .attr('transform', `translate(${gaugeW / 2},${gaugeH / 2})`)
+        .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
         .attr('d', (d, i) => {
           const s = sofar;
           sofar += rimData[i] / sumRim;
           return d3.arc()({
-            innerRadius: gaugeH / 2 * 0.78,
-            outerRadius: gaugeH / 2 * 0.8,
+            innerRadius: gaugeR / 2 * 0.78,
+            outerRadius: gaugeR / 2 * 0.8,
             padAngle: 1e-2,
             startAngle: arcScale(s),
             endAngle: arcScale(sofar)
@@ -314,13 +314,13 @@ export class DispComponent implements OnInit {
         .append('text')
         .attr('class', 'gauge')
         .style('font-size', `${rimFont}px`)
-        .attr('transform', (d, i) => `translate(${gaugeW / 2},${gaugeH / 2 + rimFont * 2 * (i - 1)})`)
+        .attr('transform', (d, i) => `translate(${gaugeR / 2},${gaugeR / 2 + rimFont * 2 * (i - 1)})`)
         .text(d => d);
       const tit = gaugeSVG.append('text')
         .attr('class', 'gaugeT')
-        .attr('transform', `translate(${gaugeW / 2},${gaugeH - rimFont})`)
+        .attr('transform', `translate(${gaugeR / 2},${gaugeR - rimFont})`)
         .text(gTitle);
-      tit.attr('transform', `translate(${gaugeW / 2},${gaugeH - +tit.style('font-size').replace('px', '') / 4})`);
+      tit.attr('transform', `translate(${gaugeR / 2},${gaugeR - +tit.style('font-size').replace('px', '') / 4})`);
     }
     // ==============================================================
   }
