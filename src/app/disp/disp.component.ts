@@ -302,7 +302,7 @@ export class DispComponent implements OnInit {
         .style('fill', (d, i) => rimColours[i])
         .on('mousemove', d => {
           tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-            .html(`<i class='fa fa-key leafy'></i> ${d}`);
+            .html(`<i class='fa fa-weibo leafy'></i> ${d}`);
         })
         .on('mouseout', () => {
           tTip.attr('style', `display:none`);
