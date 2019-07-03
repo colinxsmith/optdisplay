@@ -272,11 +272,12 @@ export class DispComponent implements OnInit {
         return back;
       });
     // New Gauge chart=========================================
+    const tTip = d3.select('app-disp').append('g').attr('class', 'tooltip');
     const showGauge = true;
     if (!showGauge) {
       d3.select('#scl').remove();
     } else {
-      const rimData = [1, 1, 1, 1];
+      const rimData = [1, 2, 3, 1];
       const innerNumbers = [34, 56, 67];
       const rimColours = ['red', 'blue', 'green', 'brown'];
       const gTitle = 'RISK';
@@ -299,6 +300,13 @@ export class DispComponent implements OnInit {
         .attr('class', 'gauge')
         .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
+        .on('mousemove', d => {
+          tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+            .html(`<i class='fa fa-key leafy'></i> ${d}`);
+        })
+        .on('mouseout', () => {
+          tTip.attr('style', `display:none`);
+        })
         .transition().duration(5000)
         .attrTween('d', d => {
           const s = sofar;
@@ -313,7 +321,7 @@ export class DispComponent implements OnInit {
             });
           };
         });
-      gaugeSVG.selectAll('.ineers').data(innerNumbers).enter()
+      gaugeSVG.selectAll('.inners').data(innerNumbers).enter()
         .append('text')
         .attr('class', 'gauge')
         .style('font-size', `${rimFont}px`)

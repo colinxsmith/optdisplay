@@ -155,19 +155,36 @@ div.iDivRisk {
     font-size: 16px;
     color: rgb(220, 150, 23);
 }
-path.gauge{
-    fill:green;
+
+path.gauge {
+    fill: green;
     stroke: none;
 }
-text.gauge{
+
+text.gauge {
     stroke: none;
     fill: rgb(87, 78, 78);
     font-size: 40px;
     text-anchor: middle;
 }
-text.gaugeT{
+
+text.gaugeT {
     stroke: none;
     fill: rgb(87, 78, 78);
     font-size: 35px;
     text-anchor: middle;
+}
+
+g.tooltip {
+    background: black;
+    color: white;
+    position: absolute;
+    text-align: center;
+    font: 25px Calibri, sans serif;
+    pointer-events: none;
+    overflow: auto;
+}
+.leafy{
+    color:yellow;
+    font-size:20px;
 }
