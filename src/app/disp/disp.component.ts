@@ -299,7 +299,7 @@ export class DispComponent implements OnInit {
         .attr('class', 'gauge')
         .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
-        .attr('d', d => {t
+        .attr('d', d => {
           const s = sofar;
           sofar += d;
           return d3.arc()({
