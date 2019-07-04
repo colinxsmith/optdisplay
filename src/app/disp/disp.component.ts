@@ -9,6 +9,7 @@ import { isString } from 'util';
   encapsulation: ViewEncapsulation.None
 })
 export class DispComponent implements OnInit {
+  tTip = d3.select('app-disp').append('g').attr('class', 'tooltip');
   updateLabel = 'Update';
   getLabel = 'Refresh';
   sendGamma = '';
@@ -99,7 +100,7 @@ export class DispComponent implements OnInit {
       .attr('class', 'innerScrolled')
       .attr('style', `width:${ww}px;height:${newDim / 2}px`)
       ;
-    this.tableDisplay(ww, hh, picData, fontSize, 'innerScrolled', 'notScrolled');
+    this.tableDisplay(ww, hh, picData, fontSize, '.innerScrolled', '.notScrolled');
     mHW = newDim;
     const nameInvert = {};
     picData.forEach((d, i) => {
@@ -165,7 +166,7 @@ export class DispComponent implements OnInit {
       .attr('class', 'iDivRisk')
       .attr('style', `width:${wwR}px;height:${newDim / 2}px`)
       ;
-    this.tableDisplay(wwR, hh, picData2, fontSize, 'iDivRisk', 'nsDivRisk');
+    this.tableDisplay(wwR, hh, picData2, fontSize, '.iDivRisk', '.nsDivRisk');
     mHW = newDim;
 
     // -------------------------------------Data for Radar Plot Start
@@ -260,19 +261,33 @@ export class DispComponent implements OnInit {
     pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement);
     pHH.scrollTop = pHH.scrollHeight;
     console.log(this.sendBack);
-    d3.selectAll('#SB')
-      .attr('class', 'sendback')
-      .text(() => {
-        let back = '';
-        Object.keys(this.sendBack).forEach(d => {
-          if (d.indexOf('vec') <= 1) {
-            back += `${d}:${this.sendBack[d]} `;
-          }
-        });
-        return back;
-      });
+    /*  d3.selectAll('#SB')
+        .attr('class', 'sendback')
+        .text(() => {
+          let back = '';
+          Object.keys(this.sendBack).forEach(d => {
+            if (d.indexOf('vec') <= 1) {
+              back += `${d}:${this.sendBack[d]} `;
+            }
+          });
+          return back;
+        });*/
+    const ll = 0, wh = 1000, h_h = 30;
+    d3.select('#SB').selectAll('div').remove();
+    d3.select('#SB').append('div')
+      .attr('class', 'nsSB')
+      .attr('style', `width:${ww}px;height:${h_h}px`);
+    d3.select('#SB').append('div')
+      .attr('class', 'oSB')
+      .append('div')
+      .attr('class', 'iSB')
+      .attr('style', `width:${ww}px;height:${h_h * 2}px`)
+      ;
+    if (Object.keys(this.sendBack).length !== 0) {
+      this.tableDisplay(wh, h_h, [this.sendBack], 20, '.iSB', '.nsSB');
+      d3.select('#SB').selectAll('svg').selectAll('rect').attr('style', 'fill-opacity:0.1;fill:lightgreen');
+    }
     // New Gauge chart=========================================
-    const tTip = d3.select('app-disp').append('g').attr('class', 'tooltip');
     const showGauge = true;
     if (!showGauge) {
       d3.select('#scl').remove();
@@ -301,11 +316,12 @@ export class DispComponent implements OnInit {
         .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
         .on('mousemove', d => {
-          tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
             .html(`<i class='fa fa-weibo leafy'></i> ${d}`);
         })
         .on('mouseout', () => {
-          tTip.attr('style', `display:none`);
+          this.tTip.attr('style', `display:none`)
+            .html('');
         })
         .transition().duration(5000)
         .attrTween('d', d => {
@@ -610,44 +626,46 @@ export class DispComponent implements OnInit {
         }
       }
     })
-  tableDisplay = (ww: number, hh: number, picData: {}[], fontSize = 12, innerScrolled = 'innerScrolled',
-    notScrolled = 'notScrolled') => {
+  tableDisplay = (ww: number, hh: number, picData: {}[], fontSize = 12, innerScrolled = '.innerScrolled',
+    notScrolled = '.notScrolled') => {
     const tableFormat = (i: number | string) =>
       isString(i as string) ? i as string : d3.format('0.5f')(i as number), picKeys = Object.keys(picData[0]);
-    const svgs = d3.select('.' + innerScrolled).append('svg');
+    const svgs = d3.select(innerScrolled).append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)
       .attr('class', 'picture' + 'app-disp');
     const svg = svgs.append('g');
     const xPos = d3.scaleLinear().domain([0, picKeys.length]).range([0, ww - fontSize * 2]);
     const yPos = d3.scaleLinear().domain([0, picData.length]).range([0, hh]);
-    d3.select('.' + notScrolled).append('svg')
-      .attr('class', 'picture' + 'app-disp')
-      .append('rect')
-      .attr('class', 'trades')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', ww)
-      .attr('height', yPos(1));
-    d3.select('.' + notScrolled).select('svg')
-      .attr('width', ww)
-      .attr('height', yPos(1))
-      .append('text')
-      .attr('class', 'trades')
-      .style('font-size', `${fontSize}px`)
-      .attr('transform', `translate(${xPos(1)},${yPos(0.75)})`)
-      .call(dd => {
-        const here = dd;
-        for (let kk = 0; kk < picKeys.length; ++kk) {
-          const t = (kk + 1) / picKeys.length;
-          here.append('tspan')
-            .attr('x', xPos(kk))
-            .attr('y', yPos(0))
-            .attr('class', 'spacer')
-            .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
-            .text(tableFormat(picKeys[kk]));
-        }
-      });
+    if (notScrolled !== '') {
+      d3.select(notScrolled).append('svg')
+        .attr('class', 'picture' + 'app-disp')
+        .append('rect')
+        .attr('class', 'trades')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', ww)
+        .attr('height', yPos(1));
+      d3.select(notScrolled).select('svg')
+        .attr('width', ww)
+        .attr('height', yPos(1))
+        .append('text')
+        .attr('class', 'trades')
+        .style('font-size', `${fontSize}px`)
+        .attr('transform', `translate(${xPos(1)},${yPos(0.75)})`)
+        .call(dd => {
+          const here = dd;
+          for (let kk = 0; kk < picKeys.length; ++kk) {
+            const t = (kk + 1) / picKeys.length;
+            here.append('tspan')
+              .attr('x', xPos(kk))
+              .attr('y', yPos(0))
+              .attr('class', 'spacer')
+              .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
+              .text(tableFormat(picKeys[kk]));
+          }
+        });
+    }
     svg.append('rect')
       .attr('class', 'trades')
       .attr('x', 0)
