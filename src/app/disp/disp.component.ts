@@ -313,7 +313,7 @@ export class DispComponent implements OnInit {
           sofar += d;
           return (t) => {
             return d3.arc()({
-              innerRadius: gaugeR / 2 * 0.78 * t * t,
+              innerRadius: gaugeR / 2 * 0.75 * t * t,
               outerRadius: gaugeR / 2 * 0.8,
               padAngle: 1e-2,
               startAngle: arcScale(s) * t,
