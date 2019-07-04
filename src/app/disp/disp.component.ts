@@ -272,19 +272,20 @@ export class DispComponent implements OnInit {
           });
           return back;
         });*/
-    const ll = 0, wh = 1000, h_h = 30;
+    const ll = 0, wh = 200, h_h = 30;
     d3.select('#SB').selectAll('div').remove();
+    d3.select('#SB').attr('style', `overflow-x:auto;overflow-y:hidden;width:960px`);
     d3.select('#SB').append('div')
       .attr('class', 'nsSB')
-      .attr('style', `width:${ww}px;height:${h_h}px`);
+      .attr('style', `width:${wh}px;height:${h_h}px`);
     d3.select('#SB').append('div')
       .attr('class', 'oSB')
       .append('div')
       .attr('class', 'iSB')
-      .attr('style', `width:${ww}px;height:${h_h * 2}px`)
+      .attr('style', `width:${wh}px;height:${h_h}px`)
       ;
     if (Object.keys(this.sendBack).length !== 0) {
-      this.tableDisplay(wh, h_h, [this.sendBack], 20, '.iSB', '.nsSB');
+      this.tableDisplay(wh * Object.keys(this.sendBack).length, h_h, [this.sendBack], 20, '.iSB', '.nsSB');
       d3.select('#SB').selectAll('svg').selectAll('rect').attr('style', 'fill-opacity:0.1;fill:lightgreen');
     }
     // New Gauge chart=========================================
@@ -292,7 +293,7 @@ export class DispComponent implements OnInit {
     if (!showGauge) {
       d3.select('#scl').remove();
     } else {
-      const rimData = [1, 2, 3, 1];
+      const rimData = [1, 4, 7, 1];
       const innerNumbers = [34, 56, 67];
       const rimColours = ['red', 'blue', 'green', 'brown'];
       const gTitle = 'RISK';
