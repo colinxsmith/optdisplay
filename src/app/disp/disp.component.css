@@ -152,7 +152,7 @@ div.iDivRisk {
 }
 
 div.iSB {
-    position: relative;
+    overflow: none;
 }
 
 div.oSB {
@@ -161,11 +161,6 @@ div.oSB {
 
 div.nsSB {
     position: relative;
-}
-
-#SB.sendback {
-    font-size: 16px;
-    color: rgb(220, 150, 23);
 }
 
 path.gauge {

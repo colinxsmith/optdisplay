@@ -24,6 +24,7 @@ export class DispComponent implements OnInit {
     this.filename = v;
   }
   newGamma(v: string) {
+    delete this.sendBack['gamma'];
     this.sendBack['gamma'] = v;
     this.sendGamma = v;
   }
@@ -67,6 +68,7 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').selectAll('.notScrolled').remove();
     d3.select('app-disp').selectAll('.oDivRisk').remove();
     d3.select('app-disp').selectAll('.nsDivRisk').remove();
+    d3.select('#SB').selectAll('div').remove();
     const picData: { Name: string, Weight: number | string, Initial: number | string, Trade: number }[] = [];
     this.displayData.w.forEach((d: number, i: number) => {
       const init = this.displayData.initial === undefined || this.displayData.initial.length === 0 ? 0 : this.displayData.initial[i];
@@ -217,8 +219,10 @@ export class DispComponent implements OnInit {
           .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
           .on('change', (dk, i, j) => {
             (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
+            delete this.sendBack[Object.keys(d)[iii]];
             this.sendBack[Object.keys(d)[iii]] = (j[i]).value;
             if (Object.keys(d)[iii] === 'Beta') {
+              delete this.sendBack[Object.keys(d)[iii] + 'vec'];
               this.sendBack[Object.keys(d)[iii] + 'vec'] = this.displayData.beta;
             }
             d3.select(j[i]).remove();
@@ -255,26 +259,10 @@ export class DispComponent implements OnInit {
         });
     });
 
-    // Allways scroll to the end of the divs.
-    let pHH = (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement);
-    pHH.scrollTop = pHH.scrollHeight;
-    pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement);
-    pHH.scrollTop = pHH.scrollHeight;
-    console.log(this.sendBack);
-    /*  d3.selectAll('#SB')
-        .attr('class', 'sendback')
-        .text(() => {
-          let back = '';
-          Object.keys(this.sendBack).forEach(d => {
-            if (d.indexOf('vec') <= 1) {
-              back += `${d}:${this.sendBack[d]} `;
-            }
-          });
-          return back;
-        });*/
+
+
     const ll = 0, wh = 200, h_h = 30;
-    d3.select('#SB').selectAll('div').remove();
-    d3.select('#SB').attr('style', `overflow-x:auto;overflow-y:hidden;width:960px`);
+    d3.select('#SB').attr('style', `overflow-x:auto;overflow-y:hidden;width:960px;scroll-behaviour:smooth`);
     d3.select('#SB').append('div')
       .attr('class', 'nsSB')
       .attr('style', `width:${wh}px;height:${h_h}px`);
@@ -354,7 +342,13 @@ export class DispComponent implements OnInit {
         .attrTween('transform', () => (t) =>
           `translate(${gaugeR / 2},${gaugeR * t - +tit.style('font-size').replace('px', '') / 4}) rotate(${360 * t})`);
     }
-    // ==============================================================
+    // ==============================================================    // Allways scroll to the end of the divs.
+    let pHH = (d3.select('app-disp').select('.innerScrolled').node() as HTMLDivElement);
+    pHH.scrollTop = pHH.scrollHeight;
+    pHH = (d3.select('app-disp').select('.iDivRisk').node() as HTMLDivElement);
+    pHH.scrollTop = pHH.scrollHeight;
+    pHH = (d3.select('#SB').node() as HTMLParagraphElement);
+    pHH.scrollLeft = pHH.scrollWidth;
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
