@@ -317,13 +317,16 @@ export class DispComponent implements OnInit {
           const s = sofar;
           sofar += d;
           return (t) => {
-            return d3.arc()({
+            const aDat = {
               innerRadius: gaugeR / 2 * 0.75 * t * t,
               outerRadius: gaugeR / 2 * 0.8,
               padAngle: 1e-2,
               startAngle: arcScale(s) * t,
               endAngle: arcScale(sofar) * t
-            });
+            };
+            const back = d3.arc();
+            back.cornerRadius(gaugeR * 0.1);
+            return back(aDat);
           };
         });
       gaugeSVG.selectAll('.inners').data(innerNumbers).enter()
