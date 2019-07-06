@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
+import { BaseType } from 'd3';
 @Component({
   selector: 'app-disp',
   templateUrl: './disp.component.html',
@@ -210,25 +211,6 @@ export class DispComponent implements OnInit {
     d3.select('app-disp').select('.nsDivRisk').selectAll('text')
       .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
       .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
-
-    d3.selectAll('.trades').selectAll('tspan')
-      .on('click', (d, iii, jjj) => {
-        d3.select((jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode).insert('input')
-          .attr('type', 'text')
-          .attr('size', '5')
-          .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
-          .on('change', (dk, i, j) => {
-            (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
-            delete this.sendBack[Object.keys(d)[iii]];
-            this.sendBack[Object.keys(d)[iii]] = (j[i]).value;
-            if (Object.keys(d)[iii] === 'Beta') {
-              delete this.sendBack[Object.keys(d)[iii] + 'vec'];
-              this.sendBack[Object.keys(d)[iii] + 'vec'] = this.displayData.beta;
-            }
-            d3.select(j[i]).remove();
-          });
-      });
-
     ['.divradar', '.divradar2'].forEach(cls => {
       d3.select('app-disp').selectAll(cls).selectAll('text')
         .on('mouseover', (d: string, i, j) => {
@@ -275,6 +257,7 @@ export class DispComponent implements OnInit {
     if (Object.keys(this.sendBack).length !== 0) {
       this.tableDisplay(wh * Object.keys(this.sendBack).length, h_h, [this.sendBack], 20, '.iSB', '.nsSB');
       d3.select('#SB').selectAll('svg').selectAll('rect').attr('style', 'fill-opacity:0.1;fill:lightgreen');
+
     }
     // New Gauge chart=========================================
     const showGauge = true;
@@ -320,12 +303,12 @@ export class DispComponent implements OnInit {
             const aDat = {
               innerRadius: gaugeR / 2 * 0.75 * t * t,
               outerRadius: gaugeR / 2 * 0.8,
-              padAngle: 1e-2,
+              padAngle: 1 - t,
               startAngle: arcScale(s) * t,
               endAngle: arcScale(sofar) * t
             };
             const back = d3.arc();
-            back.cornerRadius(gaugeR * 0.1);
+            back.cornerRadius(gaugeR * 0.1 * (1 - t));
             return back(aDat);
           };
         });
@@ -352,6 +335,26 @@ export class DispComponent implements OnInit {
     pHH.scrollTop = pHH.scrollHeight;
     pHH = (d3.select('#SB').node() as HTMLParagraphElement);
     pHH.scrollLeft = pHH.scrollWidth;
+    d3.selectAll('.trades').selectAll('tspan')
+      .on('click', (d, iii, jjj) => {
+        const topper = (jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode;
+        const keyH = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()[iii] as HTMLSpanElement).textContent;
+
+        d3.select((jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode).insert('input')
+          .attr('type', 'text')
+          .attr('size', '5')
+          .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
+          .on('change', (dk, i, j) => {
+            (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
+            delete this.sendBack[Object.keys(d)[iii]];
+            this.sendBack[keyH] = (j[i]).value;
+            if (keyH === 'Beta') {
+              delete this.sendBack[keyH + 'vec'];
+              this.sendBack[keyH + 'vec'] = this.displayData.beta;
+            }
+            d3.select(j[i]).remove();
+          });
+      });
   }
   RadarChart(id: string, data: { axis: string; value: number; }[][], options: {
     w: number; h: number;
@@ -638,6 +641,7 @@ export class DispComponent implements OnInit {
     if (notScrolled !== '') {
       d3.select(notScrolled).append('svg')
         .attr('class', 'picture' + 'app-disp')
+        .attr('id', 'tabhead')
         .append('rect')
         .attr('class', 'trades')
         .attr('x', 0)
