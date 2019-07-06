@@ -2,7 +2,6 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
-import { BaseType } from 'd3';
 @Component({
   selector: 'app-disp',
   templateUrl: './disp.component.html',
@@ -346,7 +345,7 @@ export class DispComponent implements OnInit {
           .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
           .on('change', (dk, i, j) => {
             (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
-            delete this.sendBack[Object.keys(d)[iii]];
+            delete this.sendBack[keyH];
             this.sendBack[keyH] = (j[i]).value;
             if (keyH === 'Beta') {
               delete this.sendBack[keyH + 'vec'];
