@@ -339,7 +339,7 @@ export class DispComponent implements OnInit {
         const topper = (jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode;
         const keyH = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()[iii] as HTMLSpanElement).textContent;
 
-        d3.select((jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode).insert('input')
+        d3.select(topper).insert('input')
           .attr('type', 'text')
           .attr('size', '5')
           .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
