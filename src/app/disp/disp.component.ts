@@ -300,11 +300,11 @@ export class DispComponent implements OnInit {
           sofar += d;
           return (t) => {
             const aDat = {
-              innerRadius: gaugeR / 2 * 0.75 * t * t,
+              innerRadius: gaugeR / 2 * 0.7 * t,
               outerRadius: gaugeR / 2 * 0.8,
-              padAngle: 1 - t,
-              startAngle: arcScale(s) * t,
-              endAngle: arcScale(sofar) * t
+              padAngle: 1 - t * t,
+              startAngle: arcScale(s) * t * t,
+              endAngle: arcScale(sofar) * t * t
             };
             const back = d3.arc();
             back.cornerRadius(gaugeR * 0.1 * (1 - t));
@@ -337,21 +337,31 @@ export class DispComponent implements OnInit {
     d3.selectAll('.trades').selectAll('tspan')
       .on('click', (d, iii, jjj) => {
         const topper = (jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode;
-        const keyH = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()[iii] as HTMLSpanElement).textContent;
-
+        const keyDef = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()[iii] as SVGTSpanElement);
+        (topper.parentNode as HTMLElement).scrollLeft = 0;
+        const labH = d3.select(topper)
+          .insert('svg')
+          .attr('width', 75)
+          .attr('height', 25)
+          .attr('style', keyDef.getAttribute('style'))
+          .append('text').attr('transform', 'translate(0,22)')
+          .text(keyDef.textContent);
         d3.select(topper).insert('input')
           .attr('type', 'text')
-          .attr('size', '5')
+          .attr('size', '10')
+          .style('background-color', d3.select(topper).select('rect').style('fill'))
+          .style('text-align', 'right')
           .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
           .on('change', (dk, i, j) => {
             (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
-            delete this.sendBack[keyH];
-            this.sendBack[keyH] = (j[i]).value;
-            if (keyH === 'Beta') {
-              delete this.sendBack[keyH + 'vec'];
-              this.sendBack[keyH + 'vec'] = this.displayData.beta;
+            delete this.sendBack[keyDef.textContent];
+            this.sendBack[keyDef.textContent] = (j[i]).value;
+            if (keyDef.textContent === 'Beta') {
+              delete this.sendBack[keyDef.textContent + 'vec'];
+              this.sendBack[keyDef.textContent + 'vec'] = this.displayData.beta;
             }
             d3.select(j[i]).remove();
+            labH.remove();
           });
       });
   }
@@ -640,7 +650,6 @@ export class DispComponent implements OnInit {
     if (notScrolled !== '') {
       d3.select(notScrolled).append('svg')
         .attr('class', 'picture' + 'app-disp')
-        .attr('id', 'tabhead')
         .append('rect')
         .attr('class', 'trades')
         .attr('x', 0)
