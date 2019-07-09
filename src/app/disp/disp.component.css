@@ -11,6 +11,7 @@ text.trades.touch {
 text.datakeys {
     font-size: 15px;
     fill: rgb(90, 76, 59);
+    text-anchor: middle;
 }
 
 rect.trades {

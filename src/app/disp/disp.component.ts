@@ -472,7 +472,8 @@ export class DispComponent implements OnInit {
     const blobChooserText = baseSvg.selectAll('.datakeys').data(axisKeys).enter()
       .append('text')
       .attr('class', 'datakeys')
-      .attr('transform', (d, k) => `translate(${radius * 0.95},${-cfg.margin.bottom / 2 - radius * 0.925 + k * radius / 10})`)
+      .style('fill', (d, i) => cfg.colour(i))
+      .attr('transform', (d, k) => `translate(${radius},${-cfg.margin.bottom / 2 - radius * 0.925 + k * radius / 10})`)
       .text(d => d);
 
     const blobWrapper = baseSvg.selectAll('.radarWrapper')
