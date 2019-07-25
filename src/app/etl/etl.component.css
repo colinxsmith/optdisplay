@@ -1,3 +1,7 @@
-div.inputData{
+div.inputData {
     background-color: honeydew;
+}
+
+tspan.spacer {
+    text-anchor: end;
 }
