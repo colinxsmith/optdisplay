@@ -17,6 +17,7 @@ export class EtlComponent implements OnInit {
   ETL: number;
   RISK: number;
   RETURN: number;
+  MESSAGE: string;
   cols = 4;
   sendLabel = 'SEND';
   constructor(private dataService: DataService, private mainScreen: ElementRef) { }
@@ -30,8 +31,11 @@ export class EtlComponent implements OnInit {
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
     d3.select(this.mainScreen.nativeElement).select('#valuesback').selectAll('svg').remove();
+    d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
     this.dataService.sendData('etl', { names: this.stockNames, lower: this.stockLower, upper: this.stockUpper })
-      .subscribe((DAT: any) => {
+      .subscribe(
+        (DAT: { port: { names: string, lower: number, upper: number, weights: number }[],
+          ETL: number, RISK: number, RETURN: number, message: string }) => {
         console.log(DAT);
         if (DAT.port.length) {
           this.stockNames = DAT.port.map(d => d.names);
@@ -41,6 +45,7 @@ export class EtlComponent implements OnInit {
           this.ETL = DAT.ETL;
           this.RISK = DAT.RISK;
           this.RETURN = DAT.RETURN;
+          this.MESSAGE = DAT.message;
         }
         if (this.stockNames === undefined || this.stockNames.length === 0) {
           for (let i = 0; i < 10; i++) {
@@ -60,13 +65,18 @@ export class EtlComponent implements OnInit {
           }
         }
         const tableFormat = (i: number | string) =>
-          isString(i as string) ? i as string : d3.format('0.5f')(i as number);
+          isString(i as string) ? i as string : d3.format('0.8f')(i as number);
+        const etlFormat = (i: number | string) =>
+          isString(i as string) ? i as string : d3.format('0.8f')(i as number);
         const ww = 900, xPos = d3.scaleLinear().domain([0, this.cols + 1]).range([0, ww]),
-          colourT = d3.interpolate(d3.rgb('green'), d3.rgb('blue'));
+          colourT = d3.interpolate(d3.rgb('orange'), d3.rgb('blue'));
         const hh = 20 * this.stockNames.length, yPos = d3.scaleLinear().domain([0, this.stockNames.length]).range([0, hh]);
         d3.select(this.mainScreen.nativeElement).select('#stockdata').append('div').attr('class', 'inputData')
           .style('width', `${ww}px`)
-          .style('height', `${hh}px`)
+          .style('height', `200px`)
+          .style('background-color', 'black')
+          .style('overflow-x', 'hidden')
+          .style('overflow-y', 'scroll')
           .append('svg')
           .attr('width', ww)
           .attr('height', hh)
@@ -104,15 +114,19 @@ export class EtlComponent implements OnInit {
           .append('text')
           .style('fill', (d, i) => `${colourT(i)}`)
           .attr('transform', (d, i) => `translate(${xPos(i + 1)},${yPos(1)})`)
-          .text((d, i) => `${propLabels[i]}: ${tableFormat(d)}`)
+          .text((d, i) => `${propLabels[i]}: ${etlFormat(d)}`)
           ;
         d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
           .on('click', (d, i, j) => {
             const id = i % this.cols;
+            if (!(id === 1 || id === 2)) {
+              return;
+            }
             const stock = Math.floor(i / this.cols);
             console.log(i, id, stock);
             const here = (j[i] as SVGTSpanElement);
-            const field = d3.select(this.mainScreen.nativeElement).select('#stockdata').append('input');
+            const field = d3.select(this.mainScreen.nativeElement).select('#stockdata').append('input')
+              .attr('class', 'inputField');
             field.attr('x', here.getAttribute('x'));
             field.attr('y', here.getAttribute('y'));
             field.text(here.textContent);
@@ -129,6 +143,9 @@ export class EtlComponent implements OnInit {
               field.remove();
             });
           });
+        d3.select('#message').append('text')
+          .style('color', 'darkgreen')
+          .text(this.MESSAGE);
       });
   }
 }

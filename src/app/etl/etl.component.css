@@ -5,3 +5,7 @@ div.inputData {
 tspan.spacer {
     text-anchor: end;
 }
+
+input.inputField {
+    background-color: chocolate;
+}
