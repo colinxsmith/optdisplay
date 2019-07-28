@@ -14,11 +14,12 @@ export class EtlComponent implements OnInit {
   stockLower: number[] = [];
   stockUpper: number[] = [];
   stockWeights: number[] = [];
+  stockAlpha: number[] = [];
   ETL: number;
   RISK: number;
   RETURN: number;
   MESSAGE: string;
-  cols = 4;
+  cols = 5;
   sendLabel = 'SEND';
   constructor(private dataService: DataService, private mainScreen: ElementRef) { }
 
@@ -34,7 +35,7 @@ export class EtlComponent implements OnInit {
     d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
     this.dataService.sendData('etl', { names: this.stockNames, lower: this.stockLower, upper: this.stockUpper })
       .subscribe(
-        (DAT: { port: { names: string, lower: number, upper: number, weights: number }[],
+        (DAT: { port: { names: string, lower: number, upper: number, weights: number, alpha: number }[],
           ETL: number, RISK: number, RETURN: number, message: string }) => {
         console.log(DAT);
         if (DAT.port.length) {
@@ -42,6 +43,7 @@ export class EtlComponent implements OnInit {
           this.stockLower = DAT.port.map(d => d.lower);
           this.stockUpper = DAT.port.map(d => d.upper);
           this.stockWeights = DAT.port.map(d => d.weights);
+          this.stockAlpha = DAT.port.map(d => d.alpha);
           this.ETL = DAT.ETL;
           this.RISK = DAT.RISK;
           this.RETURN = DAT.RETURN;
@@ -93,6 +95,8 @@ export class EtlComponent implements OnInit {
                 out = this.stockUpper[i];
               } else if (kk === 3) {
                 out = this.stockWeights.length ? this.stockWeights[i] : '';
+              } else if (kk === 4) {
+                out = this.stockAlpha.length ? this.stockAlpha[i] : '';
               } else if (kk === 0) {
                 out = this.stockNames[i];
               }
