@@ -31,6 +31,20 @@ export class EtlComponent implements OnInit {
   sendData() {
     this.chooser();
   }
+  zeroAlpha() {
+    for (let i = 0; i < this.stockAlpha.length; ++i) {
+      this.stockAlpha[i] = 0;
+    }
+    d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
+      .nodes().forEach((d, ii, j) => {
+        const k = Math.floor(ii / this.cols);
+        if (k > 0) {
+          if (ii % this.cols === (this.cols - 1)) {
+            (j[ii] as SVGTSpanElement).textContent = `${this.stockAlpha[k - 1]}`;
+          }
+        }
+      });
+  }
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
     d3.select(this.mainScreen.nativeElement).select('#valuesback').selectAll('svg').remove();
