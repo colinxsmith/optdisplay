@@ -15,14 +15,22 @@ export class EtlComponent implements OnInit {
   stockUpper: number[] = [];
   stockWeights: number[] = [];
   stockAlpha: number[] = [];
+  stockInitial: number[] = [];
   CVar_averse = 1000;
   Return_gamma = 0;
   ETL: number;
   RISK: number;
   RETURN: number;
   MESSAGE: string;
-  cols = 5;
+  cols = -1;
   sendLabel = 'SEND';
+  noRiskModel = false;
+  revise = 0;
+  delta = -1;
+  tableFormat = (i: number | string) =>
+    isString(i as string) ? i as string : d3.format('0.8f')(i as number)
+  etlFormat = (i: number | string) =>
+    isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   constructor(private dataService: DataService, private mainScreen: ElementRef) { }
 
   ngOnInit() {
@@ -39,8 +47,22 @@ export class EtlComponent implements OnInit {
       .nodes().forEach((d, ii, j) => {
         const k = Math.floor(ii / this.cols);
         if (k > 0) {
-          if (ii % this.cols === (this.cols - 1)) {
-            (j[ii] as SVGTSpanElement).textContent = `${this.stockAlpha[k - 1]}`;
+          if (ii % this.cols === 4) {
+            (j[ii] as SVGTSpanElement).textContent = this.tableFormat(this.stockAlpha[k - 1]);
+          }
+        }
+      });
+  }
+  negateAlpha() {
+    for (let i = 0; i < this.stockAlpha.length; ++i) {
+      this.stockAlpha[i] = -this.stockAlpha[i];
+    }
+    d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
+      .nodes().forEach((d, ii, j) => {
+        const k = Math.floor(ii / this.cols);
+        if (k > 0) {
+          if (ii % this.cols === 4) {
+            (j[ii] as SVGTSpanElement).textContent = this.tableFormat(this.stockAlpha[k - 1]);
           }
         }
       });
@@ -50,12 +72,12 @@ export class EtlComponent implements OnInit {
     d3.select(this.mainScreen.nativeElement).select('#valuesback').selectAll('svg').remove();
     d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
     this.dataService.sendData('etl', {
-      names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha,
-      CVar_averse: this.CVar_averse, gamma: this.Return_gamma
+      names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
+      CVar_averse: this.CVar_averse, gamma: this.Return_gamma, noRiskModel: this.noRiskModel, revise: this.revise, delta: this.delta
     })
       .subscribe(
         (DAT: {
-          port: { names: string, lower: number, upper: number, weights: number, alpha: number }[],
+          port: { names: string, lower: number, upper: number, weights: number, alpha: number, initial: number }[],
           ETL: number, RISK: number, RETURN: number, message: string
         }) => {
           console.log(DAT);
@@ -65,6 +87,7 @@ export class EtlComponent implements OnInit {
             this.stockUpper = DAT.port.map(d => d.upper);
             this.stockWeights = DAT.port.map(d => d.weights);
             this.stockAlpha = DAT.port.map(d => d.alpha);
+            this.stockInitial = DAT.port.map(d => d.initial);
             this.ETL = DAT.ETL;
             this.RISK = DAT.RISK;
             this.RETURN = DAT.RETURN;
@@ -87,10 +110,26 @@ export class EtlComponent implements OnInit {
               this.stockUpper.push(1);
             }
           }
-          const tableFormat = (i: number | string) =>
-            isString(i as string) ? i as string : d3.format('0.8f')(i as number);
-          const etlFormat = (i: number | string) =>
-            isString(i as string) ? i as string : d3.format('0.8f')(i as number);
+          const inputHeadings = [];
+          if (DAT.port[0].names !== undefined) {
+            inputHeadings.push('Asset');
+          }
+          if (DAT.port[0].lower !== undefined) {
+            inputHeadings.push('Lower');
+          }
+          if (DAT.port[0].upper !== undefined) {
+            inputHeadings.push('Upper');
+          }
+          if (DAT.port[0].weights !== undefined) {
+            inputHeadings.push('Weight');
+          }
+          if (DAT.port[0].alpha !== undefined) {
+            inputHeadings.push('Alpha');
+          }
+          if (DAT.port[0].initial !== undefined) {
+            inputHeadings.push('Initial');
+          }
+          this.cols = inputHeadings.length;
           const ww = 1000, xPos = d3.scaleLinear().domain([0, this.cols + 1]).range([0, ww]),
             colourT = d3.interpolate(d3.rgb('orange'), d3.rgb('blue'));
           const hh = 31 * this.stockNames.length, yPos = d3.scaleLinear().domain([0, this.stockNames.length]).range([0, hh]);
@@ -98,7 +137,7 @@ export class EtlComponent implements OnInit {
           tab.append('svg')
             .attr('width', ww)
             .attr('height', yPos(1))
-            .selectAll('.heading').data(['Asset', 'Lower', 'Upper', 'weight', 'alpha']).enter()
+            .selectAll('.heading').data(inputHeadings).enter()
             .append('text')
             .call(d => d.each((dd, i, j) => {
               d3.select(j[i]).append('tspan').attr('class', 'spacer').attr('x', xPos(i + 1)).attr('y', yPos(0.75))
@@ -128,6 +167,8 @@ export class EtlComponent implements OnInit {
                   out = this.stockWeights.length ? this.stockWeights[i] : '';
                 } else if (kk === 4) {
                   out = this.stockAlpha.length ? this.stockAlpha[i] : '';
+                } else if (kk === 5) {
+                  out = this.stockInitial.length ? this.stockInitial[i] : '';
                 } else if (kk === 0) {
                   out = this.stockNames[i];
                 }
@@ -137,19 +178,23 @@ export class EtlComponent implements OnInit {
                   .attr('y', yPos(i + 1))
                   .attr('class', 'spacer')
                   .style('fill', `${colourT(t)}`)
-                  .text(tableFormat(out));
+                  .text(this.tableFormat(out));
               }
             }));
+          const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover'];
           const inputFields = tab.append('div')
             .style('width', `${ww}px`)
-            .style('height', `${yPos(1) * 2}px`)
+            .style('height', `${yPos(1) * scalarParams.length / 2}px`)
             .attr('class', 'spacer')
             .style('color', colourT(0))
-            .style('text-align-last', 'center').selectAll('iFields').data(['Etl Aversion', 'Return gamma']).enter()
             .append('div')
+            .style('text-align', 'justify')
+            .selectAll('iFields').data(scalarParams).enter()
+            .append('text')
+            .style('color', (d, i, j) => colourT((i + 1) / this.cols))
             .text(d => d)
             .append('input')
-            .style('color', 'black')
+            .style('color', (d, i, j) => colourT((i + 1) / this.cols))
             .style('background-color', 'chartreuse')
             .on('change', (d, i, j) => {
               const here = j[i];
@@ -157,6 +202,12 @@ export class EtlComponent implements OnInit {
                 this.CVar_averse = +here.value;
               } else if (i === 1) {
                 this.Return_gamma = +here.value;
+              } else if (i === 2) {
+                this.noRiskModel = here.value === 'true' ? true : false;
+              } else if (i === 3) {
+                this.revise = +here.value;
+              } else if (i === 4) {
+                this.delta = +here.value;
               }
             })
             .nodes().forEach((d, i, j) => {
@@ -164,25 +215,41 @@ export class EtlComponent implements OnInit {
                 d.value = `${this.CVar_averse}`;
               } else if (i === 1) {
                 d.value = `${this.Return_gamma}`;
+              } else if (i === 2) {
+                d.value = this.noRiskModel ? 'true' : 'false';
+              } else if (i === 3) {
+                d.value = `${this.revise}`;
+              } else if (i === 4) {
+                d.value = `${this.delta}`;
               }
             })
             ;
           const propLabels = ['ETL', 'RISK', 'RETURN'];
+          const propData = [this.ETL, this.RISK, this.RETURN];
+          let turnoverAchieved = 0;
+          if (this.revise) {
+            this.stockWeights.forEach((d, i) => {
+              turnoverAchieved += Math.abs(d - this.stockInitial[i]);
+            });
+            turnoverAchieved *= 0.5;
+            propLabels.push('TURNOVER');
+            propData.push(turnoverAchieved);
+          }
           d3.select(this.mainScreen.nativeElement).select('#valuesback').append('div').attr('class', 'spacer')
             .append('svg')
             .attr('width', ww)
             .attr('height', yPos(1) * 2)
-            .selectAll('.properties').data([this.ETL, this.RISK, this.RETURN]).enter()
+            .selectAll('.properties').data(propData).enter()
             .append('text')
             .attr('class', 'spacer')
-            .style('fill', (d, i) => `${colourT(i / this.cols)}`)
-            .attr('transform', (d, i) => `translate(${xPos(2) * (i + 1)},${yPos(1)})`)
-            .text((d, i) => `${propLabels[i]}: ${etlFormat(d)}`)
+            .style('fill', (d, i) => `${colourT(i / (propLabels.length - 1))}`)
+            .attr('transform', (d, i) => `translate(${xPos(2) * (i % 3 + 1)},${yPos(Math.floor(i / 3) + 1)})`)
+            .text((d, i) => `${propLabels[i]}: ${this.etlFormat(d)}`)
             ;
           d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
             .on('click', (d, i, j) => {
               const id = i % this.cols;
-              if (!(id === 1 || id === 2 || id === 4)) {
+              if (!(id === 1 || id === 2 || id === 4 || id === 5)) {
                 return;
               }
               const stock = Math.floor(i / this.cols);
@@ -204,6 +271,9 @@ export class EtlComponent implements OnInit {
                   here.textContent = `${val}`;
                 } else if (id === 4) {
                   this.stockAlpha[stock - 1] = val;
+                  here.textContent = `${val}`;
+                } else if (id === 5) {
+                  this.stockInitial[stock - 1] = val;
                   here.textContent = `${val}`;
                 }
                 field.remove();
