@@ -4,16 +4,18 @@ div.inputData {
 
 tspan.spacer {
     text-anchor: end;
-    font-size: 25px;
+    font-size: 20px;
 }
 
 input.inputField {
     background-color: chocolate;
 }
-div.spacer{
-    font-size:25px;
+
+div.spacer {
+    font-size: 15px;
 }
-text.spacer{
+
+text.spacer {
     text-anchor: end;
-    font-size:25px;
+    font-size: 2px;
 }

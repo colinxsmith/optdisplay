@@ -29,7 +29,7 @@ export class EtlComponent implements OnInit {
   noRiskModel = true;
   revise = 0;
   delta = -1;
-  costs = 0;
+  costs = 1;
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -38,6 +38,9 @@ export class EtlComponent implements OnInit {
 
   ngOnInit() {
     this.chooser();
+  }
+  clear(){
+    d3.select('#valuesback').selectAll('div').remove();
   }
   sendData() {
     this.chooser();
@@ -72,7 +75,6 @@ export class EtlComponent implements OnInit {
   }
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
-    d3.select(this.mainScreen.nativeElement).select('#valuesback').selectAll('svg').remove();
     d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
     this.dataService.sendData('etl', {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
@@ -269,6 +271,10 @@ export class EtlComponent implements OnInit {
             });
             propLabels.push('COST');
             propData.push(transactionCost);
+            propLabels.push('ETL+COST');
+            propData.push(this.ETL + transactionCost);
+            propLabels.push('ETL+COST-gRETURN');
+            propData.push(this.ETL + transactionCost - this.Return_gamma * (1 - this.Return_gamma) * this.RETURN);
           }
           d3.select(this.mainScreen.nativeElement).select('#valuesback').append('div').attr('class', 'spacer')
             .selectAll('.properties').data(propData).enter()
