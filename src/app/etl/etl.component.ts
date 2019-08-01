@@ -42,6 +42,9 @@ export class EtlComponent implements OnInit {
   clear() {
     d3.select('#valuesback').selectAll('div').remove();
   }
+  clearLastchart() {
+    d3.select(this.mainScreen.nativeElement).select('#chart').select('svg').remove();
+  }
   sendData() {
     this.chooser();
   }
@@ -87,15 +90,15 @@ export class EtlComponent implements OnInit {
         }
       });
   }
-  flowers(data: { axis: string, value: number }[][]) {
+  flowers(data: { axis: string, value: number }[][], id = '#chart') {
     const margin = {
       top: 10,
       bottom: 10,
       left: 10,
       right: 10
     },
-      ww = 1000,
-      hh = 1000,
+      ww = 125,
+      hh = 125,
       width = ww - margin.left - margin.right,
       height = hh - margin.top - margin.bottom;
     let dk = 0;
@@ -110,7 +113,7 @@ export class EtlComponent implements OnInit {
     const radius = Math.min(width, height) / 2,
       rScale = d3.scaleLinear().domain([dmin, dmax]).range([0, radius]),
       angleScale = d3.scaleLinear().domain([0, data[0].length]).range([0, Math.PI * 2]);
-    const svgbase = d3.select('#chart').append('svg')
+    const svgbase = d3.select(id).append('svg')
       .attr('width', ww).attr('height', hh),
       svg = svgbase.append('g').attr('width', width).attr('height', height)
         .attr('transform', `translate(${width * 0.5 + margin.left},${height * 0.5 + margin.top})`),
@@ -158,7 +161,7 @@ export class EtlComponent implements OnInit {
         'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
-      .attr('r', '5px');
+      .attr('r', '1px');
     svg.append('circle')
       .attr('class', 'portfolioflower')
       .attr('cx', 0)
@@ -168,7 +171,6 @@ export class EtlComponent implements OnInit {
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
     d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
-    d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').remove();
     this.dataService.sendData('etl', {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
       buy: this.stockBuy, sell: this.stockSell,
