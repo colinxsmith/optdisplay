@@ -39,11 +39,25 @@ export class EtlComponent implements OnInit {
   ngOnInit() {
     this.chooser();
   }
-  clear(){
+  clear() {
     d3.select('#valuesback').selectAll('div').remove();
   }
   sendData() {
     this.chooser();
+  }
+  zeroInitial() {
+    for (let i = 0; i < this.stockAlpha.length; ++i) {
+      this.stockInitial[i] = 0;
+    }
+    d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
+      .nodes().forEach((d, ii, j) => {
+        const k = Math.floor(ii / this.cols);
+        if (k > 0) {
+          if (ii % this.cols === 5) {
+            (j[ii] as SVGTSpanElement).textContent = this.tableFormat(this.stockInitial[k - 1]);
+          }
+        }
+      });
   }
   zeroAlpha() {
     for (let i = 0; i < this.stockAlpha.length; ++i) {
@@ -73,9 +87,88 @@ export class EtlComponent implements OnInit {
         }
       });
   }
+  flowers(data: { axis: string, value: number }[][]) {
+    const margin = {
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10
+    },
+      ww = 1000,
+      hh = 1000,
+      width = ww - margin.left - margin.right,
+      height = hh - margin.top - margin.bottom;
+    let dk = 0;
+    data.forEach((d) => {
+      dk = Math.min(d3.min(d.map(dd => dd.value)), dk);
+    });
+    const dmin = dk;
+    data.forEach((d) => {
+      dk = Math.max(d3.max(d.map(dd => dd.value)), dk);
+    });
+    const dmax = dk;
+    const radius = Math.min(width, height) / 2,
+      rScale = d3.scaleLinear().domain([dmin, dmax]).range([0, radius]),
+      angleScale = d3.scaleLinear().domain([0, data[0].length]).range([0, Math.PI * 2]);
+    const svgbase = d3.select('#chart').append('svg')
+      .attr('width', ww).attr('height', hh),
+      svg = svgbase.append('g').attr('width', width).attr('height', height)
+        .attr('transform', `translate(${width * 0.5 + margin.left},${height * 0.5 + margin.top})`),
+      radarLine = d3.lineRadial<{ axis: string, value: number }>()
+        .curve(d3.curveCardinalClosed)
+        .radius((d) => rScale(d.value))
+        .angle((d, i) => (angleScale(i)));
+    const radarLineZ = d3.lineRadial<{ axis: string, value: number }>()
+      .curve(d3.curveCardinalClosed)
+      .radius((d) => rScale(0))
+      .angle((d, i) => (angleScale(-i)));
+    svg.selectAll('portfolioFlower').data(data).enter()
+      .append('path')
+      .attr('class', 'portfolioflower')
+      .style('fill', (d, i) => i % 2 === 0 ? 'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
+      .attr('d', (d) => radarLine(d) + radarLineZ(d))
+      .style('fill-opacity', 0.35)
+      .on('mouseover', (d, i, jj) => {
+        // Dim all blobs
+        d3.selectAll('.portfolioflower')
+          .transition().duration(200)
+          .style('fill-opacity', 0.1);
+        // Bring back the hovered over blob
+        d3.select(jj[i])
+          .transition().duration(200)
+          .style('fill-opacity', 0.7);
+      })
+      .on('mouseout', () => d3.selectAll('.portfolioflower')
+        .transition().duration(200)
+        .style('fill-opacity', 0.35)
+      );
+    svg.selectAll('portfolioFlower').data(data).enter()
+      .append('path')
+      .attr('class', 'portfolioflower')
+      .style('fill', 'none')
+      .style('stroke', (d, i) => i % 2 === 0 ? 'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
+      .attr('d', (d) => radarLine(d));
+    svg.selectAll('portfolioFlower').data(data).enter().append('g')
+      .attr('d_index', (d, i) => i).selectAll('poscircle')
+      .data((d) => d).enter()
+      .append('circle')
+      .attr('class', 'portfolioflower')
+      .style('stroke', 'none')
+      .style('fill', (d, i, j) => +(j[i].parentNode as SVGGElement).getAttribute('d_index') % 2 === 0 ?
+        'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
+      .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
+      .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
+      .attr('r', '5px');
+    svg.append('circle')
+      .attr('class', 'portfolioflower')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', rScale(0));
+  }
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
     d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
+    d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').remove();
     this.dataService.sendData('etl', {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
       buy: this.stockBuy, sell: this.stockSell,
@@ -324,6 +417,21 @@ export class EtlComponent implements OnInit {
           d3.select('#message').append('text')
             .style('color', 'darkgreen')
             .text(this.MESSAGE);
+          d3.select('#valuesback')
+            .call(d => { const here = (d.node() as HTMLParagraphElement); here.scrollTop = here.scrollHeight; });
+          const plotData: { axis: string, value: number }[][] = [];
+          const p1: { axis: string, value: number }[] = [];
+          this.stockNames.forEach((d, i) => {
+            p1.push({ axis: d, value: this.stockWeights[i] });
+          });
+          const p2: { axis: string, value: number }[] = [];
+          this.stockNames.forEach((d, i) => {
+            p2.push({ axis: d, value: this.stockInitial[i] });
+          });
+          plotData.push(p1);
+          plotData.push(p2);
+          this.flowers(plotData);
+
         });
   }
 }

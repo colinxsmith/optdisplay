@@ -19,3 +19,14 @@ text.spacer {
     text-anchor: end;
     font-size: 2px;
 }
+
+path.portfolioflower {
+    fill: rgba(255, 255, 0, 0.8);
+    stroke: rgb(255, 255, 0);
+}
+
+circle.portfolioflower {
+    fill: none;
+    stroke: black;
+    stroke-dasharray: 10, 5;
+}
