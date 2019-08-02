@@ -45,6 +45,14 @@ export class EtlComponent implements OnInit {
   }
   clearLastchart() {
     d3.select(this.mainScreen.nativeElement).select('#chart').select('svg').remove();
+    d3.select(this.mainScreen.nativeElement).select('#chart')
+      .call(d => {
+        const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
+        console.log(here.scrollLeft, ((d.node() as HTMLDivElement).children.length), here.scrollWidth);
+        if (((d.node() as HTMLDivElement).children.length) > 2) {
+          here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
+        }
+      });
   }
   sendData() {
     this.chooser();
@@ -98,8 +106,8 @@ export class EtlComponent implements OnInit {
       left: 10,
       right: 10
     },
-      ww = 250,
-      hh = 250,
+      ww = 500,
+      hh = 500,
       width = ww - margin.left - margin.right,
       height = hh - margin.top - margin.bottom;
     let dk = 0;
@@ -114,7 +122,8 @@ export class EtlComponent implements OnInit {
     const radius = Math.min(width, height) / 2,
       rScale = d3.scaleLinear().domain([dmin, dmax]).range([0, radius]),
       angleScale = d3.scaleLinear().domain([0, data[0].length]).range([0, Math.PI * 2]);
-    const svgbase = d3.select(id).append('svg')
+    const svgbase = d3.select(id)
+      .append('svg')
       .attr('width', ww).attr('height', hh),
       svg = svgbase.append('g').attr('width', width).attr('height', height)
         .attr('transform', `translate(${width * 0.5 + margin.left},${height * 0.5 + margin.top})`),
@@ -147,7 +156,7 @@ export class EtlComponent implements OnInit {
           .style('fill-opacity', 0.7);
       })
       .on('mouseout', () => d3.selectAll('.portfolioflower')
-        .transition().duration(2000)
+        .transition().duration(1000)
         .style('fill-opacity', 1)
       );
     svg.selectAll('.portfolioFlower').data(data).enter()
@@ -429,10 +438,10 @@ export class EtlComponent implements OnInit {
                 field.remove();
               });
             });
-          d3.select('#message').append('text')
+          d3.select(this.mainScreen.nativeElement).select('#message').append('text')
             .style('color', 'darkgreen')
             .text(this.MESSAGE);
-          d3.select('#valuesback')
+          d3.select(this.mainScreen.nativeElement).select('#valuesback')
             .call(d => { const here = (d.node() as HTMLParagraphElement); here.scrollTop = here.scrollHeight; });
           const plotData: { axis: string, value: number }[][] = [];
           const p1: { axis: string, value: number }[] = [];
@@ -446,7 +455,17 @@ export class EtlComponent implements OnInit {
           plotData.push(p1);
           plotData.push(p2);
           this.flowers(plotData);
-
+          d3.select(this.mainScreen.nativeElement).select('#chart')
+            .call(d => {
+              const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
+              // This will allow us to scroll left for ever
+              ((d.node() as HTMLDivElement).parentNode as HTMLDivElement)
+              .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length + 2)}px`);
+              // This will scroll to the start of the second to last figure so that the last 2 are always seen
+              if (((d.node() as HTMLDivElement).children.length) > 2) {
+                here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
+              }
+            });
         });
   }
 }
