@@ -10,6 +10,7 @@ import { isString } from 'util';
   encapsulation: ViewEncapsulation.None
 })
 export class EtlComponent implements OnInit {
+  tTip = d3.select(this.mainScreen.nativeElement).append('g').attr('class', 'tooltip');
   stockNames: string[] = [];
   stockLower: number[] = [];
   stockUpper: number[] = [];
@@ -97,8 +98,8 @@ export class EtlComponent implements OnInit {
       left: 10,
       right: 10
     },
-      ww = 125,
-      hh = 125,
+      ww = 250,
+      hh = 250,
       width = ww - margin.left - margin.right,
       height = hh - margin.top - margin.bottom;
     let dk = 0;
@@ -125,43 +126,55 @@ export class EtlComponent implements OnInit {
       .curve(d3.curveCardinalClosed)
       .radius((d) => rScale(0))
       .angle((d, i) => (angleScale(-i)));
-    svg.selectAll('portfolioFlower').data(data).enter()
+    const lineLable = (y1: number, x1 = -ww / 2, s1 = 20) => `M${x1},${y1}l0,${s1}l${s1},0l0,-${s1}z`;
+    svg.selectAll('.portfolioFlower').data(data).enter()
+      .append('text')
+      .attr('class', (d, i) => i === 0 ? 'portfolioflower zero' : 'portfolioflower one')
+      .attr('transform', (d, i) => `translate(${-ww / 2 + 21},${i * 20 - hh / 2 + 20})`)
+      .text((d, i) => i % 2 === 0 ? 'Optimised' : 'Initial');
+    svg.selectAll('.portfolioFlower').data(data).enter()
       .append('path')
-      .attr('class', 'portfolioflower')
-      .style('fill', (d, i) => i % 2 === 0 ? 'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
-      .attr('d', (d) => radarLine(d) + radarLineZ(d))
-      .style('fill-opacity', 0.35)
+      .style('stroke', 'none')
+      .attr('class', (d, i) => i === 0 ? 'portfolioflower zero' : 'portfolioflower one')
+      .attr('d', (d, i) => radarLine(d) + radarLineZ(d) + lineLable(i * 20 - hh / 2))
+      .style('fill-opacity', 1)
       .on('mouseover', (d, i, jj) => {
-        // Dim all blobs
         d3.selectAll('.portfolioflower')
           .transition().duration(200)
           .style('fill-opacity', 0.1);
-        // Bring back the hovered over blob
         d3.select(jj[i])
           .transition().duration(200)
           .style('fill-opacity', 0.7);
       })
       .on('mouseout', () => d3.selectAll('.portfolioflower')
-        .transition().duration(200)
-        .style('fill-opacity', 0.35)
+        .transition().duration(2000)
+        .style('fill-opacity', 1)
       );
-    svg.selectAll('portfolioFlower').data(data).enter()
+    svg.selectAll('.portfolioFlower').data(data).enter()
       .append('path')
-      .attr('class', 'portfolioflower')
       .style('fill', 'none')
-      .style('stroke', (d, i) => i % 2 === 0 ? 'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
+      .attr('class', (d, i) => i === 0 ? 'portfolioflower zero' : 'portfolioflower one')
       .attr('d', (d) => radarLine(d));
-    svg.selectAll('portfolioFlower').data(data).enter().append('g')
-      .attr('d_index', (d, i) => i).selectAll('poscircle')
+    svg.selectAll('.portfolioFlower').data(data).enter().append('g')
+      .attr('d_index', (d, i) => i).selectAll('.poscircle')
       .data((d) => d).enter()
       .append('circle')
-      .attr('class', 'portfolioflower')
       .style('stroke', 'none')
-      .style('fill', (d, i, j) => +(j[i].parentNode as SVGGElement).getAttribute('d_index') % 2 === 0 ?
-        'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)')
+      .attr('class', (d, i, j) => +(j[i].parentNode as SVGGElement).getAttribute('d_index') % 2 === 0 ?
+        'portfolioflower zero' : 'portfolioflower one')
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
-      .attr('r', '1px');
+      .attr('r', '5px')
+      .on('mouseover', (d, i, j) => {
+        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          .html(`<i class='fa fa-weibo leafy'></i>
+          ${+(j[i].parentNode as SVGGElement).getAttribute('d_index') === 0 ? 'Optimised' : 'Initial'}
+          <br>${d.axis}<br>${this.etlFormat(d.value)}`);
+      })
+      .on('mouseout', () => {
+        this.tTip.attr('style', `display:none`)
+          .html('');
+      });
     svg.append('circle')
       .attr('class', 'portfolioflower')
       .attr('cx', 0)
