@@ -460,7 +460,7 @@ export class EtlComponent implements OnInit {
               const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
               // This will allow us to scroll left for ever
               ((d.node() as HTMLDivElement).parentNode as HTMLDivElement)
-              .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length + 2)}px`);
+              .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length)}px`);
               // This will scroll to the start of the second to last figure so that the last 2 are always seen
               if (((d.node() as HTMLDivElement).children.length) > 2) {
                 here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
