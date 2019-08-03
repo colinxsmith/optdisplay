@@ -173,7 +173,7 @@ export class EtlComponent implements OnInit {
         'portfolioflower zero' : 'portfolioflower one')
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
-      .attr('r', '5px')
+      .attr('r', '2px')
       .on('mouseover', (d, i, j) => {
         this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
           .html(`<i class='fa fa-weibo leafy'></i>
