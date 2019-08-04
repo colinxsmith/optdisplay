@@ -31,6 +31,7 @@ export class EtlComponent implements OnInit {
   revise = 0;
   delta = -1;
   costs = 1;
+  relEtl = false;
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -197,7 +198,7 @@ export class EtlComponent implements OnInit {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
       buy: this.stockBuy, sell: this.stockSell,
       CVar_averse: this.CVar_averse, gamma: this.Return_gamma, noRiskModel: this.noRiskModel, revise: this.revise, delta: this.delta,
-      costs: this.costs
+      costs: this.costs, relEtl: this.relEtl
     })
       .subscribe(
         (DAT: {
@@ -205,7 +206,7 @@ export class EtlComponent implements OnInit {
             names: string, lower: number, upper: number, weights: number, alpha: number, initial: number,
             buy: number, sell: number
           }[],
-          ETL: number, RISK: number, RETURN: number, message: string
+          ETL: number, RISK: number, RETURN: number, message: string, gamma: number, relEtl: boolean
         }) => {
           console.log(DAT);
           if (DAT.port.length) {
@@ -221,6 +222,8 @@ export class EtlComponent implements OnInit {
             this.RISK = DAT.RISK;
             this.RETURN = DAT.RETURN;
             this.MESSAGE = DAT.message;
+            this.Return_gamma = DAT.gamma;
+            this.relEtl = DAT.relEtl;
           }
           if (this.stockNames === undefined || this.stockNames.length === 0) {
             for (let i = 0; i < 10; i++) {
@@ -324,7 +327,7 @@ export class EtlComponent implements OnInit {
                   .text(this.tableFormat(out));
               }
             }));
-          const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover', 'T. Costs'];
+          const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover', 'T. Costs', 'Relative Etl'];
           const inputFields = tab.append('div')
             .style('width', `${fixedTableWidth}px`)
             .style('height', `${yPos(1) * scalarParams.length / 2}px`)
@@ -352,6 +355,8 @@ export class EtlComponent implements OnInit {
                 this.delta = +here.value;
               } else if (i === 5) {
                 this.costs = +here.value;
+              } else if (i === 6) {
+                this.relEtl = here.value === 'true' ? true : false;
               }
             })
             .nodes().forEach((d, i, j) => {
@@ -367,6 +372,8 @@ export class EtlComponent implements OnInit {
                 d.value = `${this.delta}`;
               } else if (i === 5) {
                 d.value = `${this.costs}`;
+              } else if (i === 6) {
+                d.value = this.relEtl ? 'true' : 'false';
               }
             })
             ;
@@ -460,7 +467,7 @@ export class EtlComponent implements OnInit {
               const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
               // This will allow us to scroll left for ever
               ((d.node() as HTMLDivElement).parentNode as HTMLDivElement)
-              .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length)}px`);
+                .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length)}px`);
               // This will scroll to the start of the second to last figure so that the last 2 are always seen
               if (((d.node() as HTMLDivElement).children.length) > 2) {
                 here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
