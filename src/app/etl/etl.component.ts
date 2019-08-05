@@ -44,14 +44,16 @@ export class EtlComponent implements OnInit {
   clear() {
     d3.select('#valuesback').selectAll('div').remove();
   }
-  clearLastchart() {
-    d3.select(this.mainScreen.nativeElement).select('#chart').select('svg').remove();
+  clearChartN(N = 0) {
+    (d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').nodes()[N] as SVGElement).remove();
     d3.select(this.mainScreen.nativeElement).select('#chart')
       .call(d => {
         const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
-        console.log(here.scrollLeft, ((d.node() as HTMLDivElement).children.length), here.scrollWidth);
-        if (((d.node() as HTMLDivElement).children.length) > 2) {
+  //      console.log(here.scrollLeft, ((d.node() as HTMLDivElement).children.length), here.scrollWidth);
+        if (((d.node() as HTMLDivElement).children.length) > 1) {
           here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
+          ((d.node() as HTMLDivElement).parentNode as HTMLDivElement).setAttribute('style', `width:${(d.node() as HTMLDivElement)
+            .children.length * 500}px`);
         }
       });
   }
@@ -129,11 +131,11 @@ export class EtlComponent implements OnInit {
       svg = svgbase.append('g').attr('width', width).attr('height', height)
         .attr('transform', `translate(${width * 0.5 + margin.left},${height * 0.5 + margin.top})`),
       radarLine = d3.lineRadial<{ axis: string, value: number }>()
-        .curve(d3.curveCardinalClosed)
+        .curve(d3.curveLinearClosed)
         .radius((d) => rScale(d.value))
         .angle((d, i) => (angleScale(i)));
     const radarLineZ = d3.lineRadial<{ axis: string, value: number }>()
-      .curve(d3.curveCardinalClosed)
+      .curve(d3.curveLinearClosed)
       .radius((d) => rScale(0))
       .angle((d, i) => (angleScale(-i)));
     const lineLable = (y1: number, x1 = -ww / 2, s1 = 20) => `M${x1},${y1}l0,${s1}l${s1},0l0,-${s1}z`;
@@ -149,10 +151,10 @@ export class EtlComponent implements OnInit {
       .attr('d', (d, i) => radarLine(d) + radarLineZ(d) + lineLable(i * 20 - hh / 2))
       .style('fill-opacity', 1)
       .on('mouseover', (d, i, jj) => {
-        d3.selectAll('.portfolioflower')
+        svg.selectAll('path.portfolioflower')
           .transition().duration(200)
           .style('fill-opacity', 0.1);
-        d3.select(jj[i])
+        d3.select(jj[i] as SVGPathElement)
           .transition().duration(200)
           .style('fill-opacity', 0.7);
       })
@@ -174,7 +176,7 @@ export class EtlComponent implements OnInit {
         'portfolioflower zero' : 'portfolioflower one')
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
-      .attr('r', '2px')
+      .attr('r', '3px')
       .on('mouseover', (d, i, j) => {
         this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
           .html(`<i class='fa fa-weibo leafy'></i>
@@ -339,6 +341,7 @@ export class EtlComponent implements OnInit {
             .style('color', (d, i, j) => colourT((i + 1) / this.cols))
             .text(d => d)
             .append('input')
+            .attr('type', (d, i) => i === 2 || i === 6 ? 'checkbox' : '')
             .style('color', (d, i, j) => colourT((i + 1) / this.cols))
             .style('background-color', 'chartreuse')
             .on('change', (d, i, j) => {
@@ -348,7 +351,7 @@ export class EtlComponent implements OnInit {
               } else if (i === 1) {
                 this.Return_gamma = +here.value;
               } else if (i === 2) {
-                this.noRiskModel = here.value === 'true' ? true : false;
+                this.noRiskModel = here.checked;
               } else if (i === 3) {
                 this.revise = +here.value;
               } else if (i === 4) {
@@ -356,7 +359,7 @@ export class EtlComponent implements OnInit {
               } else if (i === 5) {
                 this.costs = +here.value;
               } else if (i === 6) {
-                this.relEtl = here.value === 'true' ? true : false;
+                this.relEtl = here.checked;
               }
             })
             .nodes().forEach((d, i, j) => {
@@ -365,7 +368,7 @@ export class EtlComponent implements OnInit {
               } else if (i === 1) {
                 d.value = `${this.Return_gamma}`;
               } else if (i === 2) {
-                d.value = this.noRiskModel ? 'true' : 'false';
+                d.checked = this.noRiskModel;
               } else if (i === 3) {
                 d.value = `${this.revise}`;
               } else if (i === 4) {
@@ -373,7 +376,7 @@ export class EtlComponent implements OnInit {
               } else if (i === 5) {
                 d.value = `${this.costs}`;
               } else if (i === 6) {
-                d.value = this.relEtl ? 'true' : 'false';
+                d.checked = this.relEtl;
               }
             })
             ;
