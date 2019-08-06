@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, ViewEncapsulation } from '@angular/core'
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
+import { userInfo } from 'os';
 
 @Component({
   selector: 'app-etl',
@@ -32,6 +33,7 @@ export class EtlComponent implements OnInit {
   delta = -1;
   costs = 1;
   relEtl = false;
+  useSticks = false;
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -44,12 +46,15 @@ export class EtlComponent implements OnInit {
   clear() {
     d3.select('#valuesback').selectAll('div').remove();
   }
+  stickFlowers() {
+    this.useSticks = (d3.select(this.mainScreen.nativeElement).select('#sticks').select('input').node() as HTMLInputElement).checked;
+  }
   clearChartN(N = 0) {
     (d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').nodes()[N] as SVGElement).remove();
     d3.select(this.mainScreen.nativeElement).select('#chart')
       .call(d => {
         const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
-  //      console.log(here.scrollLeft, ((d.node() as HTMLDivElement).children.length), here.scrollWidth);
+        //      console.log(here.scrollLeft, ((d.node() as HTMLDivElement).children.length), here.scrollWidth);
         if (((d.node() as HTMLDivElement).children.length) > 1) {
           here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
           ((d.node() as HTMLDivElement).parentNode as HTMLDivElement).setAttribute('style', `width:${(d.node() as HTMLDivElement)
@@ -103,6 +108,17 @@ export class EtlComponent implements OnInit {
       });
   }
   flowers(data: { axis: string, value: number }[][], id = '#chart') {
+    if (this.useSticks) {
+      const data1: { axis: string, value: number }[][] = [];
+      data.forEach(d1 => {
+        const d11: { axis: string, value: number }[] = [];
+        d1.forEach(d2 => {
+          d11.push(d2); d11.push({ axis: '', value: 0 });
+        });
+        data1.push(d11);
+      });
+      data = data1;
+    }
     const margin = {
       top: 10,
       bottom: 10,
@@ -176,17 +192,17 @@ export class EtlComponent implements OnInit {
         'portfolioflower zero' : 'portfolioflower one')
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
-      .attr('r', '3px')
-      .on('mouseover', (d, i, j) => {
-        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-          .html(`<i class='fa fa-weibo leafy'></i>
+      .attr('r', (d, i) => this.useSticks ? (i % 2 === 0 ? '3px' : '0px') : '3px')
+        .on('mouseover', (d, i, j) => {
+          this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+            .html(`<i class='fa fa-weibo leafy'></i>
           ${+(j[i].parentNode as SVGGElement).getAttribute('d_index') === 0 ? 'Optimised' : 'Initial'}
           <br>${d.axis}<br>${this.etlFormat(d.value)}`);
-      })
-      .on('mouseout', () => {
-        this.tTip.attr('style', `display:none`)
-          .html('');
-      });
+        })
+        .on('mouseout', () => {
+          this.tTip.attr('style', `display:none`)
+            .html('');
+        });
     svg.append('circle')
       .attr('class', 'portfolioflower')
       .attr('cx', 0)
