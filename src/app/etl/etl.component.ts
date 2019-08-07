@@ -32,7 +32,7 @@ export class EtlComponent implements OnInit {
   delta = -1;
   costs = 1;
   relEtl = false;
-  useSticks = false;
+  useSticks = true;
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -40,6 +40,7 @@ export class EtlComponent implements OnInit {
   constructor(private dataService: DataService, private mainScreen: ElementRef) { }
 
   ngOnInit() {
+    (d3.select(this.mainScreen.nativeElement).select('#sticks').select('input').node() as HTMLInputElement).checked = true;
     this.chooser();
   }
   clear() {
@@ -192,16 +193,16 @@ export class EtlComponent implements OnInit {
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
       .attr('r', (d, i) => this.useSticks ? (i % 2 === 0 ? '3px' : '0px') : '3px')
-        .on('mouseover', (d, i, j) => {
-          this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-            .html(`<i class='fa fa-weibo leafy'></i>
+      .on('mouseover', (d, i, j) => {
+        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          .html(`<i class='fa fa-weibo leafy'></i>
           ${+(j[i].parentNode as SVGGElement).getAttribute('d_index') === 0 ? 'Optimised' : 'Initial'}
           <br>${d.axis}<br>${this.etlFormat(d.value)}`);
-        })
-        .on('mouseout', () => {
-          this.tTip.attr('style', `display:none`)
-            .html('');
-        });
+      })
+      .on('mouseout', () => {
+        this.tTip.attr('style', `display:none`)
+          .html('');
+      });
     svg.append('circle')
       .attr('class', 'portfolioflower')
       .attr('cx', 0)
