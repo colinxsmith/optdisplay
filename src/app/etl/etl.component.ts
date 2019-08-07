@@ -2,7 +2,6 @@ import { Component, OnInit, ElementRef, ViewEncapsulation } from '@angular/core'
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
-import { userInfo } from 'os';
 
 @Component({
   selector: 'app-etl',
