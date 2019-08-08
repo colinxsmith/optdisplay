@@ -110,6 +110,9 @@ export class EtlComponent implements OnInit {
       });
   }
   flowers(data: { axis: string, value: number }[][], id = '#chart') {
+    data.forEach(dki => {
+      dki = this.reOrderArray(dki);
+    });
     if (this.useSticks) {
       const data1: { axis: string, value: number }[][] = [];
       data.forEach(d1 => {
@@ -426,21 +429,15 @@ export class EtlComponent implements OnInit {
       .style('color', (d, i) => `${colourT(i / (propLabels.length - 1))}`)
       .text((d, i) => `${propLabels[i]}: ${this.etlFormat(d)}  `)
       ;
-    this.stockNames = this.reOrderArray(this.stockNames, this.tableOrderInverse);
-    this.stockLower = this.reOrderArray(this.stockLower, this.tableOrderInverse);
-    this.stockUpper = this.reOrderArray(this.stockUpper, this.tableOrderInverse);
-    this.stockWeights = this.reOrderArray(this.stockWeights, this.tableOrderInverse);
-    this.stockAlpha = this.reOrderArray(this.stockAlpha, this.tableOrderInverse);
-    this.stockInitial = this.reOrderArray(this.stockInitial, this.tableOrderInverse);
-    this.stockBuy = this.reOrderArray(this.stockBuy, this.tableOrderInverse);
-    this.stockSell = this.reOrderArray(this.stockSell, this.tableOrderInverse);
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
       .on('click', (d, i, j) => {
         const id = i % this.cols;
         const stock = Math.floor(i / this.cols);
         console.log(i, id, stock);
         if (stock === 0) {
-          // return;    // skip ordering for now
+          for (let io = 0; io < this.tableOrder.length; ++io) {
+            this.tableOrder[io] = io;
+          }
           if (!(id === 3 || id === 4 || id === 5)) {
             return;
           }
@@ -478,6 +475,7 @@ export class EtlComponent implements OnInit {
             });
           }
           d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
+          d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
           for (let ii = 0; ii < this.tableOrder.length; ++ii) {
             this.tableOrderInverse[this.tableOrder[ii]] = ii;
           }
@@ -495,24 +493,24 @@ export class EtlComponent implements OnInit {
         field.node().value = here.textContent;
         field.on('change', (dd, ii, jj) => {
           const val = +jj[ii].value;
-          console.log(val);
+          console.log(val, this.stockNames[this.tableOrder[stock - 1]]);
           if (id === 1) {
-            this.stockLower[this.tableOrderInverse[stock - 1]] = val;
+            this.stockLower[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
           } else if (id === 2) {
-            this.stockUpper[this.tableOrderInverse[stock - 1]] = val;
+            this.stockUpper[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
           } else if (id === 4) {
-            this.stockAlpha[this.tableOrderInverse[stock - 1]] = val;
+            this.stockAlpha[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
           } else if (id === 5) {
-            this.stockInitial[this.tableOrderInverse[stock - 1]] = val;
+            this.stockInitial[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
           } else if (id === 6) {
-            this.stockBuy[this.tableOrderInverse[stock - 1]] = val;
+            this.stockBuy[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
           } else if (id === 7) {
-            this.stockSell[this.tableOrderInverse[stock - 1]] = val;
+            this.stockSell[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
           }
           field.remove();
@@ -545,6 +543,18 @@ export class EtlComponent implements OnInit {
         if (((d.node() as HTMLDivElement).children.length) > 2) {
           here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
         }
+      });
+    this.stockNames = this.reOrderArray(this.stockNames, this.tableOrderInverse);
+    this.stockLower = this.reOrderArray(this.stockLower, this.tableOrderInverse);
+    this.stockUpper = this.reOrderArray(this.stockUpper, this.tableOrderInverse);
+    this.stockWeights = this.reOrderArray(this.stockWeights, this.tableOrderInverse);
+    this.stockAlpha = this.reOrderArray(this.stockAlpha, this.tableOrderInverse);
+    this.stockInitial = this.reOrderArray(this.stockInitial, this.tableOrderInverse);
+    this.stockBuy = this.reOrderArray(this.stockBuy, this.tableOrderInverse);
+    this.stockSell = this.reOrderArray(this.stockSell, this.tableOrderInverse);
+    d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg')
+      .on('click', (d, i) => {
+        this.clearChartN(i);
       });
   }
   chooser() {
