@@ -35,6 +35,9 @@ export class EtlComponent implements OnInit {
   costs = 1;
   relEtl = false;
   useSticks = true;
+  CVar_constraint = 0;
+  CVarMax = 2.144e-2;
+  CVarMin = 2.14302e-2;
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -349,7 +352,8 @@ export class EtlComponent implements OnInit {
             .text(this.tableFormat(out));
         }
       }));
-    const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover', 'T. Costs', 'Relative Etl'];
+    const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover',
+      'T. Costs', 'Relative Etl', 'ETL Constraint', 'ETL min', 'ETL max'];
     const inputFields = tab.append('div')
       .style('width', `${fixedTableWidth}px`)
       .style('height', `${yPos(1) * scalarParams.length / 2}px`)
@@ -361,7 +365,7 @@ export class EtlComponent implements OnInit {
       .style('color', (d, i, j) => colourT((i + 1) / this.cols))
       .text(d => d)
       .append('input')
-      .attr('type', (d, i) => i === 2 || i === 6 ? 'checkbox' : '')
+      .attr('type', (d, i) => i === 2 || i === 6 || i === 7 ? 'checkbox' : '')
       .style('color', (d, i, j) => colourT((i + 1) / this.cols))
       .style('background-color', 'chartreuse')
       .on('change', (d, i, j) => {
@@ -380,6 +384,12 @@ export class EtlComponent implements OnInit {
           this.costs = +here.value;
         } else if (i === 6) {
           this.relEtl = here.checked;
+        } else if (i === 7) {
+          this.CVar_constraint = here.checked ? 1 : 0;
+        } else if (i === 8) {
+          this.CVarMin = +here.value;
+        } else if (i === 9) {
+          this.CVarMax = +here.value;
         }
       })
       .nodes().forEach((d, i, j) => {
@@ -397,6 +407,12 @@ export class EtlComponent implements OnInit {
           d.value = `${this.costs}`;
         } else if (i === 6) {
           d.checked = this.relEtl;
+        } else if (i === 7) {
+          d.checked = this.CVar_constraint === 1;
+        } else if (i === 8) {
+          d.value = `${this.CVarMin}`;
+        } else if (i === 9) {
+          d.value = `${this.CVarMax}`;
         }
       })
       ;
@@ -563,7 +579,7 @@ export class EtlComponent implements OnInit {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
       buy: this.stockBuy, sell: this.stockSell,
       CVar_averse: this.CVar_averse, gamma: this.Return_gamma, noRiskModel: this.noRiskModel, revise: this.revise, delta: this.delta,
-      costs: this.costs, relEtl: this.relEtl
+      costs: this.costs, relEtl: this.relEtl, CVar_constraint: this.CVar_constraint, CVarMax: this.CVarMax, CVarMin: this.CVarMin
     })
       .subscribe(
         (DAT: {
