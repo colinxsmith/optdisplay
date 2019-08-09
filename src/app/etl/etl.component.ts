@@ -36,8 +36,8 @@ export class EtlComponent implements OnInit {
   relEtl = false;
   useSticks = true;
   CVar_constraint = 0;
-  CVarMax = 2.144e-2;
-  CVarMin = 2.14302e-2;
+  CVarMax = 0;
+  CVarMin = 0;
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
