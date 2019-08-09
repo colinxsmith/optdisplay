@@ -52,7 +52,7 @@ export class EtlComponent implements OnInit {
     this.useSticks = (d3.select(this.mainScreen.nativeElement).select('#sticks').select('input').node() as HTMLInputElement).checked;
   }
   clearChartN(N = 0) {
-    (d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').nodes()[N] as SVGElement).remove();
+    d3.select(d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').nodes()[N] as SVGElement).remove();
     d3.select(this.mainScreen.nativeElement).select('#chart')
       .call(d => {
         const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
@@ -433,7 +433,6 @@ export class EtlComponent implements OnInit {
       .on('click', (d, i, j) => {
         const id = i % this.cols;
         const stock = Math.floor(i / this.cols);
-        console.log(i, id, stock);
         if (stock === 0) {
           for (let io = 0; io < this.tableOrder.length; ++io) {
             this.tableOrder[io] = io;
@@ -443,9 +442,9 @@ export class EtlComponent implements OnInit {
           }
           if (id === 3) {
             this.tableOrder.sort((k, l) => {
-              if (this.stockWeights[this.tableOrder[k]] < this.stockWeights[this.tableOrder[l]]) {
+              if (this.stockWeights[k] < this.stockWeights[l]) {
                 return 1;
-              } else if (this.stockWeights[this.tableOrder[k]] === this.stockWeights[this.tableOrder[l]]) {
+              } else if (this.stockWeights[k] === this.stockWeights[l]) {
                 return 0;
               } else {
                 return -1;
@@ -454,9 +453,9 @@ export class EtlComponent implements OnInit {
           }
           if (id === 4) {
             this.tableOrder.sort((k, l) => {
-              if (this.stockAlpha[this.tableOrder[k]] < this.stockAlpha[this.tableOrder[l]]) {
+              if (this.stockAlpha[k] < this.stockAlpha[l]) {
                 return 1;
-              } else if (this.stockAlpha[this.tableOrder[k]] === this.stockAlpha[this.tableOrder[l]]) {
+              } else if (this.stockAlpha[k] === this.stockAlpha[l]) {
                 return 0;
               } else {
                 return -1;
@@ -465,9 +464,9 @@ export class EtlComponent implements OnInit {
           }
           if (id === 5) {
             this.tableOrder.sort((k, l) => {
-              if (this.stockInitial[this.tableOrder[k]] < this.stockInitial[this.tableOrder[l]]) {
+              if (this.stockInitial[k] < this.stockInitial[l]) {
                 return 1;
-              } else if (this.stockInitial[this.tableOrder[k]] === this.stockInitial[this.tableOrder[l]]) {
+              } else if (this.stockInitial[k] === this.stockInitial[l]) {
                 return 0;
               } else {
                 return -1;
