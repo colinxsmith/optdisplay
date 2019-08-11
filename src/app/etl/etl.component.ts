@@ -38,6 +38,7 @@ export class EtlComponent implements OnInit {
   CVar_constraint = 0;
   CVarMax = 0;
   CVarMin = 0;
+  eps = Math.abs((4 / 3 - 1) * 3 - 1);
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -69,6 +70,17 @@ export class EtlComponent implements OnInit {
   }
   sendData() {
     this.chooser();
+  }
+  basket(x: number[], initial: number[] = []) {
+    let count = 0, hold = 1e10;
+    for (let i = 0; i < x.length; ++i) {
+      const diff = Math.abs(initial.length ? x[i] - initial[i] : x[i]);
+      if (diff > this.eps) {
+        count++;
+        hold = Math.min(hold, diff);
+      }
+    }
+    return { holding: hold, number: count };
   }
   zeroInitial() {
     for (let i = 0; i < this.stockAlpha.length; ++i) {
@@ -416,8 +428,18 @@ export class EtlComponent implements OnInit {
         }
       })
       ;
-    const propLabels = ['ETL', 'RISK', 'RETURN'];
-    const propData = [this.ETL, this.RISK, this.RETURN];
+    const minHolding = this.basket(this.stockWeights).holding;
+    const minTrade = this.basket(this.stockWeights, this.stockInitial).holding;
+    const basketHolding = `${this.basket(this.stockWeights).number}`;
+    const basketTrade = `${this.basket(this.stockWeights, this.stockInitial).number}`;
+    const propLabels = ['ETL', 'RISK', 'RETURN', 'Non-zero weights', 'Min. holding'];
+    const propData = [this.ETL, this.RISK, this.RETURN, basketHolding, minHolding];
+    if (this.stockInitial.length) {
+      propLabels.push('Non-zero trades');
+      propData.push(basketTrade);
+      propLabels.push('Min. trade');
+      propData.push(minTrade);
+    }
     let turnoverAchieved = 0, transactionCost = 0;
     if (this.revise) {
       this.stockWeights.forEach((d, i) => {
@@ -434,10 +456,6 @@ export class EtlComponent implements OnInit {
       });
       propLabels.push('COST');
       propData.push(transactionCost);
-      propLabels.push('ETL+COST');
-      propData.push(this.ETL + transactionCost);
-      propLabels.push('ETL+COST-gRETURN');
-      propData.push(this.ETL + transactionCost - this.Return_gamma * (1 - this.Return_gamma) * this.RETURN);
     }
     d3.select(this.mainScreen.nativeElement).select('#valuesback').append('div').attr('class', 'spacer')
       .selectAll('.properties').data(propData).enter()
