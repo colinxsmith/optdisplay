@@ -38,6 +38,10 @@ export class EtlComponent implements OnInit {
   CVar_constraint = 0;
   CVarMax = 0;
   CVarMin = 0;
+  stockBasket = -1;
+  stockTrades = -1;
+  stockMinHold = -1;
+  stockMinTrade = -1;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
@@ -305,7 +309,7 @@ export class EtlComponent implements OnInit {
       inputHeadings.push('Sell');
     }
     this.cols = inputHeadings.length;
-    const fixedTableWidth = 1000, ww = Math.max(fixedTableWidth, fixedTableWidth / 7 * (this.cols + 1)),
+    const fixedTableWidth = 1000, ftCols = 3, ww = Math.max(fixedTableWidth, fixedTableWidth / 7 * (this.cols + 1)),
       xPos = d3.scaleLinear().domain([0, this.cols + 1]).range([0, ww]),
       colourT = d3.interpolate(d3.rgb('orange'), d3.rgb('blue'));
     const hh = 31 * this.stockNames.length, yPos = d3.scaleLinear().domain([0, this.stockNames.length]).range([0, hh]);
@@ -365,14 +369,17 @@ export class EtlComponent implements OnInit {
         }
       }));
     const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover',
-      'T. Costs', 'Relative Etl', 'ETL Constraint', 'ETL min', 'ETL max'];
+      'T. Costs', 'Relative Etl', 'ETL Constraint', 'ETL min', 'ETL max', 'Basket', 'Trades', 'Min. holding', 'Min. trade'];
     const inputFields = tab.append('div')
       .style('width', `${fixedTableWidth}px`)
       .style('height', `${yPos(1) * scalarParams.length / 2}px`)
       .attr('class', 'spacer')
       .style('color', colourT(0))
-      .style('text-align', 'justify')
-      .selectAll('iFields').data(scalarParams).enter()
+      .selectAll('iFields').data(scalarParams).enter().append('div')
+      .style('text-align', 'end')
+      .style('background-color', 'burlywood')
+      .style('float', 'left')
+      .style('width', `${Math.floor(fixedTableWidth / ftCols)}px`)
       .append('text')
       .style('color', (d, i, j) => colourT((i + 1) / this.cols))
       .text(d => d)
@@ -402,6 +409,14 @@ export class EtlComponent implements OnInit {
           this.CVarMin = +here.value;
         } else if (i === 9) {
           this.CVarMax = +here.value;
+        } else if (i === 10) {
+          this.stockBasket = +here.value;
+        } else if (i === 11) {
+          this.stockTrades = +here.value;
+        } else if (i === 12) {
+          this.stockMinHold = +here.value;
+        } else if (i === 13) {
+          this.stockMinTrade = +here.value;
         }
       })
       .nodes().forEach((d, i, j) => {
@@ -425,13 +440,23 @@ export class EtlComponent implements OnInit {
           d.value = `${this.CVarMin}`;
         } else if (i === 9) {
           d.value = `${this.CVarMax}`;
+        } else if (i === 10) {
+          d.value = `${this.stockBasket}`;
+        } else if (i === 11) {
+          d.value = `${this.stockTrades}`;
+        } else if (i === 12) {
+          d.value = `${this.stockMinHold}`;
+        } else if (i === 13) {
+          d.value = `${this.stockMinTrade}`;
         }
       })
       ;
-    const minHolding = this.basket(this.stockWeights).holding;
-    const minTrade = this.basket(this.stockWeights, this.stockInitial).holding;
-    const basketHolding = `${this.basket(this.stockWeights).number}`;
-    const basketTrade = `${this.basket(this.stockWeights, this.stockInitial).number}`;
+    const h1 = this.basket(this.stockWeights);
+    const t1 = this.basket(this.stockWeights, this.stockInitial);
+    const minHolding = h1.holding;
+    const minTrade = t1.holding;
+    const basketHolding = `${h1.number}`;
+    const basketTrade = `${t1.number}`;
     const propLabels = ['ETL', 'RISK', 'RETURN', 'Non-zero weights', 'Min. holding'];
     const propData = [this.ETL, this.RISK, this.RETURN, basketHolding, minHolding];
     if (this.stockInitial.length) {
@@ -597,7 +622,8 @@ export class EtlComponent implements OnInit {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
       buy: this.stockBuy, sell: this.stockSell,
       CVar_averse: this.CVar_averse, gamma: this.Return_gamma, noRiskModel: this.noRiskModel, revise: this.revise, delta: this.delta,
-      costs: this.costs, relEtl: this.relEtl, CVar_constraint: this.CVar_constraint, CVarMax: this.CVarMax, CVarMin: this.CVarMin
+      costs: this.costs, relEtl: this.relEtl, CVar_constraint: this.CVar_constraint, CVarMax: this.CVarMax, CVarMin: this.CVarMin,
+      basket: this.stockBasket, trades: this.stockTrades, min_holding: this.stockMinHold, min_trade: this.stockMinTrade
     })
       .subscribe(
         (DAT: {

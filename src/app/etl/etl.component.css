@@ -67,7 +67,8 @@ g.tooltip {
     pointer-events: none;
     overflow: auto;
 }
-.leafy{
-    color:blue;
+
+.leafy {
+    color: blue;
     font-size: 20px;
 }
