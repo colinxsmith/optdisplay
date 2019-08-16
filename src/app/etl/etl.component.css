@@ -15,6 +15,11 @@ div.spacer {
     font-size: 15px;
 }
 
+div.spacer div text {
+    float: right;
+    width: auto;
+}
+
 text.spacer {
     text-anchor: end;
     font-size: 2px;

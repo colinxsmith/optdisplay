@@ -379,17 +379,19 @@ export class EtlComponent implements OnInit {
       .style('text-align', 'end')
       .style('background-color', 'black')
       .style('float', 'left')
-      .style('width', `1000px`);
+      .style('width', `${fixedTableWidth}px`);
     inputFields.transition().duration(1000)
       .style('background-color', 'burlywood')
-      .style('width', `${Math.floor(fixedTableWidth / ftCols)}px`);
-    inputFields.append('text')
+      .styleTween('float', () => (t) => t < 0.95 ? 'right' : 'left')
+      .style('width', `${fixedTableWidth / ftCols}px`);
+    inputFields.append('text') // actually uses width:auto;float:right in the css
       .style('color', colourT(1))
       .text(d => d)
       .append('input')
       .attr('type', (d, i) => i < 3 ? 'checkbox' : '')
-      .style('color', colourT(1))
-      .style('background-color', 'chartreuse')
+      .style('color', (d, i) => i < 3 ? 'auto' : colourT(0.5))
+      .style('width', (d, i) => i < 3 ? 'auto' : `inherit`)
+      .style('background-color', (d, i) => i < 3 ? 'auto' : 'chartreuse')
       .on('change', (d, i, j) => {
         const here = j[i];
         if (i === 0) {
