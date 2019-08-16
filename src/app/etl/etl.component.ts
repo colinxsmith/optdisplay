@@ -368,8 +368,8 @@ export class EtlComponent implements OnInit {
             .text(this.tableFormat(out));
         }
       }));
-    const scalarParams = ['Etl Aversion', 'Return gamma', 'Zero Risk Model', 'Revision', 'Turnover',
-      'T. Costs', 'Relative Etl', 'ETL Constraint', 'ETL min', 'ETL max', 'Basket', 'Trades', 'Min. holding', 'Min. trade'];
+    const scalarParams = ['Zero Risk Model', 'ETL Constraint', 'Relative Etl', 'Etl Aversion', 'Return gamma', 'Revision', 'Turnover',
+      'T. Costs', 'ETL min', 'ETL max', 'Basket', 'Trades', 'Min. holding', 'Min. trade'];
     const inputFields = tab.append('div')
       .style('width', `${fixedTableWidth}px`)
       .style('height', `${yPos(1) * scalarParams.length / 2}px`)
@@ -377,34 +377,37 @@ export class EtlComponent implements OnInit {
       .style('color', colourT(0))
       .selectAll('iFields').data(scalarParams).enter().append('div')
       .style('text-align', 'end')
-      .style('background-color', 'burlywood')
+      .style('background-color', 'black')
       .style('float', 'left')
-      .style('width', `${Math.floor(fixedTableWidth / ftCols)}px`)
-      .append('text')
-      .style('color', (d, i, j) => colourT((i + 1) / this.cols))
+      .style('width', `1000px`);
+    inputFields.transition().duration(1000)
+      .style('background-color', 'burlywood')
+      .style('width', `${Math.floor(fixedTableWidth / ftCols)}px`);
+    inputFields.append('text')
+      .style('color', colourT(1))
       .text(d => d)
       .append('input')
-      .attr('type', (d, i) => i === 2 || i === 6 || i === 7 ? 'checkbox' : '')
-      .style('color', (d, i, j) => colourT((i + 1) / this.cols))
+      .attr('type', (d, i) => i < 3 ? 'checkbox' : '')
+      .style('color', colourT(1))
       .style('background-color', 'chartreuse')
       .on('change', (d, i, j) => {
         const here = j[i];
         if (i === 0) {
-          this.CVar_averse = +here.value;
-        } else if (i === 1) {
-          this.Return_gamma = +here.value;
-        } else if (i === 2) {
           this.noRiskModel = here.checked;
-        } else if (i === 3) {
-          this.revise = +here.value;
-        } else if (i === 4) {
-          this.delta = +here.value;
-        } else if (i === 5) {
-          this.costs = +here.value;
-        } else if (i === 6) {
-          this.relEtl = here.checked;
-        } else if (i === 7) {
+        } else if (i === 1) {
           this.CVar_constraint = here.checked ? 1 : 0;
+        } else if (i === 2) {
+          this.relEtl = here.checked;
+        } else if (i === 3) {
+          this.CVar_averse = +here.value;
+        } else if (i === 4) {
+          this.Return_gamma = +here.value;
+        } else if (i === 5) {
+          this.revise = +here.value;
+        } else if (i === 6) {
+          this.delta = +here.value;
+        } else if (i === 7) {
+          this.costs = +here.value;
         } else if (i === 8) {
           this.CVarMin = +here.value;
         } else if (i === 9) {
@@ -421,21 +424,21 @@ export class EtlComponent implements OnInit {
       })
       .nodes().forEach((d, i, j) => {
         if (i === 0) {
-          d.value = `${this.CVar_averse}`;
-        } else if (i === 1) {
-          d.value = `${this.Return_gamma}`;
-        } else if (i === 2) {
           d.checked = this.noRiskModel;
-        } else if (i === 3) {
-          d.value = `${this.revise}`;
-        } else if (i === 4) {
-          d.value = `${this.delta}`;
-        } else if (i === 5) {
-          d.value = `${this.costs}`;
-        } else if (i === 6) {
-          d.checked = this.relEtl;
-        } else if (i === 7) {
+        } else if (i === 1) {
           d.checked = this.CVar_constraint === 1;
+        } else if (i === 2) {
+          d.checked = this.relEtl;
+        } else if (i === 3) {
+          d.value = `${this.CVar_averse}`;
+        } else if (i === 4) {
+          d.value = `${this.Return_gamma}`;
+        } else if (i === 5) {
+          d.value = `${this.revise}`;
+        } else if (i === 6) {
+          d.value = `${this.delta}`;
+        } else if (i === 7) {
+          d.value = `${this.costs}`;
         } else if (i === 8) {
           d.value = `${this.CVarMin}`;
         } else if (i === 9) {
