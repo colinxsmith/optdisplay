@@ -258,12 +258,11 @@ export class NewgaugeComponent implements OnInit {
       .attr('height', side);
     const xMin = d3.min(points.map(d => Math.min(d.outlier, Math.min(d.almostOutlier, d.compliant))));
     const xMax = d3.max(points.map(d => Math.max(d.outlier, Math.max(d.almostOutlier, d.compliant))));
-    const rimDef = side / 10;
-    const barScale = d3.scaleLinear().domain([xMin, xMax]).range([-0.9 * side / 2, 0.9 * side / 2]);
+    const barScale = d3.scaleLinear().domain([xMin, xMax]).range([- side / 2, side / 2]);
     console.log(points.map(d => (d.outlier)));
     console.log(points.map(d => barScale(d.outlier)));
     console.log(barScale(0));
-    const gap = side * 0.5;
+    const gap = side * 0.6;
     SVG.selectAll('.bars1').data(points).enter()
       .append('rect')
       .attr('id', 'casedef')
