@@ -1,0 +1,48 @@
+path.gauge {
+    fill: green;
+    stroke: none;
+}
+
+text.gauge {
+    stroke: none;
+    fill: rgb(87, 78, 78);
+    font-size: 40px;
+    text-anchor: middle;
+}
+
+text.gaugeT {
+    stroke: none;
+    fill: rgb(87, 78, 78);
+    text-anchor: middle;
+}
+
+g.tooltip {
+    background: black;
+    color: white;
+    position: absolute;
+    text-align: center;
+    font-size: 25px;
+    pointer-events: none;
+    overflow: auto;
+}
+
+.leafy {
+    color: yellow;
+    font-size: 20px;
+}
+
+#case13 {
+    fill: rgba(243, 201, 44, 0.92);
+}
+
+#case2 {
+    fill: rgba(109, 208, 21, 0.8588235294117647);
+}
+
+#casedef {
+    fill: rgb(194, 16, 14);
+}
+
+#casered {
+    fill: rgba(199, 2, 2, 0.79);
+}

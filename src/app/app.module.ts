@@ -9,9 +9,11 @@ import { DispComponent } from './disp/disp.component';
 import { DataService } from './data.service';
 import { EtlComponent } from './etl/etl.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { NewgaugeComponent } from './newgauge/newgauge.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
+  { path: 'gauge', component: NewgaugeComponent },
   { path: '', redirectTo: '/etl', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },
 ];
@@ -21,7 +23,8 @@ const appRoutes: Routes = [
     AppComponent,
     DispComponent,
     EtlComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    NewgaugeComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(
