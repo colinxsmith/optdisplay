@@ -16,12 +16,12 @@ text.gaugeT {
     text-anchor: middle;
 }
 
-g.tooltip {
+.tooltip {
     background: black;
     color: white;
     position: absolute;
     text-align: center;
-    font-size: 25px;
+    font-size: 12px;
     pointer-events: none;
     overflow: auto;
 }
@@ -45,4 +45,9 @@ g.tooltip {
 
 #casered {
     fill: rgba(199, 2, 2, 0.79);
+}
+
+rect.border {
+    stroke: none;
+    fill: none;
 }
