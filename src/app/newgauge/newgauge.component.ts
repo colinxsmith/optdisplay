@@ -9,10 +9,11 @@ import * as d3 from 'd3';
 })
 export class NewgaugeComponent implements OnInit {
 
-  tTip = d3.select(this.mainScreen.nativeElement).append('g').attr('class', 'tooltip');
-  duration = 3000;
-  chartSide = 100;
+  toolTipObj = d3.select(this.mainScreen.nativeElement).append('g').attr('class', 'tooltip');
+  duration = 3000; // duration time in ms for animations
+  chartSide = 100; // each chart is 100px by 100px
 
+  // Mock data for the bulk trade charts
   DATA = {
     outlierStatusCounter: {
       title: 'Outlier Status Count',
@@ -240,94 +241,12 @@ export class NewgaugeComponent implements OnInit {
   };
   constructor(private mainScreen: ElementRef) { }
 
-  barplot(points: {
-    name: string;
-    outlier: number;
-    almostOutlier: number;
-    compliant: number;
-  }[], side: number, id: string, bars: string, title: string) {
-
-    const SVG = d3.select(id).select(`${bars}`)
-      .attr('width', side)
-      .attr('height', side);
-    SVG.append('rect')
-      .attr('class', 'border')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', side)
-      .attr('height', side);
-    const xMin = d3.min(points.map(d => Math.min(d.outlier, Math.min(d.almostOutlier, d.compliant))));
-    const xMax = d3.max(points.map(d => Math.max(d.outlier, Math.max(d.almostOutlier, d.compliant))));
-    const barScale = d3.scaleLinear().domain([xMin, xMax]).range([- side / 2, side / 2]);
-    console.log(points.map(d => (d.outlier)));
-    console.log(points.map(d => barScale(d.outlier)));
-    console.log(barScale(0));
-    const gap = side * 0.6;
-    SVG.selectAll('.bars1').data(points).enter()
-      .append('rect')
-      .attr('id', 'casedef')
-      .attr('transform', (d, i) => `translate(${side / 2},${(2 * (side - gap) / 3 + gap / 2 + side * i) / points.length})`)
-      .attr('y', 0)
-      .attr('height', (side - gap) / 3 / points.length)
-      .attr('x', d => d.outlier < 0 ? barScale(d.outlier) - barScale(0) : 0)
-      .attr('width', d => d.outlier < 0 ? barScale(0) - barScale(d.outlier) : barScale(d.outlier))
-      .on('mousemove', d => {
-        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-          .html(`${title}<br>${d.name}<br>${d.outlier}`);
-      })
-      .on('mouseout', () => {
-        this.tTip.attr('style', `display:none`)
-          .html('');
-      })
-      .transition().duration(this.duration)
-      .attrTween('x', d => t => `${d.outlier < 0 ? (barScale(d.outlier) - barScale(0)) * t : 0}`)
-      .attrTween('width', d => t => `${d.outlier < 0 ? t * (barScale(0) - barScale(d.outlier)) :
-        t * barScale(d.outlier)}`)
-      ;
-    SVG.selectAll('.bars2').data(points).enter()
-      .append('rect')
-      .attr('id', 'case2')
-      .attr('transform', (d, i) => `translate(${side / 2},${(0 * (side - gap) / 3 + gap / 2 + side * i) / points.length})`)
-      .attr('y', 0)
-      .attr('height', (side - gap) / 3 / points.length)
-      .attr('x', d => d.compliant < 0 ? barScale(d.compliant) - barScale(0) : 0)
-      .attr('width', d => d.compliant < 0 ? barScale(0) - barScale(d.compliant) : barScale(d.compliant))
-      .on('mousemove', d => {
-        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-          .html(`${title}<br>${d.name}<br>${d.compliant}`);
-      })
-      .on('mouseout', () => {
-        this.tTip.attr('style', `display:none`)
-          .html('');
-      })
-      .transition().duration(this.duration)
-      .attrTween('x', d => t => `${d.compliant < 0 ? (barScale(d.compliant) - barScale(0)) * t : 0}`)
-      .attrTween('width', d => t => `${d.compliant < 0 ? t * (barScale(0) - barScale(d.compliant)) :
-        t * barScale(d.compliant)}`)
-      ;
-    SVG.selectAll('.bars3').data(points).enter()
-      .append('rect')
-      .attr('id', 'case13')
-      .attr('transform', (d, i) => `translate(${side / 2},${((side - gap) / 3 + gap / 2 + side * i) / points.length})`)
-      .attr('y', 0)
-      .attr('height', (side - gap) / 3 / points.length)
-      .attr('x', d => d.almostOutlier < 0 ? barScale(d.almostOutlier) - barScale(0) : 0)
-      .attr('width', d => d.almostOutlier < 0 ? barScale(0) - barScale(d.almostOutlier) : barScale(d.almostOutlier))
-      .on('mousemove', d => {
-        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-          .html(`${title}<br>${d.name}<br>${d.almostOutlier}`);
-      })
-      .on('mouseout', () => {
-        this.tTip.attr('style', `display:none`)
-          .html('');
-      })
-      .transition().duration(this.duration)
-      .attrTween('x', d => t => `${d.almostOutlier < 0 ? (barScale(d.almostOutlier) - barScale(0)) * t : 0}`)
-      .attrTween('width', d => t => `${d.almostOutlier < 0 ? t * (barScale(0) - barScale(d.almostOutlier)) :
-        t * barScale(d.almostOutlier)}`)
-      ;
-  }
   ngOnInit() {
+
+    // The positions for the charts are set out in the html file. There is a div with id chartholder which holds
+    // 9 svgs gaugepre1,2,3 and 4, barchart and gaugepost1,2,3 and 4.
+    // each chart is contained in a square of side 100px. (this.chartSide)
+
     d3.select('#chartholder').attr('style', `height:${this.chartSide}px;width:${this.chartSide * 9}px`);
     this.DATA.preTradeMonitorFlags.monitorFlagRow.forEach(d =>
       this.chart(d, this.chartSide, '#chartholder', '#gaugepre', this.DATA.preTradeMonitorFlags.title));
@@ -335,6 +254,98 @@ export class NewgaugeComponent implements OnInit {
     this.barplot(bardata, this.chartSide * 0.9, '#chartholder', '#barchart', this.DATA.outlierStatusCounter.title);
     this.DATA.postTradeMonitorFlags.monitorFlagRow.forEach(d =>
       this.chart(d, this.chartSide, '#chartholder', '#gaugepost', this.DATA.postTradeMonitorFlags.title));
+  }
+
+  barplot(barChartData: {
+    name: string;
+    outlier: number;
+    almostOutlier: number;
+    compliant: number;
+  }[], side: number, id: string, bars: string, title: string) {
+    // Plots the data in barChartData as horizontal bars in a square side px by side px.
+    // id is the name of the chart's container and bars is its SVG.
+    // title is written to the tooltip.
+
+    const SVG = d3.select(id).select(`${bars}`)
+      .attr('width', side)
+      .attr('height', side);
+    SVG.selectAll('rect').remove();
+    SVG.append('rect')
+      .attr('class', 'border')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', side)
+      .attr('height', side);
+    const xMin = d3.min(barChartData.map(d => Math.min(d.outlier, Math.min(d.almostOutlier, d.compliant))));
+    const xMax = d3.max(barChartData.map(d => Math.max(d.outlier, Math.max(d.almostOutlier, d.compliant))));
+    const barScale = d3.scaleLinear().domain([xMin, xMax]).range([- side / 2, side / 2]);
+    console.log(barChartData.map(d => (d.outlier)));
+    console.log(barChartData.map(d => barScale(d.outlier)));
+    console.log(barScale(0));
+    const gap = side * 0.6;
+    SVG.selectAll('.bars1').data(barChartData).enter()
+      .append('rect')
+      .attr('id', 'casedef')
+      .attr('transform', (d, i) => `translate(${side / 2},${(2 * (side - gap) / 3 + gap / 2 + side * i) / barChartData.length})`)
+      .attr('y', 0)
+      .attr('height', (side - gap) / 3 / barChartData.length)
+      .attr('x', d => d.outlier < 0 ? barScale(d.outlier) - barScale(0) : 0)
+      .attr('width', d => d.outlier < 0 ? barScale(0) - barScale(d.outlier) : barScale(d.outlier))
+      .on('mousemove', d => {
+        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          .html(`${title}<br>${d.name}<br>${d.outlier}`);
+      })
+      .on('mouseout', () => {
+        this.toolTipObj.attr('style', `display:none`)
+          .html('');
+      })
+      .transition().duration(this.duration)
+      .attrTween('x', d => t => `${d.outlier < 0 ? (barScale(d.outlier) - barScale(0)) * t : 0}`)
+      .attrTween('width', d => t => `${d.outlier < 0 ? t * (barScale(0) - barScale(d.outlier)) :
+        t * barScale(d.outlier)}`)
+      ;
+    SVG.selectAll('.bars2').data(barChartData).enter()
+      .append('rect')
+      .attr('id', 'case2')
+      .attr('transform', (d, i) => `translate(${side / 2},${(0 * (side - gap) / 3 + gap / 2 + side * i) / barChartData.length})`)
+      .attr('y', 0)
+      .attr('height', (side - gap) / 3 / barChartData.length)
+      .attr('x', d => d.compliant < 0 ? barScale(d.compliant) - barScale(0) : 0)
+      .attr('width', d => d.compliant < 0 ? barScale(0) - barScale(d.compliant) : barScale(d.compliant))
+      .on('mousemove', d => {
+        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          .html(`${title}<br>${d.name}<br>${d.compliant}`);
+      })
+      .on('mouseout', () => {
+        this.toolTipObj.attr('style', `display:none`)
+          .html('');
+      })
+      .transition().duration(this.duration)
+      .attrTween('x', d => t => `${d.compliant < 0 ? (barScale(d.compliant) - barScale(0)) * t : 0}`)
+      .attrTween('width', d => t => `${d.compliant < 0 ? t * (barScale(0) - barScale(d.compliant)) :
+        t * barScale(d.compliant)}`)
+      ;
+    SVG.selectAll('.bars3').data(barChartData).enter()
+      .append('rect')
+      .attr('id', 'case13')
+      .attr('transform', (d, i) => `translate(${side / 2},${((side - gap) / 3 + gap / 2 + side * i) / barChartData.length})`)
+      .attr('y', 0)
+      .attr('height', (side - gap) / 3 / barChartData.length)
+      .attr('x', d => d.almostOutlier < 0 ? barScale(d.almostOutlier) - barScale(0) : 0)
+      .attr('width', d => d.almostOutlier < 0 ? barScale(0) - barScale(d.almostOutlier) : barScale(d.almostOutlier))
+      .on('mousemove', d => {
+        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          .html(`${title}<br>${d.name}<br>${d.almostOutlier}`);
+      })
+      .on('mouseout', () => {
+        this.toolTipObj.attr('style', `display:none`)
+          .html('');
+      })
+      .transition().duration(this.duration)
+      .attrTween('x', d => t => `${d.almostOutlier < 0 ? (barScale(d.almostOutlier) - barScale(0)) * t : 0}`)
+      .attrTween('width', d => t => `${d.almostOutlier < 0 ? t * (barScale(0) - barScale(d.almostOutlier)) :
+        t * barScale(d.almostOutlier)}`)
+      ;
   }
   chart(oneChartData: {
     id: number;
@@ -346,12 +357,17 @@ export class NewgaugeComponent implements OnInit {
       value: number;
       outlierStatusType: string;
     }[];
-  }, gaugeR: number, id: string, gauge: string, title: string) {
+  }, side: number, id: string, gauge: string, title: string) {
+
+    // Plots the data in oneChartData as an "arc chart" in a square side px by side px.
+    // id is the name of the chart's container and gaugeoneChartData.id is its SVG.
+    // title is written to the tooltip.
+
     const rimData = oneChartData.monitorFlagCategory.map(d => d.value);
     const innerNumbers = oneChartData.monitorFlagCategory.map(d => d.value);
     const gTitle = oneChartData.label;
-    const divSquare = gaugeR * 7 / 5;
-    const rimDef = gaugeR / 10, rimFont = gaugeR / 10;
+    const divSquare = side * 7 / 5;
+    const rimDef = side / 10, rimFont = side / 10;
     let sumRim = 0, sofar = 0;
     rimData.forEach(d => {
       sumRim += d;
@@ -360,13 +376,13 @@ export class NewgaugeComponent implements OnInit {
       .domain([0, sumRim])
       .range([(180 + rimDef) / 360 * Math.PI * 2, (180 + 360 - rimDef) / 360 * Math.PI * 2]);
     const gaugeSVG = d3.select(id).select(`${gauge}${oneChartData.id}`);
-    gaugeSVG.attr('width', gaugeR).attr('height', gaugeR);
+    gaugeSVG.attr('width', side).attr('height', side);
     gaugeSVG.selectAll('path').remove();
     gaugeSVG.selectAll('text').remove();
     gaugeSVG.selectAll('.rims').data(oneChartData.monitorFlagCategory).enter()
       .append('path')
       .attr('class', 'gauge')
-      .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
+      .attr('transform', `translate(${side / 2},${side / 2})`)
       .attr('id', (d, i) => {
         switch (d.outlierStatusType) {
           case 'NOT OUTLIER': return 'case2';
@@ -376,11 +392,11 @@ export class NewgaugeComponent implements OnInit {
         }
       })
       .on('mousemove', d => {
-        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
           .html(`${title}<br>${d.outlierStatusType}<br>${d.value}`);
       })
       .on('mouseout', () => {
-        this.tTip.attr('style', `display:none`)
+        this.toolTipObj.attr('style', `display:none`)
           .html('');
       })
       .transition().duration(this.duration)
@@ -389,14 +405,14 @@ export class NewgaugeComponent implements OnInit {
         sofar += d.value;
         return (t) => {
           const aDat = {
-            innerRadius: gaugeR / 2 * 0.7 * t,
-            outerRadius: gaugeR / 2 * 0.8,
+            innerRadius: side / 2 * 0.7 * t,
+            outerRadius: side / 2 * 0.8,
             padAngle: 1 - t * t,
             startAngle: arcScale(s) * t * t,
             endAngle: arcScale(sofar) * t * t
           };
           const back = d3.arc();
-          back.cornerRadius(gaugeR * 0.1 * (1 - t));
+          back.cornerRadius(side * 0.1 * (1 - t));
           return back(aDat);
         };
       });
@@ -405,16 +421,16 @@ export class NewgaugeComponent implements OnInit {
       .attr('class', 'gauge')
       .style('font-size', `${rimFont}px`)
       .transition().duration(this.duration).ease(d3.easeBounce)
-      .attrTween('transform', (d, i) => (t) => `translate(${gaugeR / 2},${gaugeR / 2 + t * t * rimFont * 2 * (i - 1)})`)
+      .attrTween('transform', (d, i) => (t) => `translate(${side / 2},${side / 2 + t * t * rimFont * 2 * (i - 1)})`)
       .text(d => d);
     const titleText = gaugeSVG.append('text')
       .attr('class', 'gaugeT')
-      .attr('transform', `translate(${gaugeR / 2},${gaugeR - rimFont})`)
+      .attr('transform', `translate(${side / 2},${side - rimFont})`)
       .style('font-size', `${divSquare / 10}`)
       .text(gTitle);
     titleText
       .transition().duration(this.duration)
       .attrTween('transform', () => (t) =>
-        `translate(${gaugeR / 2},${gaugeR * t}) rotate(${360 * t})`);
+        `translate(${side / 2},${side * t}) rotate(${360 * t})`);
   }
 }
