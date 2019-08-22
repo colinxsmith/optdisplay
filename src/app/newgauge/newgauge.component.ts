@@ -276,8 +276,14 @@ export class NewgaugeComponent implements OnInit {
       .attr('y', 0)
       .attr('width', side)
       .attr('height', side);
-    const xMin = d3.min(barChartData.map(d => Math.min(d.outlier, Math.min(d.almostOutlier, d.compliant))));
-    const xMax = d3.max(barChartData.map(d => Math.max(d.outlier, Math.max(d.almostOutlier, d.compliant))));
+    let xMin = d3.min(barChartData.map(d => Math.min(d.outlier, Math.min(d.almostOutlier, d.compliant))));
+    let xMax = d3.max(barChartData.map(d => Math.max(d.outlier, Math.max(d.almostOutlier, d.compliant))));
+    if (xMax < 0) {
+      xMax = 0;
+    }
+    if (xMin > 0) {
+      xMin = 0;
+    }
     const barScale = d3.scaleLinear().domain([xMin, xMax]).range([- side / 2, side / 2]);
     console.log(barChartData.map(d => (d.outlier)));
     console.log(barChartData.map(d => barScale(d.outlier)));
