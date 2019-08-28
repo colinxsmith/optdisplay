@@ -1,6 +1,6 @@
 <svg id="barchart" class="bars" width="400" height="400">
 </svg>
-<svg id="proper" class="bars" class="new" width="400" height="400">
+<svg id="proper" class="new" width="400" height="400">
     <g *ngFor="let d of DATA; let i=index" (click)=clicked(d,i)>
         <rect [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)" [attr.width]="d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0)" [attr.y]="i*h/DATA.length" [attr.height]="h/DATA.length"></rect>
     </g>

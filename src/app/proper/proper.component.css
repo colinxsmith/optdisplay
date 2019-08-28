@@ -5,3 +5,7 @@ svg.bars {
 svg.new {
     fill: green;
 }
+
+svg.new rect {
+    fill: cyan;
+}
