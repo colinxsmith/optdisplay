@@ -36,6 +36,14 @@ export class ProperComponent implements OnInit {
       .on('click', (d, i, j) => {
         j[i].setAttribute('style', 'fill:' + (d.x > 0 ? 'blue' : 'orange'));
       });
+    BARS.selectAll('rect').transition().duration(1000)
+      .attrTween('x', (d: { x: number }, i, j) => {
+        return (t) => d.x > 0 ? '' + this.scaleX(1 - t) : '' + this.scaleX(t * d.x);
+      })
+      .attrTween('width', (d: { x: number }) => {
+        return (t) => d.x < 0 ? '' + (this.scaleX(1 - t) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(1 - t));
+      })
+      ;
   }
   clicked(DA: { x: number }, i: number) {
     const BARS = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
