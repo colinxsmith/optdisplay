@@ -84,6 +84,9 @@ export class EtlComponent implements OnInit {
         hold = Math.min(hold, diff);
       }
     }
+    if (hold === 1e10) {
+      hold = 0;
+    }
     return { holding: hold, number: count };
   }
   zeroInitial() {

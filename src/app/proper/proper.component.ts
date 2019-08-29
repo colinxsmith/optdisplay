@@ -37,16 +37,26 @@ export class ProperComponent implements OnInit {
         j[i].setAttribute('style', 'fill:' + (d.x > 0 ? 'blue' : 'orange'));
       });
     BARS.selectAll('rect').transition().duration(1000)
-      .attrTween('x', (d: { x: number }, i, j) => {
-        return (t) => d.x > 0 ? '' + this.scaleX(1 - t) : '' + this.scaleX(t * d.x);
+      .attrTween('x', (d: { x: number }) => {
+        return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
       })
       .attrTween('width', (d: { x: number }) => {
-        return (t) => d.x < 0 ? '' + (this.scaleX(1 - t) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(1 - t));
+        return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
       })
       ;
   }
   clicked(DA: { x: number }, i: number) {
-    const BARS = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
+    const BARS: d3.Selection<SVGRectElement, { x: number }, d3.BaseType, unknown>
+      = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
+    d3.select((BARS.nodes()[i] as SVGRectElement)).transition().duration(1000)
+      .attrTween('x', () => {
+        const d = DA;
+        return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
+      })
+      .attrTween('width', () => {
+        const d = DA;
+        return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
+      });
     (BARS.nodes()[i] as SVGRectElement)
       .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'red'));
   }
