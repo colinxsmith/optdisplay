@@ -2,7 +2,9 @@
 </svg>
 <svg id="proper" class="new" width="400" height="400">
     <g *ngFor="let d of DATA; let i=index" (click)=clicked(d,i)>
-        <rect [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)" [attr.width]="d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0)" 
+    <g *ngFor="let t of animateArray">
+        <rect [attr.id]="t==1?'keep':'remove'" [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)" [attr.width]="(d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0))*t" 
         [attr.y]="i*h/DATA.length" [attr.height]="h/DATA.length"></rect>
+    </g>
     </g>
 </svg>
