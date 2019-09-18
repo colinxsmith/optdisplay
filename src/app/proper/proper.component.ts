@@ -23,11 +23,13 @@ export class ProperComponent implements OnInit, AfterViewInit {
     }
     console.log('init');
     this.DATA = [];
-    for (let i = 0; i < 10; ++i) {
-      this.DATA.push({ x: ((i + 1) - 5.5) * ((i + 1) - 4.5) * ((i + 1) - 3.5) });
+    for (let i = 0; i < 100; ++i) {
+      this.DATA.push({ x: ((i + 1) - 50.5) * ((i + 1) - 40.5) * ((i + 1) - 30.5) });
     }
-    this.w = this.mainElement.nativeElement.offsetWidth;
-    this.h = Math.max(this.mainElement.nativeElement.offsetWidth, this.mainElement.nativeElement.offsetHeight);
+    this.w = Math.max(this.mainElement.nativeElement.offsetWidth,
+      +d3.select(this.mainElement.nativeElement).select('#proper').attr('width'));
+    this.h = Math.max(+d3.select(this.mainElement.nativeElement).select('#proper').attr('height'),
+      this.mainElement.nativeElement.offsetHeight);
     this.scaleX = d3.scaleLinear().domain([d3.min(this.DATA.map(d => d.x)), d3.max(this.DATA.map(d => d.x))]).range([0, this.w]);
   }
   ngAfterViewInit() {// Add animations to the proper Angular chart
