@@ -9,3 +9,9 @@ svg.new {
 svg.new rect {
     fill: cyan;
 }
+svg.new rect.plus{
+    fill: lightgreen;
+}
+svg.new rect.minus{
+    fill: red;
+}

@@ -26,7 +26,9 @@ export class ProperComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < 10; ++i) {
       this.DATA.push({ x: ((i + 1) - 5.5) * ((i + 1) - 4.5) * ((i + 1) - 3.5) });
     }
-    this.picture();
+    this.w = this.mainElement.nativeElement.offsetWidth;
+    this.h = Math.max(this.mainElement.nativeElement.offsetWidth, this.mainElement.nativeElement.offsetHeight);
+    this.scaleX = d3.scaleLinear().domain([d3.min(this.DATA.map(d => d.x)), d3.max(this.DATA.map(d => d.x))]).range([0, this.w]);
   }
   ngAfterViewInit() {// Add animations to the proper Angular chart
     const test = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
@@ -43,32 +45,7 @@ export class ProperComponent implements OnInit, AfterViewInit {
         ;
     }
   }
-  picture() {
-    const SVG = d3.select(this.mainElement.nativeElement).select('#barchart');
-    console.log(this.mainElement.nativeElement.offsetWidth, this.mainElement.nativeElement.offsetHeight);
-    this.w = +SVG.attr('width');
-    this.h = +SVG.attr('height');
-    console.log(this.w, this.h);
-    this.scaleX = d3.scaleLinear().domain([d3.min(this.DATA.map(d => d.x)), d3.max(this.DATA.map(d => d.x))]).range([0, this.w]);
-    SVG.selectAll('.bars').data(this.DATA).enter().append('g');
-    this.BARS = d3.select(this.mainElement.nativeElement).select('#barchart').selectAll('g');
-    this.BARS.append('rect')
-      .attr('x', d => d.x > 0 ? this.scaleX(0) : this.scaleX(d.x))
-      .attr('width', d => d.x < 0 ? this.scaleX(0) - this.scaleX(d.x) : this.scaleX(d.x) - this.scaleX(0))
-      .attr('y', (d, i) => this.h * i / this.DATA.length)
-      .attr('height', this.h / this.DATA.length)
-      .on('click', (d, i, j) => {
-        j[i].setAttribute('style', 'fill:' + (d.x > 0 ? 'blue' : 'orange'));
-      });
-    this.BARS.selectAll('rect').transition().duration(1000)
-      .attrTween('x', (d: { x: number }) => {
-        return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
-      })
-      .attrTween('width', (d: { x: number }) => {
-        return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
-      })
-      ;
-  }
+
   clicked(DA: { x: number }, i: number) {
     d3.select(this.mainElement.nativeElement).selectAll('#remove').nodes().forEach(d => {
       d3.select((d as SVGRectElement).parentNode).remove();
@@ -85,6 +62,6 @@ export class ProperComponent implements OnInit, AfterViewInit {
         return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
       });
     (BARS.nodes()[i] as SVGRectElement)
-      .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'red'));
+      .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'orange'));
   }
 }
