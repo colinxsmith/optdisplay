@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, OnChanges, SimpleChanges, ViewEncapsulation, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 @Component({
@@ -7,8 +7,8 @@ import * as d3 from 'd3';
   styleUrls: ['./proper.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ProperComponent implements OnInit, OnChanges {
-  @Input() DATA: { x: number }[];
+export class ProperComponent implements OnInit, AfterViewInit {
+  DATA: { x: number }[];
   animateArray: number[] = Array(100);
   w: number;
   h: number;
@@ -27,24 +27,17 @@ export class ProperComponent implements OnInit, OnChanges {
       this.DATA.push({ x: ((i + 1) - 5.5) * ((i + 1) - 4.5) * ((i + 1) - 3.5) });
     }
     this.picture();
-    /*    this.DATA = [];
-        for (let i = 0; i < 10; ++i) {
-          this.DATA.push({ x: (-(i + 1) + 5.5) * (-(i + 1) + 4.5) * (-(i + 1) + 3.5) });
-        }*/
   }
-  ngOnChanges(ch: SimpleChanges) {
-    console.log(ch);
-    this.picture();
-    const test = d3.select(this.mainElement.nativeElement).selectAll('rect');
-    console.log(test);
+  ngAfterViewInit() {// Add animations to the proper Angular chart
+    const test = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
     if (test !== undefined) {
       test.transition().duration(1000)
-        .attrTween('x', (d: { x: number }) => {
-          console.log(d);
+        .attrTween('x', (dd, i) => {
+          const d = this.DATA[i];
           return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
         })
-        .attrTween('width', (d: { x: number }) => {
-          console.log(d);
+        .attrTween('width', (dd, i) => {
+          const d = this.DATA[i];
           return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
         })
         ;
