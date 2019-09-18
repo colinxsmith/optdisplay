@@ -35,13 +35,16 @@ export class ProperComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {// Add animations to the proper Angular chart
     const test = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
     if (test !== undefined) {
+      test.data(this.DATA);
       test.transition().duration(1000)
-        .attrTween('x', (dd, i) => {
-          const d = this.DATA[i];
+        .attrTween('x', (d: {
+          x: number;
+        }) => {
           return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
         })
-        .attrTween('width', (dd, i) => {
-          const d = this.DATA[i];
+        .attrTween('width', (d: {
+          x: number;
+        }) => {
           return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
         })
         ;
@@ -54,13 +57,16 @@ export class ProperComponent implements OnInit, AfterViewInit {
     });
     const BARS: d3.Selection<SVGRectElement, { x: number }, d3.BaseType, unknown>
       = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
+    BARS.data(this.DATA);
     d3.select((BARS.nodes()[i] as SVGRectElement)).transition().duration(1000)
-      .attrTween('x', () => {
-        const d = DA;
+      .attrTween('x', (d: {
+        x: number;
+      }) => {
         return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
       })
-      .attrTween('width', () => {
-        const d = DA;
+      .attrTween('width', (d: {
+        x: number;
+      }) => {
         return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
       });
     (BARS.nodes()[i] as SVGRectElement)
