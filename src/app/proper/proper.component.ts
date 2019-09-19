@@ -9,7 +9,6 @@ import * as d3 from 'd3';
 })
 export class ProperComponent implements OnInit, AfterViewInit {
   DATA: { x: number }[];
-  animateArray: number[] = Array(100);
   w: number;
   h: number;
   scaleX: d3.ScaleLinear<number, number>;
@@ -18,9 +17,6 @@ export class ProperComponent implements OnInit, AfterViewInit {
   }, d3.BaseType, unknown>;
   constructor(private mainElement: ElementRef) { }
   ngOnInit() {
-    for (let i = 0; i < this.animateArray.length; ++i) {
-      this.animateArray[i] = i / (this.animateArray.length - 1);
-    }
     console.log('init');
     this.DATA = [];
     for (let i = 0; i < 100; ++i) {
@@ -30,13 +26,15 @@ export class ProperComponent implements OnInit, AfterViewInit {
       +d3.select(this.mainElement.nativeElement).select('#proper').attr('width'));
     this.h = Math.max(+d3.select(this.mainElement.nativeElement).select('#proper').attr('height'),
       this.mainElement.nativeElement.offsetHeight);
-    this.scaleX = d3.scaleLinear().domain([d3.min(this.DATA.map(d => d.x)), d3.max(this.DATA.map(d => d.x))]).range([0, this.w]);
+    this.scaleX = d3.scaleLinear().domain([d3.min(this.DATA.map(d => -Math.abs(d.x))),
+    d3.max(this.DATA.map(d => Math.abs(d.x)))]).range([0, this.w]);
   }
   ngAfterViewInit() {// Add animations to the proper Angular chart
-    const test = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
-    if (test !== undefined) {
-      test.data(this.DATA);
-      test.transition().duration(1000)
+    console.log('after view init');
+    const BARS = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
+    if (BARS !== undefined) {
+      BARS.data(this.DATA);
+      BARS.transition().duration(1000)
         .attrTween('x', (d: {
           x: number;
         }) => {
@@ -49,9 +47,21 @@ export class ProperComponent implements OnInit, AfterViewInit {
         })
         ;
     }
+    const TEXT = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('text');
+    TEXT.data(this.DATA);
+    TEXT
+      .attr('x', 0)
+      .attr('y', 0)
+      .text((d, i) => `Text ${i}`)
+      .attr('transform', (d: any, i) => `translate(${this.scaleX(d.x) + 100},${i * this.h / this.DATA.length}) rotate(90)`)
+      .transition().duration(1000)
+      .attr('transform', (d: any, i) => `translate(${this.scaleX(d.x) - 10},${i * this.h / this.DATA.length}) rotate(-45)`)
+      ;
   }
 
   clicked(DA: { x: number }, i: number) {
+    console.log('clicked', i);
+    this.DATA[i].x *= -1;
     d3.select(this.mainElement.nativeElement).selectAll('#remove').nodes().forEach(d => {
       d3.select((d as SVGRectElement).parentNode).remove();
     });

@@ -3,7 +3,8 @@ svg.bars {
 }
 
 svg.new {
-    fill: green;
+    fill:brown;
+    font-size:12px;
 }
 
 svg.new rect {
