@@ -53,9 +53,9 @@ export class ProperComponent implements OnInit, AfterViewInit {
       .attr('x', 0)
       .attr('y', 0)
       .text((d, i) => `Text ${i}`)
-      .attr('transform', (d: any, i) => `translate(${this.scaleX(d.x) + 100},${i * this.h / this.DATA.length}) rotate(90)`)
+      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(d.x) + 100},${i * this.h / this.DATA.length}) rotate(90)`)
       .transition().duration(1000)
-      .attr('transform', (d: any, i) => `translate(${this.scaleX(d.x) - 10},${i * this.h / this.DATA.length}) rotate(-45)`)
+      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(d.x) - 10},${i * this.h / this.DATA.length}) rotate(-45)`)
       ;
   }
 
