@@ -5,6 +5,7 @@ svg.bars {
 svg.new {
     fill:brown;
     font-size:12px;
+    text-anchor: end;
 }
 
 svg.new rect {

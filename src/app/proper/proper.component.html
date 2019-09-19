@@ -2,6 +2,6 @@
     <g *ngFor="let d of DATA; let i=index" (click)=clicked(d,i)>
         <rect  [attr.class]="d.x > 0 ? 'plus':'minus'" [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)" [attr.width]="(d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0))" 
         [attr.y]="i*h/DATA.length" [attr.height]="h/DATA.length"></rect>
-        <text [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)" [attr.y]="i*h/DATA.length">Test</text>
+        <text [attr.x]="10" [attr.y]="10">Test Initial</text>
     </g>
 </svg>

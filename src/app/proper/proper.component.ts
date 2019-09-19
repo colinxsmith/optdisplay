@@ -19,8 +19,9 @@ export class ProperComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     console.log('init');
     this.DATA = [];
-    for (let i = 0; i < 100; ++i) {
-      this.DATA.push({ x: ((i + 1) - 50.5) * ((i + 1) - 40.5) * ((i + 1) - 30.5) });
+    const dLen = 10;
+    for (let i = 0; i < dLen; ++i) {
+      this.DATA.push({ x: ((i + 1) - 0.505 * dLen) * ((i + 1) - 0.405 * dLen) * ((i + 1) - 0.305 * dLen) });
     }
     this.w = Math.max(this.mainElement.nativeElement.offsetWidth,
       +d3.select(this.mainElement.nativeElement).select('#proper').attr('width'));
@@ -31,6 +32,23 @@ export class ProperComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {// Add animations to the proper Angular chart
     console.log('after view init');
+    this.update();
+  }
+
+  clicked(DA: { x: number }, i: number) {
+    console.log('clicked', i);
+    this.DATA[i].x = -this.DATA[i].x;
+    d3.select(this.mainElement.nativeElement).selectAll('#remove').nodes().forEach(d => {
+      d3.select((d as SVGRectElement).parentNode).remove();
+    });
+    const BARS: d3.Selection<SVGRectElement, { x: number }, d3.BaseType, unknown>
+      = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
+    BARS.data(this.DATA);
+    (BARS.nodes()[i] as SVGRectElement)
+      .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'orange'));
+    this.update();
+  }
+  update() {
     const BARS = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
     if (BARS !== undefined) {
       BARS.data(this.DATA);
@@ -50,36 +68,13 @@ export class ProperComponent implements OnInit, AfterViewInit {
     const TEXT = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('text');
     TEXT.data(this.DATA);
     TEXT
+      .text((d, i) => `Text ${i + 1}`)
       .attr('x', 0)
       .attr('y', 0)
-      .text((d, i) => `Text ${i}`)
-      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(d.x) + 100},${i * this.h / this.DATA.length}) rotate(90)`)
+      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(d.x)},${i * this.h / this.DATA.length}) rotate(90)`)
       .transition().duration(1000)
-      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(d.x) - 10},${i * this.h / this.DATA.length}) rotate(-45)`)
+      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(-d.x * 0.8)},
+      ${(i + 0.5) * this.h / this.DATA.length}) rotate(-45)`)
       ;
-  }
-
-  clicked(DA: { x: number }, i: number) {
-    console.log('clicked', i);
-    this.DATA[i].x *= -1;
-    d3.select(this.mainElement.nativeElement).selectAll('#remove').nodes().forEach(d => {
-      d3.select((d as SVGRectElement).parentNode).remove();
-    });
-    const BARS: d3.Selection<SVGRectElement, { x: number }, d3.BaseType, unknown>
-      = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
-    BARS.data(this.DATA);
-    d3.select((BARS.nodes()[i] as SVGRectElement)).transition().duration(1000)
-      .attrTween('x', (d: {
-        x: number;
-      }) => {
-        return (t: number) => d.x > 0 ? '' + this.scaleX(0) : '' + this.scaleX(t * d.x);
-      })
-      .attrTween('width', (d: {
-        x: number;
-      }) => {
-        return (t: number) => d.x < 0 ? '' + (this.scaleX(0) - this.scaleX(t * d.x)) : '' + (this.scaleX(t * d.x) - this.scaleX(0));
-      });
-    (BARS.nodes()[i] as SVGRectElement)
-      .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'orange'));
   }
 }
