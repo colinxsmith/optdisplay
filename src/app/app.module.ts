@@ -11,11 +11,13 @@ import { EtlComponent } from './etl/etl.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { NewgaugeComponent } from './newgauge/newgauge.component';
 import { ProperComponent } from './proper/proper.component';
+import { BulktradeComponent } from './bulktrade/bulktrade.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
   { path: 'proper', component: ProperComponent },
   { path: 'gauge', component: NewgaugeComponent },
+  { path: 'bulk', component: BulktradeComponent },
   { path: '', redirectTo: '/etl', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },
 ];
@@ -27,7 +29,8 @@ const appRoutes: Routes = [
     EtlComponent,
     PageNotFoundComponent,
     NewgaugeComponent,
-    ProperComponent
+    ProperComponent,
+    BulktradeComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(

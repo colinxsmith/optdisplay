@@ -3,9 +3,9 @@ svg.bars {
 }
 
 svg.new {
-    fill:brown;
-    font-size:12px;
-    text-anchor: end;
+    fill:cornflowerblue;
+    font-size:21px;
+    text-anchor: middle;
 }
 
 svg.new rect {

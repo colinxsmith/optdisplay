@@ -3,14 +3,41 @@ import { DataService } from '../data.service';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-proper',
-  templateUrl: './proper.component.html',
-  styleUrls: ['./proper.component.css'],
+  template: `<div id="place" style="margin-left:400px">
+  <svg id="proper" class="new" width="800" height="900">
+  <g *ngFor="let d of DATA; let i=index" (click)=clicked(d,i)>
+      <rect  [attr.class]="d.x > 0 ? 'plus':'minus'" [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)"
+      [attr.width]="(d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0))"
+      [attr.y]="i*h/DATA.length+gap" [attr.height]="h/DATA.length*(1-2*gap)"></rect>
+      <text [attr.x]="w/2" [attr.y]="(i+0.5)*h/DATA.length">Test Initial</text>
+  </g>
+</svg></div>`,
+  styles: [`svg.bars {
+    fill: red;
+}
+
+svg.new {
+    fill:cornflowerblue;
+    font-size:21px;
+    text-anchor: middle;
+}
+
+svg.new rect {
+    fill: cyan;
+}
+svg.new rect.plus{
+    fill: lightgreen;
+}
+svg.new rect.minus{
+    fill: red;
+}`],
   encapsulation: ViewEncapsulation.None
 })
 export class ProperComponent implements OnInit, AfterViewInit {
   DATA: { x: number }[];
   w: number;
   h: number;
+  gap = 0.02;
   scaleX: d3.ScaleLinear<number, number>;
   BARS: d3.Selection<SVGGElement, {
     x: number;
@@ -32,20 +59,21 @@ export class ProperComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {// Add animations to the proper Angular chart
     console.log('after view init');
+/*    const DIV = (d3.select(this.mainElement.nativeElement).select('#place').node() as HTMLDivElement);
+    DIV.scrollTop = (this.h / 4);
+    DIV.scrollLeft = (this.w / 4);*/
     this.update();
   }
 
   clicked(DA: { x: number }, i: number) {
     console.log('clicked', i);
     this.DATA[i].x = -this.DATA[i].x;
-    d3.select(this.mainElement.nativeElement).selectAll('#remove').nodes().forEach(d => {
-      d3.select((d as SVGRectElement).parentNode).remove();
-    });
-    const BARS: d3.Selection<SVGRectElement, { x: number }, d3.BaseType, unknown>
-      = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
-    BARS.data(this.DATA);
-    (BARS.nodes()[i] as SVGRectElement)
-      .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'orange'));
+    const BARS = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('rect');
+    if (BARS !== undefined) {
+      BARS.data(this.DATA);
+      (BARS.nodes()[i] as SVGRectElement)
+        .setAttribute('style', 'fill:' + (DA.x > 0 ? 'blue' : 'orange'));
+    }
     this.update();
   }
   update() {
@@ -66,15 +94,20 @@ export class ProperComponent implements OnInit, AfterViewInit {
         ;
     }
     const TEXT = d3.select(this.mainElement.nativeElement).select('#proper').selectAll('text');
-    TEXT.data(this.DATA);
-    TEXT
-      .text((d, i) => `Text ${i + 1}`)
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(d.x)},${i * this.h / this.DATA.length}) rotate(90)`)
-      .transition().duration(1000)
-      .attr('transform', (d: { x: number }, i) => `translate(${this.scaleX(-d.x * 0.8)},
-      ${(i + 0.5) * this.h / this.DATA.length}) rotate(-45)`)
-      ;
+    if (TEXT !== undefined) {
+      TEXT.data(this.DATA);
+      TEXT
+        .transition().duration(1000)
+        .tween('transform', (d: { x: number }, i, j) => t => {
+          const here = d3.select(j[i] as SVGTextElement);
+          here
+            .text(() => `Text ${d3.format('0.3')(i + t)}`)
+            .attr('x', 1000 * (1 - t))
+            .attr('y', 1000 * (1 - t))
+            .attr('transform', `translate(${this.scaleX(-(2 * t - 1) * d.x * 0.8)},
+          ${(i + 0.5) * (1 + t) / 2 * this.h / this.DATA.length}) rotate(${90 * (1 - t) + t * -45})`);
+        })
+        ;
+    }
   }
 }
