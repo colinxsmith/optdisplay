@@ -1,0 +1,27 @@
+#BULK path.O {
+    fill: red;
+}
+
+#BULK path.N {
+    fill: green;
+}
+
+#BULK path.A {
+    fill: yellow;
+}
+
+#BULK text {
+    font-size: 80px;
+    fill: grey;
+    text-anchor: middle;
+}
+
+.tooltip {
+    background: black;
+    color: white;
+    position: absolute;
+    text-align: center;
+    font-size: 12px;
+    pointer-events: none;
+    overflow: auto;
+}

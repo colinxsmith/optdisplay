@@ -1,23 +1,58 @@
-import { Component, OnInit, ElementRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit, OnChanges, Input, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
-
+import { easeBounce } from 'd3';
 @Component({
   selector: 'app-bulktrade',
   template: `<svg id="BULK" width="800" height="800">
   <g  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
-  <path [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)">
+  <path [attr.class]="d.outlierStatusType.substr(0,1)"
+  [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)">
   </path>
+  <text [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
   </g>
+  <text [attr.transform]="translateHack(side/2,side/2+320)">{{DATA.label}}</text>
   </svg>`,
-  styleUrls: ['./bulktrade.component.css'],
+  styles: [`#BULK path.O {
+    fill: red;
+}
+
+#BULK path.N {
+    fill: green;
+}
+
+#BULK path.A {
+    fill: yellow;
+}
+
+#BULK text {
+    font-size: 80px;
+    fill: grey;
+    text-anchor: middle;
+}
+.tooltip {
+  background: black;
+  color: white;
+  position: absolute;
+  text-align: center;
+  font-size: 12px;
+  pointer-events: none;
+  overflow: auto;
+}
+`],
   encapsulation: ViewEncapsulation.None
 })
-export class BulktradeComponent implements OnInit {
+export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
+  toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
+  width = 800;
+  height = 800;
   w: number;
   h: number;
   side: number;
+  fontSize: number;
+  id: string;
+  rimAnagle = 0.1 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
-  DATA = {
+  @Input() DATA = {
     id: 1,
     type: 'stockLevelTotalRisk',
     label: 'RISK',
@@ -30,18 +65,26 @@ export class BulktradeComponent implements OnInit {
       },
       {
         id: 2,
-        value: 1,
+        value: 27,
         outlierStatusType: 'ALMOST OUTLIER'
       },
       {
         id: 3,
-        value: 1,
+        value: 10,
         outlierStatusType: 'OUTLIER'
       }
     ]
   };
   constructor(private element: ElementRef) { }
-
+  ngOnChanges(ch: SimpleChanges) {
+    this.update();
+  }
+  ngAfterViewInit() {
+    this.id = this.element.nativeElement;
+    this.fontSize = +d3.select(this.id).select('text').style('font-size').replace('px', '');
+    console.log(this.fontSize);
+    this.update();
+  }
   ngOnInit() {
     this.w = Math.max(this.element.nativeElement.offsetWidth, +d3.select(this.element.nativeElement).select('#BULK').attr('width'));
     this.h = Math.max(this.element.nativeElement.offsetHeight, +d3.select(this.element.nativeElement).select('#BULK').attr('height'));
@@ -51,7 +94,7 @@ export class BulktradeComponent implements OnInit {
     this.DATA.monitorFlagCategory.forEach(d => {
       totalV += d.value;
     });
-    this.scaleArc.domain([0, totalV]).range([0, 2 * Math.PI]);
+    this.scaleArc.domain([0, totalV]).range([Math.PI + this.rimAnagle, 3 * Math.PI - this.rimAnagle]);
 
   }
   arcPath(i: number) {
@@ -60,14 +103,64 @@ export class BulktradeComponent implements OnInit {
     for (let ii = 0; ii < i; ++ii) {
       sofar += this.DATA.monitorFlagCategory[ii].value;
     }
+    const ARC = d3.arc().cornerRadius(10);
     console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
     console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
-    return d3.arc()({
+    return ARC({
       innerRadius: this.side / 2 * 0.7, outerRadius: this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
-      , endAngle: this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 1
+      , endAngle: this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 0.01
+    });
+  }
+  arcPathanim(i: number, t: number) {
+    console.log(i, t);
+    let sofar = 0;
+    for (let ii = 0; ii < i; ++ii) {
+      sofar += this.DATA.monitorFlagCategory[ii].value;
+    }
+    const ARC = d3.arc().cornerRadius(10);
+    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
+    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
+    return ARC({
+      innerRadius: this.side / 2 * 0.7 * t, outerRadius: t * this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
+      , endAngle: t * t * this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 1 - t * t + 0.01
     });
   }
   translateHack(w: number, h: number) {
     return `translate(${w},${h})`;
+  }
+  update() {
+    this.w = this.width;
+    this.h = this.height;
+    this.side = Math.min(this.w, this.h);
+    this.fontSize = this.side / 10;
+    d3.select(this.id).select('svg')
+      .attr('width', this.width)
+      .attr('height', this.height);
+    const PATHS = d3.select(this.id).selectAll('path');
+    PATHS.data(this.DATA.monitorFlagCategory);
+    PATHS.transition().duration(2000).tween('ppp', (d, i, j) => t => {
+      const HERE = d3.select(j[i] as SVGPathElement);
+      HERE.attr('d', this.arcPathanim(i, t));
+      HERE.on('mousemove', (dd: {
+        id: number;
+        value: number;
+        outlierStatusType: string;
+      }) => {
+        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+          .html(`${this.DATA.label}<br>${dd.outlierStatusType}<br>${dd.value}`);
+      });
+      HERE.on('mouseout', () => {
+        this.toolTipObj.attr('style', `display:none`)
+          .html('');
+      });
+    });
+    const TEXTS = d3.select(this.id).selectAll('text');
+    TEXTS.transition().duration(2000)
+      .ease(easeBounce)
+      .tween('ppp', (d, i, j) => t => {
+        const HERE = d3.select(j[i] as SVGTextElement);
+        HERE.style('font-size', t * this.fontSize + 'px');
+        HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * this.fontSize * 2 * (i - 1)})`);
+      });
   }
 }
