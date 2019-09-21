@@ -43,12 +43,12 @@ import { easeBounce } from 'd3';
 })
 export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
   toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
-  width = 800;
-  height = 800;
+  @Input() width = 800;
+  @Input() height = 800;
   w: number;
   h: number;
-  side: number;
-  fontSize: number;
+  @Input() side: number;
+  @Input() fontSize: number;
   id: string;
   rimAnagle = 0.1 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
@@ -77,6 +77,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
   };
   constructor(private element: ElementRef) { }
   ngOnChanges(ch: SimpleChanges) {
+    console.log('onchanges', ch);
     this.update();
   }
   ngAfterViewInit() {
@@ -98,28 +99,28 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
   arcPath(i: number) {
-    console.log(i);
+//    console.log(i);
     let sofar = 0;
     for (let ii = 0; ii < i; ++ii) {
       sofar += this.DATA.monitorFlagCategory[ii].value;
     }
     const ARC = d3.arc().cornerRadius(10);
-    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
-    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
+//    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
+//    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
     return ARC({
       innerRadius: this.side / 2 * 0.7, outerRadius: this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
       , endAngle: this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 0.01
     });
   }
   arcPathanim(i: number, t: number) {
-    console.log(i, t);
+//    console.log(i, t);
     let sofar = 0;
     for (let ii = 0; ii < i; ++ii) {
       sofar += this.DATA.monitorFlagCategory[ii].value;
     }
     const ARC = d3.arc().cornerRadius(10);
-    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
-    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
+//    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
+//    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
     return ARC({
       innerRadius: this.side / 2 * 0.7 * t, outerRadius: t * this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
       , endAngle: t * t * this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 1 - t * t + 0.01
