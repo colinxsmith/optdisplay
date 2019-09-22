@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, ElementRef } from '@angular/core';
 import { BulktradeComponent } from '../bulktrade/bulktrade.component';
-import { temporaryDeclaration } from '@angular/compiler/src/compiler_util/expression_converter';
 @Component({
   selector: 'app-bulktest',
   templateUrl: './bulktest.component.html',

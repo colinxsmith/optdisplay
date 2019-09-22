@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit, Input } from '@angular/core';
 import * as d3 from 'd3';
-import { easeBounce } from 'd3';
 @Component({
   selector: 'app-bulktrade',
   template: `<svg id="BULK" width="800" height="800">
@@ -15,15 +14,12 @@ import { easeBounce } from 'd3';
   styles: [`#BULK path.O {
     fill: red;
 }
-
 #BULK path.N {
     fill: green;
 }
-
 #BULK path.A {
     fill: yellow;
 }
-
 #BULK text {
     font-size: 80px;
     fill: grey;
@@ -42,15 +38,15 @@ import { easeBounce } from 'd3';
   encapsulation: ViewEncapsulation.None
 })
 export class BulktradeComponent implements OnInit, AfterViewInit {
+  toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
+  id: string;
+  rimAnagle = 0.08 * Math.PI * 2;
+  scaleArc = d3.scaleLinear();
   @Input() width = 800;
   @Input() height = 800;
-  toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
   @Input() animate = true;
+  @Input() durationTime = 2000;
   @Input() side: number;
-  @Input() fontSize: number;
-  id: string;
-  rimAnagle = 0.1 * Math.PI * 2;
-  scaleArc = d3.scaleLinear();
   @Input() DATA = {
     id: 1,
     type: 'stockLevelTotalRisk',
@@ -108,8 +104,8 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
     return `translate(${w},${h})`;
   }
   update() {
+    const fontSize = this.side / 10;
     this.side = Math.min(this.width, this.height);
-    this.fontSize = this.side / 10;
     d3.select(this.id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
@@ -117,7 +113,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
     const TEXTS = d3.select(this.id).selectAll('text');
     PATHS.data(this.DATA.monitorFlagCategory);
     if (this.animate) {
-      PATHS.transition().duration(2000).tween('ppp', (d, i, j) => t => {
+      PATHS.transition().duration(this.durationTime).tween('ppp', (d, i, j) => t => {
         const HERE = d3.select(j[i] as SVGPathElement);
         HERE.attr('d', this.arcPath(i, t));
         HERE.on('mousemove', (dd: {
@@ -133,12 +129,12 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
             .html('');
         });
       });
-      TEXTS.transition().duration(2000)
-        .ease(easeBounce)
+      TEXTS.transition().duration(this.durationTime)
+        .ease(d3.easeBounce)
         .tween('ppp', (d, i, j) => t => {
           const HERE = d3.select(j[i] as SVGTextElement);
-          HERE.style('font-size', t * this.fontSize + 'px');
-          HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * this.fontSize * 2 * (i - 1)})`);
+          HERE.style('font-size', t * fontSize + 'px');
+          HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * fontSize * 2 * (i - 1)})`);
         });
     } else {
       PATHS
@@ -157,9 +153,8 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
             .html('');
         });
       TEXTS
-        .style('font-size', this.fontSize + 'px')
-        .attr('transform', (d, i) => `translate(${this.side / 2},${this.side / 2 + this.fontSize * 2 * (i - 1)})`);
+        .style('font-size', fontSize + 'px')
+        .attr('transform', (d, i) => `translate(${this.side / 2},${this.side / 2 + fontSize * 2 * (i - 1)})`);
     }
   }
 }
-
