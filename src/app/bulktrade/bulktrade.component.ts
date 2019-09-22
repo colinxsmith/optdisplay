@@ -42,11 +42,10 @@ import { easeBounce } from 'd3';
   encapsulation: ViewEncapsulation.None
 })
 export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
-  toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
   @Input() width = 800;
   @Input() height = 800;
-  w: number;
-  h: number;
+  toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
+  @Input() animate = true;
   @Input() side: number;
   @Input() fontSize: number;
   id: string;
@@ -77,20 +76,16 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
   };
   constructor(private element: ElementRef) { }
   ngOnChanges(ch: SimpleChanges) {
-    console.log('onchanges', ch);
-    this.update();
+    console.log('onchanges', this.DATA);
   }
   ngAfterViewInit() {
+    console.log('after view init', this.DATA);
     this.id = this.element.nativeElement;
-    this.fontSize = +d3.select(this.id).select('text').style('font-size').replace('px', '');
-    console.log(this.fontSize);
     this.update();
   }
   ngOnInit() {
-    this.w = Math.max(this.element.nativeElement.offsetWidth, +d3.select(this.element.nativeElement).select('#BULK').attr('width'));
-    this.h = Math.max(this.element.nativeElement.offsetHeight, +d3.select(this.element.nativeElement).select('#BULK').attr('height'));
-    this.side = Math.min(this.w, this.h);
-    console.log(this.w, this.h);
+    console.log('on init', this.DATA);
+    this.side = Math.min(this.width, this.height);
     let totalV = 0;
     this.DATA.monitorFlagCategory.forEach(d => {
       totalV += d.value;
@@ -99,28 +94,28 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
   arcPath(i: number) {
-//    console.log(i);
+    //    console.log(i);
     let sofar = 0;
     for (let ii = 0; ii < i; ++ii) {
       sofar += this.DATA.monitorFlagCategory[ii].value;
     }
     const ARC = d3.arc().cornerRadius(10);
-//    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
-//    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
+    //    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
+    //    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
     return ARC({
       innerRadius: this.side / 2 * 0.7, outerRadius: this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
       , endAngle: this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 0.01
     });
   }
   arcPathanim(i: number, t: number) {
-//    console.log(i, t);
+    //    console.log(i, t);
     let sofar = 0;
     for (let ii = 0; ii < i; ++ii) {
       sofar += this.DATA.monitorFlagCategory[ii].value;
     }
     const ARC = d3.arc().cornerRadius(10);
-//    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
-//    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
+    //    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
+    //    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
     return ARC({
       innerRadius: this.side / 2 * 0.7 * t, outerRadius: t * this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
       , endAngle: t * t * this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 1 - t * t + 0.01
@@ -130,38 +125,58 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
     return `translate(${w},${h})`;
   }
   update() {
-    this.w = this.width;
-    this.h = this.height;
-    this.side = Math.min(this.w, this.h);
+    this.side = Math.min(this.width, this.height);
     this.fontSize = this.side / 10;
     d3.select(this.id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
     const PATHS = d3.select(this.id).selectAll('path');
+    const TEXTS = d3.select(this.id).selectAll('text');
     PATHS.data(this.DATA.monitorFlagCategory);
-    PATHS.transition().duration(2000).tween('ppp', (d, i, j) => t => {
-      const HERE = d3.select(j[i] as SVGPathElement);
-      HERE.attr('d', this.arcPathanim(i, t));
-      HERE.on('mousemove', (dd: {
+    if (this.animate) {
+      PATHS.transition().duration(2000).tween('ppp', (d, i, j) => t => {
+        const HERE = d3.select(j[i] as SVGPathElement);
+        HERE.attr('d', this.arcPathanim(i, t));
+        HERE.on('mousemove', (dd: {
+          id: number;
+          value: number;
+          outlierStatusType: string;
+        }) => {
+          this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+            .html(`${this.DATA.label}<br>${dd.outlierStatusType}<br>${dd.value}`);
+        });
+        HERE.on('mouseout', () => {
+          this.toolTipObj.attr('style', `display:none`)
+            .html('');
+        });
+      });
+      TEXTS.transition().duration(2000)
+        .ease(easeBounce)
+        .tween('ppp', (d, i, j) => t => {
+          const HERE = d3.select(j[i] as SVGTextElement);
+          HERE.style('font-size', t * this.fontSize + 'px');
+          HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * this.fontSize * 2 * (i - 1)})`);
+        });
+    } else {
+      PATHS
+        .attr('transform', `translate(${this.side / 2},${this.side / 2})`)
+        .attr('d', (d, i) => this.arcPath(i));
+      PATHS.on('mouseover', (d: {
         id: number;
         value: number;
         outlierStatusType: string;
       }) => {
         this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-          .html(`${this.DATA.label}<br>${dd.outlierStatusType}<br>${dd.value}`);
-      });
-      HERE.on('mouseout', () => {
-        this.toolTipObj.attr('style', `display:none`)
-          .html('');
-      });
-    });
-    const TEXTS = d3.select(this.id).selectAll('text');
-    TEXTS.transition().duration(2000)
-      .ease(easeBounce)
-      .tween('ppp', (d, i, j) => t => {
-        const HERE = d3.select(j[i] as SVGTextElement);
-        HERE.style('font-size', t * this.fontSize + 'px');
-        HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * this.fontSize * 2 * (i - 1)})`);
-      });
+          .html(`${this.DATA.label}<br>${d.outlierStatusType}<br>${d.value}`);
+      })
+        .on('mouseout', () => {
+          this.toolTipObj.attr('style', `display:none`)
+            .html('');
+        });
+      TEXTS
+        .style('font-size', this.fontSize + 'px')
+        .attr('transform', (d, i) => `translate(${this.side / 2},${this.side / 2 + this.fontSize * 2 * (i - 1)})`);
+    }
   }
 }
+

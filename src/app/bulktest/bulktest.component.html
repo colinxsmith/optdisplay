@@ -1,2 +1,6 @@
-<app-bulktrade [DATA]="data" [width]="200" [height]="150"></app-bulktrade>
-<app-bulktrade [DATA]="data" [width]="200" [height]="250"></app-bulktrade>
+<div style="display: inline-flex">
+    <div *ngFor="let flagRow of DATA.preTradeMonitorFlags.monitorFlagRow">
+        <app-bulktrade [animate]="true" [DATA]="flagRow" [width]="200" [height]="150"></app-bulktrade>
+    </div>
+    <app-bulktrade [animate]="false" [DATA]="data" [width]="200" [height]="250"></app-bulktrade>
+</div>
