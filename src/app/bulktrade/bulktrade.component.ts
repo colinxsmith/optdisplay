@@ -129,12 +129,15 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
             .html('');
         });
       });
-      TEXTS.transition().duration(this.durationTime)
-        .ease(d3.easeBounce)
+      TEXTS.transition().duration(this.durationTime * 2)
         .tween('ppp', (d, i, j) => t => {
           const HERE = d3.select(j[i] as SVGTextElement);
           HERE.style('font-size', t * fontSize + 'px');
-          HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * fontSize * 2 * (i - 1)})`);
+          if (i <= 2) {
+            HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * fontSize * 2 * (i - 1)})`);
+          } else {
+            HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 * t + t * fontSize * 2 * (i - 1)}) rotate(${360 * t})`);
+          }
         });
     } else {
       PATHS
