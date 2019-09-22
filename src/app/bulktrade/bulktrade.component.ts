@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit, OnChanges, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 import { easeBounce } from 'd3';
 @Component({
@@ -41,7 +41,7 @@ import { easeBounce } from 'd3';
 `],
   encapsulation: ViewEncapsulation.None
 })
-export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
+export class BulktradeComponent implements OnInit, AfterViewInit {
   @Input() width = 800;
   @Input() height = 800;
   toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
@@ -75,9 +75,6 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
     ]
   };
   constructor(private element: ElementRef) { }
-  ngOnChanges(ch: SimpleChanges) {
-    console.log('onchanges', this.DATA);
-  }
   ngAfterViewInit() {
     console.log('after view init', this.DATA);
     this.id = this.element.nativeElement;
@@ -93,21 +90,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
     this.scaleArc.domain([0, totalV]).range([Math.PI + this.rimAnagle, 3 * Math.PI - this.rimAnagle]);
 
   }
-  arcPath(i: number) {
-    //    console.log(i);
-    let sofar = 0;
-    for (let ii = 0; ii < i; ++ii) {
-      sofar += this.DATA.monitorFlagCategory[ii].value;
-    }
-    const ARC = d3.arc().cornerRadius(10);
-    //    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
-    //    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
-    return ARC({
-      innerRadius: this.side / 2 * 0.7, outerRadius: this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
-      , endAngle: this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 0.01
-    });
-  }
-  arcPathanim(i: number, t: number) {
+  arcPath(i: number, t = 1) {
     //    console.log(i, t);
     let sofar = 0;
     for (let ii = 0; ii < i; ++ii) {
@@ -136,7 +119,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.animate) {
       PATHS.transition().duration(2000).tween('ppp', (d, i, j) => t => {
         const HERE = d3.select(j[i] as SVGPathElement);
-        HERE.attr('d', this.arcPathanim(i, t));
+        HERE.attr('d', this.arcPath(i, t));
         HERE.on('mousemove', (dd: {
           id: number;
           value: number;
