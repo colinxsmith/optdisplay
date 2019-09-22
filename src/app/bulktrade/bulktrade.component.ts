@@ -39,7 +39,6 @@ import * as d3 from 'd3';
 })
 export class BulktradeComponent implements OnInit, AfterViewInit {
   toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
-  id: string;
   rimAnagle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   @Input() width = 800;
@@ -73,18 +72,16 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
   constructor(private element: ElementRef) { }
   ngAfterViewInit() {
     console.log('after view init', this.DATA);
-    this.id = this.element.nativeElement;
     this.update();
   }
   ngOnInit() {
     console.log('on init', this.DATA);
-    this.side = Math.min(this.width, this.height);
+    this.side = Math.min(this.width, this.height); // Needed in arcPath
     let totalV = 0;
     this.DATA.monitorFlagCategory.forEach(d => {
       totalV += d.value;
     });
     this.scaleArc.domain([0, totalV]).range([Math.PI + this.rimAnagle, 3 * Math.PI - this.rimAnagle]);
-
   }
   arcPath(i: number, t = 1) {
     //    console.log(i, t);
@@ -104,13 +101,13 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
     return `translate(${w},${h})`;
   }
   update() {
-    const fontSize = this.side / 10;
-    this.side = Math.min(this.width, this.height);
-    d3.select(this.id).select('svg')
+    const id = this.element.nativeElement;
+    d3.select(id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
-    const PATHS = d3.select(this.id).selectAll('path');
-    const TEXTS = d3.select(this.id).selectAll('text');
+    const fontSize = this.side / 10;
+    const PATHS = d3.select(id).selectAll('path');
+    const TEXTS = d3.select(id).selectAll('text');
     PATHS.data(this.DATA.monitorFlagCategory);
     if (this.animate) {
       PATHS.transition().duration(this.durationTime).tween('ppp', (d, i, j) => t => {
