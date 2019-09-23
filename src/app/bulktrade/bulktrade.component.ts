@@ -1,8 +1,8 @@
-import { Component, OnInit, ElementRef, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, AfterViewInit, Input, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-bulktrade',
-  template: `<svg id="BULK" width="800" height="800">
+  template: `<svg id="BULK" width="width" height="height">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
   [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)">
@@ -25,7 +25,7 @@ import * as d3 from 'd3';
     fill: grey;
     text-anchor: middle;
 }
-.tooltip {
+g.tooltip1 {
   background: black;
   color: white;
   position: absolute;
@@ -34,10 +34,11 @@ import * as d3 from 'd3';
   pointer-events: none;
   overflow: auto;
 }
-`]
+`],
+  encapsulation: ViewEncapsulation.None
 })
 export class BulktradeComponent implements OnInit, AfterViewInit {
-  toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');
+  toolTipObj: d3.Selection<SVGGElement, unknown, null, undefined>;
   rimAnagle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   @Input() width = 800;
@@ -74,6 +75,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
     this.update();
   }
   ngOnInit() {
+    this.toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
     console.log('on init', this.DATA);
     this.side = Math.min(this.width, this.height); // Needed in arcPath
     let totalV = 0;
