@@ -1,9 +1,9 @@
 <div style="display: inline-flex">
-    <div *ngFor="let flagRow of DATA.preTradeMonitorFlags.monitorFlagRow">
+    <ng-container *ngFor="let flagRow of DATA.preTradeMonitorFlags.monitorFlagRow">
         <app-bulktrade [DATA]="flagRow" [width]="100"></app-bulktrade>
-    </div>
+    </ng-container>
     <app-bulktrade [animate]="false" [DATA]="data" [width]="200" [height]="250"></app-bulktrade>
-    <div *ngFor="let flagRow of DATA.postTradeMonitorFlags.monitorFlagRow">
+    <ng-container *ngFor="let flagRow of DATA.postTradeMonitorFlags.monitorFlagRow">
         <app-bulktrade [durationTime]="1000" [DATA]="flagRow" [width]="100"></app-bulktrade>
-    </div>
+    </ng-container>
 </div>

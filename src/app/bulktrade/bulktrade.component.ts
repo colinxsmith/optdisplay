@@ -1,14 +1,14 @@
-import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, AfterViewInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-bulktrade',
   template: `<svg id="BULK" width="800" height="800">
-  <g  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
+  <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
   [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)">
   </path>
   <text [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
-  </g>
+  </ng-container>
   <text [attr.transform]="translateHack(side/2,side/2+320)">{{DATA.label}}</text>
   </svg>`,
   styles: [`#BULK path.O {
@@ -34,8 +34,7 @@ import * as d3 from 'd3';
   pointer-events: none;
   overflow: auto;
 }
-`],
-  encapsulation: ViewEncapsulation.None
+`]
 })
 export class BulktradeComponent implements OnInit, AfterViewInit {
   toolTipObj = d3.select('body').append('g').attr('class', 'tooltip');

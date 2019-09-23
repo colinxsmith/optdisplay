@@ -1,13 +1,10 @@
-import { Component, OnInit, ViewEncapsulation, ElementRef } from '@angular/core';
-import { BulktradeComponent } from '../bulktrade/bulktrade.component';
+import { Component, OnInit, ElementRef } from '@angular/core';
 @Component({
   selector: 'app-bulktest',
   templateUrl: './bulktest.component.html',
-  styleUrls: ['./bulktest.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./bulktest.component.css']
 })
 export class BulktestComponent implements OnInit {
-  trade: BulktradeComponent;
   data = {
     id: 1,
     type: 'stockLevelTotalRisk',

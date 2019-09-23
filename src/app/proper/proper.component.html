@@ -1,7 +1,10 @@
-<svg id="proper" class="new" width="800" height="900">
-    <g *ngFor="let d of DATA; let i=index" (click)=clicked(d,i)>
-        <rect  [attr.class]="d.x > 0 ? 'plus':'minus'" [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)" [attr.width]="(d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0))" 
-        [attr.y]="i*h/DATA.length" [attr.height]="h/DATA.length"></rect>
-        <text [attr.x]="10" [attr.y]="10">Test Initial</text>
-    </g>
+<div id="place" style="margin-left:400px">
+  <svg id="proper" class="new" width="800" height="900">
+  <ng-container *ngFor="let d of DATA; let i=index" (click)=clicked(d,i)>
+      <rect  [attr.class]="d.x > 0 ? 'plus':'minus'" [attr.x]="d.x > 0 ? scaleX(0) : scaleX(d.x)"
+      [attr.width]="(d.x < 0 ? scaleX(0) - scaleX(d.x) : scaleX(d.x) - scaleX(0))"
+      [attr.y]="i*h/DATA.length+gap" [attr.height]="h/DATA.length*(1-2*gap)"></rect>
+      <text [attr.x]="w/2" [attr.y]="(i+0.5)*h/DATA.length">Test Initial</text>
+  </ng-container>
 </svg>
+</div>
