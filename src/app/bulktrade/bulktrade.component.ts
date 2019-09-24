@@ -148,7 +148,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
       }) => {
         this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
           .html(`${this.DATA.label}<br>${d.outlierStatusType}<br>${d.value}`);
-      })
+      });
        PATHS .on('mouseout', () => {
           this.toolTipObj.attr('style', `display:none`)
             .html('');
