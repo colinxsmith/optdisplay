@@ -1,11 +1,21 @@
-#BULKBAR rect#O {
+#BULKBAR rect.O {
     fill: red;
 }
 
-#BULKBAR rect#N {
+#BULKBAR rect.N {
     fill: green;
 }
 
-#BULKBAR rect#A {
+#BULKBAR rect.A {
     fill: yellow;
+}
+
+g.tooltip1 {
+    background: black;
+    color: white;
+    position: absolute;
+    text-align: center;
+    font-size: 12px;
+    pointer-events: none;
+    overflow: auto;
 }

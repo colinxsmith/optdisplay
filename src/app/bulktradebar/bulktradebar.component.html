@@ -3,17 +3,17 @@
     <rect  [attr.transform]="translateHack(0,yScale(i))"
     [attr.x]="flag.compliant<0?xScale(flag.compliant):xScale(0)"
     [attr.width]="absHack(xScale(flag.compliant)-xScale(0))"
-    [attr.y]="0" id="N"
-    [attr.height]="yScale(1)/3*0.98"></rect>
-    <rect  [attr.transform]="translateHack(0,yScale(i)+yScale(1)/3)"
+    [attr.y]="0" class="N"
+    [attr.height]="yScale(1)/3*groupSpace"></rect>
+    <rect  [attr.transform]="translateHack(0,yScale(i)+yScale(1)/3*barSpace)"
     [attr.x]="flag.almostOutlier<0?xScale(flag.almostOutlier):xScale(0)"
     [attr.width]="absHack(xScale(flag.almostOutlier)-xScale(0))"
-    [attr.y]="0" id="A"
-    [attr.height]="yScale(1)/3*0.98"></rect>
-    <rect  [attr.transform]="translateHack(0,yScale(i)+2*yScale(1)/3)"
+    [attr.y]="0" class="A"
+    [attr.height]="yScale(1)/3*groupSpace"></rect>
+    <rect  [attr.transform]="translateHack(0,yScale(i)+2*yScale(1)/3*barSpace)"
     [attr.x]="flag.outlier<0?xScale(flag.outlier):xScale(0)"
     [attr.width]="absHack(xScale(flag.outlier)-xScale(0))"
-    [attr.y]="0" id="O"
-    [attr.height]="yScale(1)/3*0.98"></rect>
+    [attr.y]="0" class="O"
+    [attr.height]="yScale(1)/3*groupSpace"></rect>
   </g>
 </svg>
