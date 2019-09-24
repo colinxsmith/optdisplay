@@ -265,7 +265,6 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
     this.yScale.domain([0, this.counter.length]).range([0, this.height]);
   }
   translateHack(w: number, h: number) {
-    console.log(w, h);
     return `translate(${w},${h})`;
   }
   update() {

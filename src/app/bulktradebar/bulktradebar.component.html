@@ -1,5 +1,5 @@
 <svg id="BULKBAR" width="width" height="height">
-  <g *ngFor="let flag of counter; let i=index">
+  <ng-container *ngFor="let flag of counter; let i=index">
     <rect  [attr.transform]="translateHack(0,yScale(i))"
     [attr.x]="flag.compliant<0?xScale(flag.compliant):xScale(0)"
     [attr.width]="absHack(xScale(flag.compliant)-xScale(0))"
@@ -15,5 +15,5 @@
     [attr.width]="absHack(xScale(flag.outlier)-xScale(0))"
     [attr.y]="0" class="O"
     [attr.height]="yScale(1)/3*groupSpace"></rect>
-  </g>
+  </ng-container>
 </svg>
