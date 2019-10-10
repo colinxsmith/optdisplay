@@ -281,7 +281,7 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
         switch (oType) {
           case 'N':
             HERE.attr('width', t * this.absHack(this.xScale(flag.compliant) - this.xScale(0)));
-            HERE.attr('x', (flag.compliant < 0 ? this.xScale(flag.compliant) : this.xScale(0)));
+            HERE.attr('x', (flag.compliant < 0 ? this.xScale(t * flag.compliant) : this.xScale(0)));
             HERE.on('mousemove', () => {
               this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
                 .html(`${flag.name}<br>${flag.compliant}`);
@@ -289,7 +289,7 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
             break;
           case 'O':
             HERE.attr('width', t * this.absHack(this.xScale(flag.outlier) - this.xScale(0)));
-            HERE.attr('x', (flag.outlier < 0 ? this.xScale(flag.outlier) : this.xScale(0)));
+            HERE.attr('x', (flag.outlier < 0 ? this.xScale(t * flag.outlier) : this.xScale(0)));
             HERE.on('mousemove', () => {
               this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
                 .html(`${flag.name}<br>${flag.outlier}`);
@@ -297,7 +297,7 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
             break;
           case 'A':
             HERE.attr('width', t * this.absHack(this.xScale(flag.almostOutlier) - this.xScale(0)));
-            HERE.attr('x', (flag.almostOutlier < 0 ? this.xScale(flag.almostOutlier) : this.xScale(0)));
+            HERE.attr('x', (flag.almostOutlier < 0 ? this.xScale(t * flag.almostOutlier) : this.xScale(0)));
             HERE.on('mousemove', () => {
               this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
                 .html(`${flag.name}<br>${flag.almostOutlier}`);
