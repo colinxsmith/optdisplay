@@ -43,7 +43,7 @@ export class BulktradeComponent implements OnInit, OnChanges {
   fontSize: number;
   @Input() width = 800;
   @Input() height = 800;
-  @Input() animate = false;
+  @Input() animate = true;
   @Input() durationTime = 2000;
   @Input() side: number;
   @Input() DATA = {
