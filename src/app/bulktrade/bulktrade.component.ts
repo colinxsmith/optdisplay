@@ -1,15 +1,15 @@
-import { Component, OnInit, ElementRef, AfterViewInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-bulktrade',
-  template: `<svg id="BULK" width="width" height="height">
+  template: `<svg id="BULK" width="0" height="0">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
   [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)">
   </path>
-  <text [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
+  <text    [style.font-size]="fontSize"px  [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
   </ng-container>
-  <text [attr.transform]="translateHack(side/2,side/2+320)">{{DATA.label}}</text>
+  <text [style.font-size]="fontSize"px [attr.transform]="translateHack(side/2,side/2+320)">{{DATA.label}}</text>
   </svg>`,
   styles: [`#BULK path.O {
     fill: red;
@@ -34,16 +34,16 @@ g.tooltip1 {
   pointer-events: none;
   overflow: auto;
 }
-`],
-  encapsulation: ViewEncapsulation.None
+`]
 })
-export class BulktradeComponent implements OnInit, AfterViewInit {
-  toolTipObj: d3.Selection<SVGGElement, unknown, null, undefined>;
+export class BulktradeComponent implements OnInit, OnChanges {
+  toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
   rimAnagle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
+  fontSize: number;
   @Input() width = 800;
   @Input() height = 800;
-  @Input() animate = true;
+  @Input() animate = false;
   @Input() durationTime = 2000;
   @Input() side: number;
   @Input() DATA = {
@@ -70,14 +70,18 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
     ]
   };
   constructor(private element: ElementRef) { }
-  ngAfterViewInit() {
-    console.log('after view init', this.DATA);
-    this.update();
+  ngOnChanges() {
+    this.setup();
+    setTimeout(() => this.update());
   }
   ngOnInit() {
-    this.toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
-    console.log('on init', this.DATA);
+    this.setup();
+    setTimeout(() => this.update());
+  }
+  setup() {
+    console.log('setup', this.DATA);
     this.side = Math.min(this.width, this.height); // Needed in arcPath
+    this.fontSize = this.side / 10;
     let totalV = 0;
     this.DATA.monitorFlagCategory.forEach(d => {
       totalV += d.value;
@@ -106,7 +110,7 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
     d3.select(id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
-    const fontSize = this.side / 10;
+    const fontSize = this.fontSize;
     const PATHS = d3.select(id).selectAll('path');
     const TEXTS = d3.select(id).selectAll('text');
     PATHS.data(this.DATA.monitorFlagCategory);
@@ -149,10 +153,10 @@ export class BulktradeComponent implements OnInit, AfterViewInit {
         this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
           .html(`${this.DATA.label}<br>${d.outlierStatusType}<br>${d.value}`);
       });
-       PATHS .on('mouseout', () => {
-          this.toolTipObj.attr('style', `display:none`)
-            .html('');
-        });
+      PATHS.on('mouseout', () => {
+        this.toolTipObj.attr('style', `display:none`)
+          .html('');
+      });
       TEXTS
         .style('font-size', fontSize + 'px')
         .attr('transform', (d, i) => `translate(${this.side / 2},${this.side / 2 + fontSize * 2 * (i - 1)})`);

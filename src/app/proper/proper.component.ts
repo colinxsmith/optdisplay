@@ -1,5 +1,4 @@
-import { Component, OnInit, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
-import { DataService } from '../data.service';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-proper',
@@ -30,10 +29,9 @@ svg.new rect.plus{
 }
 svg.new rect.minus{
     fill: red;
-}`],
-  encapsulation: ViewEncapsulation.None
+}`]
 })
-export class ProperComponent implements OnInit, AfterViewInit {
+export class ProperComponent implements OnInit {
   DATA: { x: number }[];
   w: number;
   h: number;
@@ -44,6 +42,10 @@ export class ProperComponent implements OnInit, AfterViewInit {
   }, d3.BaseType, unknown>;
   constructor(private mainElement: ElementRef) { }
   ngOnInit() {
+    this.setup();
+    setTimeout(() => this.update());
+  }
+  setup() {
     console.log('init');
     this.DATA = [];
     const dLen = 10;
@@ -56,13 +58,6 @@ export class ProperComponent implements OnInit, AfterViewInit {
       this.mainElement.nativeElement.offsetHeight);
     this.scaleX = d3.scaleLinear().domain([d3.min(this.DATA.map(d => -Math.abs(d.x))),
     d3.max(this.DATA.map(d => Math.abs(d.x)))]).range([0, this.w]);
-  }
-  ngAfterViewInit() {// Add animations to the proper Angular chart
-    console.log('after view init');
-/*    const DIV = (d3.select(this.mainElement.nativeElement).select('#place').node() as HTMLDivElement);
-    DIV.scrollTop = (this.h / 4);
-    DIV.scrollLeft = (this.w / 4);*/
-    this.update();
   }
 
   clicked(DA: { x: number }, i: number) {

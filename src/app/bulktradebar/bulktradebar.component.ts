@@ -1,15 +1,14 @@
-import { Component, OnInit, Input, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-bulktradebar',
   templateUrl: './bulktradebar.component.html',
-  styleUrls: ['./bulktradebar.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./bulktradebar.component.css']
 })
-export class BulktradebarComponent implements OnInit, AfterViewInit {
+export class BulktradebarComponent implements OnInit, OnChanges {
 
-  toolTipObj: d3.Selection<SVGGElement, unknown, null, undefined>;
+  toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
   DATA = {
     outlierStatusCounter: {
       title: 'Outlier Status Count',
@@ -238,8 +237,8 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
   xScale = d3.scaleLinear();
   yScale = d3.scaleLinear();
   absHack = Math.abs;
-  groupSpace = 0.9;
-  barSpace = 0.95;
+  groupSpace = 0.25;
+  barSpace = 0.3;
   @Input() animate = true;
   @Input() width = 600;
   @Input() height = 600;
@@ -247,11 +246,15 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
   @Input() counter: { name: string; outlier: number; almostOutlier: number; compliant: number; }[]
     = this.DATA.outlierStatusCounter.counter;
   constructor(private element: ElementRef) { }
-  ngAfterViewInit() {
-    this.update();
+  ngOnChanges() {
+    this.setup();
+    setTimeout(() => this.update());
   }
   ngOnInit() {
-    this.toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
+    this.setup();
+    setTimeout(() => this.update());
+  }
+  setup() {
     let xMax = 0, xMin = 0;
     this.counter.forEach(d => {
       xMin = Math.min(d.almostOutlier, xMin);
@@ -262,7 +265,7 @@ export class BulktradebarComponent implements OnInit, AfterViewInit {
       xMax = Math.max(d.outlier, xMax);
     });
     this.xScale.domain([xMin, xMax]).range([0, this.width]);
-    this.yScale.domain([0, this.counter.length]).range([0, this.height]);
+    this.yScale.domain([0, this.counter.length]).range([0.1 * this.height, this.height * 0.9]);
   }
   translateHack(w: number, h: number) {
     return `translate(${w},${h})`;
