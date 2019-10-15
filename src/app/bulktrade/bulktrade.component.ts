@@ -5,7 +5,8 @@ import * as d3 from 'd3';
   template: `<svg id="BULK" width="0" height="0">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
-  [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)">
+  [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)" (mouseenter)="onMouseEnter(DATA.label,d,i)"
+  (mouseleave)="onMouseLeave(i)">
   </path>
   <text    [style.font-size]="fontSize"px  [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
   </ng-container>
@@ -25,7 +26,7 @@ import * as d3 from 'd3';
     fill: grey;
     text-anchor: middle;
 }
-g.tooltip1 {
+g.tooltip2 {
   background: black;
   color: white;
   position: absolute;
@@ -37,7 +38,7 @@ g.tooltip1 {
 `]
 })
 export class BulktradeComponent implements OnInit, OnChanges {
-  toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
+  toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip2');
   rimAnagle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   fontSize: number;
@@ -69,6 +70,22 @@ export class BulktradeComponent implements OnInit, OnChanges {
       }
     ]
   };
+  onMouseEnter(label: string, data: {
+    id: number;
+    value: number;
+    outlierStatusType: string;
+  }, ii: number) {
+    console.log(label, data, ii);
+    const PATHS = (d3.select(this.element.nativeElement).selectAll('path').nodes()[ii] as SVGPathElement).getAttribute('transform');
+    const MOUSE = PATHS.replace('translate(', '').replace(')', '').split(',');
+    this.toolTipObj.attr('style', `left:${+MOUSE[0]}px;top:${+MOUSE[1]}px;display:inline-block`)
+      .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`);
+  }
+  onMouseLeave(ii: number) {
+    console.log(ii);
+    this.toolTipObj.attr('style', `display:none`)
+      .html('');
+  }
   constructor(private element: ElementRef) { }
   ngOnChanges() {
     this.setup();
@@ -118,18 +135,6 @@ export class BulktradeComponent implements OnInit, OnChanges {
       PATHS.transition().duration(this.durationTime).tween('ppp', (d, i, j) => t => {
         const HERE = d3.select(j[i] as SVGPathElement);
         HERE.attr('d', this.arcPath(i, t));
-        HERE.on('mousemove', (dd: {
-          id: number;
-          value: number;
-          outlierStatusType: string;
-        }) => {
-          this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-            .html(`${this.DATA.label}<br>${dd.outlierStatusType}<br>${dd.value}`);
-        });
-        HERE.on('mouseout', () => {
-          this.toolTipObj.attr('style', `display:none`)
-            .html('');
-        });
       });
       TEXTS.transition().duration(this.durationTime * 2)
         .tween('ppp', (d, i, j) => t => {
@@ -145,18 +150,6 @@ export class BulktradeComponent implements OnInit, OnChanges {
       PATHS
         .attr('transform', `translate(${this.side / 2},${this.side / 2})`)
         .attr('d', (d, i) => this.arcPath(i));
-      PATHS.on('mouseover', (d: {
-        id: number;
-        value: number;
-        outlierStatusType: string;
-      }) => {
-        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-          .html(`${this.DATA.label}<br>${d.outlierStatusType}<br>${d.value}`);
-      });
-      PATHS.on('mouseout', () => {
-        this.toolTipObj.attr('style', `display:none`)
-          .html('');
-      });
       TEXTS
         .style('font-size', fontSize + 'px')
         .attr('transform', (d, i) => `translate(${this.side / 2},${this.side / 2 + fontSize * 2 * (i - 1)})`);

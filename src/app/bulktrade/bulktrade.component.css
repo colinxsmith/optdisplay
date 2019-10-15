@@ -16,12 +16,12 @@
     text-anchor: middle;
 }
 
-.tooltip {
+g.tooltip2 {
     background: black;
     color: white;
-    position: absolute;
+    position: relative;
     text-align: center;
-    font-size: 12px;
+    font-size: 30px;
     pointer-events: none;
     overflow: auto;
 }
