@@ -5,8 +5,9 @@ import * as d3 from 'd3';
   template: `<svg id="BULK" width="0" height="0">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
-  [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)" (mouseenter)="onMouseEnter(DATA.label,d,i)"
-  (mouseleave)="onMouseLeave(i)">
+  [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)"
+  (mouseenter)="onMouseEnter(DATA.label,d,$event)"
+  (mouseleave)="onMouseLeave()">
   </path>
   <text    [style.font-size]="fontSize"px  [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
   </ng-container>
@@ -26,22 +27,13 @@ import * as d3 from 'd3';
     fill: grey;
     text-anchor: middle;
 }
-g.tooltip2 {
-  background: black;
-  color: white;
-  position: absolute;
-  text-align: center;
-  font-size: 12px;
-  pointer-events: none;
-  overflow: auto;
-}
 `]
 })
 export class BulktradeComponent implements OnInit, OnChanges {
-  toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip2');
   rimAnagle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   fontSize: number;
+  @Input() toolTipObj = d3.select('app-root').select('div.mainTip');
   @Input() width = 800;
   @Input() height = 800;
   @Input() animate = true;
@@ -74,15 +66,12 @@ export class BulktradeComponent implements OnInit, OnChanges {
     id: number;
     value: number;
     outlierStatusType: string;
-  }, ii: number) {
-    console.log(label, data, ii);
-    const PATHS = (d3.select(this.element.nativeElement).selectAll('path').nodes()[ii] as SVGPathElement).getAttribute('transform');
-    const MOUSE = PATHS.replace('translate(', '').replace(')', '').split(',');
-    this.toolTipObj.attr('style', `left:${+MOUSE[0]}px;top:${+MOUSE[1]}px;display:inline-block`)
+  }, ee: MouseEvent) {
+    console.log(this.toolTipObj);
+    this.toolTipObj.attr('style', `left:${ee.x}px;top:${ee.y}px;display:inline-block`)
       .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`);
   }
-  onMouseLeave(ii: number) {
-    console.log(ii);
+  onMouseLeave() {
     this.toolTipObj.attr('style', `display:none`)
       .html('');
   }
@@ -115,6 +104,20 @@ export class BulktradeComponent implements OnInit, OnChanges {
     //    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
     //    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
     return ARC({
+      innerRadius: this.side / 2 * 0.7 * t, outerRadius: t * this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
+      , endAngle: t * t * this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 1 - t * t + 0.01
+    });
+  }
+  centroid(i: number, t = 1) {
+    //    console.log(i, t);
+    let sofar = 0;
+    for (let ii = 0; ii < i; ++ii) {
+      sofar += this.DATA.monitorFlagCategory[ii].value;
+    }
+    const ARC = d3.arc().cornerRadius(10);
+    //    console.log(sofar, sofar + this.DATA.monitorFlagCategory[i].value);
+    //    console.log(this.scaleArc(sofar), this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value));
+    return ARC.centroid({
       innerRadius: this.side / 2 * 0.7 * t, outerRadius: t * this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
       , endAngle: t * t * this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: 1 - t * t + 0.01
     });

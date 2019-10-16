@@ -1,10 +1,12 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
+import * as d3 from 'd3';
 @Component({
   selector: 'app-bulktest',
   templateUrl: './bulktest.component.html',
   styleUrls: ['./bulktest.component.css']
 })
 export class BulktestComponent implements OnInit {
+  ttObj = d3.select('app-root').select('div.mainTip');
   data = {
     id: 1,
     type: 'stockLevelTotalRisk',

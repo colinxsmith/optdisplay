@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 })
 export class BulktradebarComponent implements OnInit, OnChanges {
 
-  toolTipObj = d3.select(this.element.nativeElement).append('g').attr('class', 'tooltip1');
+  @Input() toolTipObj = d3.select('app-root').select('div.mainTip');
   DATA = {
     outlierStatusCounter: {
       title: 'Outlier Status Count',
@@ -285,35 +285,27 @@ export class BulktradebarComponent implements OnInit, OnChanges {
           case 'N':
             HERE.attr('width', t * this.absHack(this.xScale(flag.compliant) - this.xScale(0)));
             HERE.attr('x', (flag.compliant < 0 ? this.xScale(t * flag.compliant) : this.xScale(0)));
-            HERE.on('mousemove', () => {
-              this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-                .html(`${flag.name}<br>${flag.compliant}`);
-            });
             break;
           case 'O':
             HERE.attr('width', t * this.absHack(this.xScale(flag.outlier) - this.xScale(0)));
             HERE.attr('x', (flag.outlier < 0 ? this.xScale(t * flag.outlier) : this.xScale(0)));
-            HERE.on('mousemove', () => {
-              this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-                .html(`${flag.name}<br>${flag.outlier}`);
-            });
             break;
           case 'A':
             HERE.attr('width', t * this.absHack(this.xScale(flag.almostOutlier) - this.xScale(0)));
             HERE.attr('x', (flag.almostOutlier < 0 ? this.xScale(t * flag.almostOutlier) : this.xScale(0)));
-            HERE.on('mousemove', () => {
-              this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
-                .html(`${flag.name}<br>${flag.almostOutlier}`);
-            });
             break;
         }
-        HERE.on('mouseout', () => {
-          this.toolTipObj.attr('style', `display:none`)
-            .html('');
-        });
         return '';
       });
     }
 
+  }
+  onMouseEnter(name: string, value: number, ee: MouseEvent) {
+    this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
+      .html(`${name}<br>${value}`);
+  }
+  onMouseLeave() {
+    this.toolTipObj.attr('style', `display:none`)
+      .html('');
   }
 }
