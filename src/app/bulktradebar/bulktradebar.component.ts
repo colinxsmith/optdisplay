@@ -302,10 +302,12 @@ export class BulktradebarComponent implements OnInit, OnChanges {
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
-      .html(`${name}<br>${type}<br>${value}`);
+      .html(`${name}<br>${type}<br>${value}`)
+      .transition().duration(200)
+      .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
     this.toolTipObj.attr('style', `display:none`)
-      .html('');
+      .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
   }
 }

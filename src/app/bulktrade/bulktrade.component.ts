@@ -69,11 +69,13 @@ export class BulktradeComponent implements OnInit, OnChanges {
   }, ee: MouseEvent) {
     console.log(this.toolTipObj);
     this.toolTipObj.attr('style', `left:${ee.x}px;top:${ee.y}px;display:inline-block`)
-      .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`);
+      .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`)
+      .transition().duration(200)
+      .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
     this.toolTipObj.attr('style', `display:none`)
-      .html('');
+      .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
   }
   constructor(private element: ElementRef) { }
   ngOnChanges() {
