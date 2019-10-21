@@ -264,8 +264,8 @@ export class BulktradebarComponent implements OnInit, OnChanges {
       xMax = Math.max(d.compliant, xMax);
       xMax = Math.max(d.outlier, xMax);
     });
-    this.xScale.domain([xMin, xMax]).range([0, this.width]);
-    this.yScale.domain([0, this.counter.length]).range([0.1 * this.height, this.height * 0.9]);
+    this.xScale.domain([xMin, xMax]).rangeRound([0, this.width]);
+    this.yScale.domain([0, this.counter.length]).rangeRound([0.1 * this.height, this.height * 0.9]);
   }
   translateHack(w: number, h: number) {
     return `translate(${w},${h})`;
@@ -300,9 +300,9 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     }
 
   }
-  onMouseEnter(name: string, value: number, ee: MouseEvent) {
+  onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
-      .html(`${name}<br>${value}`);
+      .html(`${name}<br>${type}<br>${value}`);
   }
   onMouseLeave() {
     this.toolTipObj.attr('style', `display:none`)

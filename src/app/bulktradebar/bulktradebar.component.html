@@ -5,7 +5,7 @@
     [attr.width]="absHack(xScale(flag.compliant)-xScale(0))"
     [attr.y]="0" class="N"
     [attr.height]="yScale(1)/3*groupSpace"
-    (mouseenter)="onMouseEnter(flag.name,flag.compliant,$event)"
+    (mouseenter)="onMouseEnter(flag.name,flag.compliant,'Compliant',$event)"
     (mouseleave)="onMouseLeave()"
     ></rect>
     <rect  [attr.transform]="translateHack(0,yScale(i)+yScale(1)/3*barSpace)"
@@ -13,7 +13,7 @@
     [attr.width]="absHack(xScale(flag.almostOutlier)-xScale(0))"
     [attr.y]="0" class="A"
     [attr.height]="yScale(1)/3*groupSpace"
-    (mouseenter)="onMouseEnter(flag.name,flag.almostOutlier,$event)"
+    (mouseenter)="onMouseEnter(flag.name,flag.almostOutlier,'Almost outlier',$event)"
     (mouseleave)="onMouseLeave()"
     ></rect>
     <rect  [attr.transform]="translateHack(0,yScale(i)+2*yScale(1)/3*barSpace)"
@@ -21,7 +21,7 @@
     [attr.width]="absHack(xScale(flag.outlier)-xScale(0))"
     [attr.y]="0" class="O"
     [attr.height]="yScale(1)/3*groupSpace"
-    (mouseenter)="onMouseEnter(flag.name,flag.outlier,$event)"
+    (mouseenter)="onMouseEnter(flag.name,flag.outlier,'Outlier',$event)"
     (mouseleave)="onMouseLeave()"
     ></rect>
   </ng-container>
