@@ -280,8 +280,12 @@ export class BulktradebarComponent implements OnInit, OnChanges {
       RECTS.transition().duration(this.durationTime).tween('kk', (d, i, j) => t => {
         const HERE = d3.select(j[i]);
         const oType = HERE.attr('class');
-        const flag = this.counter[Math.floor(i / 3)];
+        const flag = this.counter[Math.floor(i / 4)];
         switch (oType) {
+          case 'group':
+            HERE.attr('x', t * this.xScale.range()[0]);
+            HERE.attr('width', t * (this.xScale.range()[1] - this.xScale.range()[0]));
+            break;
           case 'N':
             HERE.attr('width', t * this.absHack(this.xScale(flag.compliant) - this.xScale(0)));
             HERE.attr('x', (flag.compliant < 0 ? this.xScale(t * flag.compliant) : this.xScale(0)));

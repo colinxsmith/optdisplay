@@ -9,6 +9,9 @@
 #BULKBAR rect.A {
     fill: yellow;
 }
+#BULKBAR rect.group{
+    fill:dimgrey;
+}
 
 g.tooltip1 {
     background: black;

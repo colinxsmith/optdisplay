@@ -103,7 +103,7 @@ export class BulktradeComponent implements OnInit, OnChanges {
     for (let ii = 0; ii < i; ++ii) {
       sofar += this.DATA.monitorFlagCategory[ii].value;
     }
-    const ARC = this.square ? this.squareArc : d3.arc().cornerRadius(10);
+    const ARC = t < 0.8 ? d3.arc().cornerRadius(20) : this.square ? this.squareArc : d3.arc().cornerRadius(10);
     return ARC({
       innerRadius: this.side / 2 * 0.7 * t, outerRadius: t * this.side / 2 * 0.8, startAngle: this.scaleArc(sofar)
       , endAngle: t * t * this.scaleArc(sofar + this.DATA.monitorFlagCategory[i].value), padAngle: t * t * 0.01
