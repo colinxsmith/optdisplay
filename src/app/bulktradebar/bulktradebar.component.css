@@ -11,6 +11,7 @@
 }
 #BULKBAR rect.group{
     fill:dimgrey;
+    fill-opacity: 0.4;
 }
 
 g.tooltip1 {

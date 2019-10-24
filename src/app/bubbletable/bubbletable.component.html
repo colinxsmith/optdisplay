@@ -1,0 +1,9 @@
+<svg id="BUBBLE" [attr.width]="width" [attr.height]="height">
+<ng-container *ngFor="let row of DATA; let i=index">
+<text [attr.y]="side*(i+1)/2"> 
+<ng-container *ngFor="let coll of getKeys(DATA[0]); let j=index">
+<tspan [attr.x]="j*side/2" >{{row[coll]}}</tspan>
+</ng-container>
+</text>
+</ng-container>
+</svg>

@@ -271,7 +271,7 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     return `translate(${w},${h})`;
   }
   update() {
-    const id = this.element.nativeElement;
+    const id = this.element.nativeElement as HTMLElement;
     d3.select(id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
@@ -279,11 +279,11 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     if (this.animate) {
       RECTS.transition().duration(this.durationTime).tween('kk', (d, i, j) => t => {
         const HERE = d3.select(j[i]);
-        const oType = HERE.attr('class');
+        const oType = HERE.attr('class').split(' ')[0];
         const flag = this.counter[Math.floor(i / 4)];
         switch (oType) {
           case 'group':
-            HERE.attr('x', t * this.xScale.range()[0]);
+            HERE.attr('x', t * t * this.xScale.range()[0] + (1 - t) * this.width / 2);
             HERE.attr('width', t * (this.xScale.range()[1] - this.xScale.range()[0]));
             break;
           case 'N':
