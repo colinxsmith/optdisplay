@@ -1,9 +1,27 @@
 <svg id="BUBBLE" [attr.width]="width" [attr.height]="height">
-<ng-container *ngFor="let row of DATA; let i=index">
-<text [attr.y]="side*(i+1)/2"> 
+<rect [attr.width]="width" [attr.height]="height" [attr.x]="0" [attr.y]="0" class="border"></rect>
+
+<text   class="label"  [attr.y]="fontSize"> 
 <ng-container *ngFor="let coll of getKeys(DATA[0]); let j=index">
-<tspan [attr.x]="j*side/2" >{{row[coll]}}</tspan>
+<tspan [attr.x]="xScale(j+1)" >{{coll}}</tspan>
 </ng-container>
 </text>
+
+<ng-container *ngFor="let row of DATA; let i=index">
+<text   class="label"  [attr.y]="fontSize" [attr.x]="0" [attr.transform]="translateHack(fontSize,yScale(i+1),270)">
+{{i+1}}
+</text>
+
+<text  class='table'   [attr.y]="yScale(i+1)+fontSize/4"> 
+<ng-container *ngFor="let coll of getKeys(row); let j=index">
+<tspan [attr.x]="xScale(j+1)" >{{row[coll]}}</tspan>
+</ng-container>
+</text>
+
+<ng-container *ngFor="let coll of getKeys(row); let j=index">
+<ng-container *ngIf="isNumberHack(row[coll])">
+<circle class="table" [style.fill]="isNumberHack(row[coll])?zScale(row[coll]):'none'" [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)"  [attr.r]="radScale(absHack(row[coll]))"></circle>
+</ng-container>
+</ng-container>
 </ng-container>
 </svg>

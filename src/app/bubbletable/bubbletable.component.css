@@ -1,0 +1,21 @@
+#BUBBLE text{
+    font-size:20px;
+    fill:green;
+    text-anchor: middle;
+}
+#BUBBLE text.label{
+    font-size:25px;
+    fill:black;
+    text-anchor: middle;
+}
+#BUBBLE rect.border{
+    fill:none;
+    stroke:red;
+    stroke-width: 5px;
+}
+#BUBBLE circle{
+    fill:none;
+    fill-opacity: 0.4;
+    stroke:brown;
+    stroke-width: 2px;
+}
