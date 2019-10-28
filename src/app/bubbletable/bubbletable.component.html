@@ -12,16 +12,37 @@
 {{i+1}}
 </text>
 
-<text  class='table'   [attr.y]="yScale(i+1)+fontSize/4"> 
-<ng-container *ngFor="let coll of getKeys(row); let j=index">
-<tspan [attr.x]="xScale(j+1)" >{{row[coll]}}</tspan>
-</ng-container>
-</text>
 
 <ng-container *ngFor="let coll of getKeys(row); let j=index">
 <ng-container *ngIf="isNumberHack(row[coll])">
-<circle class="table" [style.fill]="isNumberHack(row[coll])?zScale(row[coll]):'none'" [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)"  [attr.r]="radScale(absHack(row[coll]))"></circle>
+
+<ng-container *ngIf="paths">
+<path class="table"  [attr.d]="radarLine(vertexLine(radScale(absHack(row[coll]))))" [style.fill]="isNumberHack(row[coll])?pathScale(row[coll]):'none'"
+[attr.transform]="translateHack(xScale(j+1),yScale(i+1),45)">
+  </path>
+</ng-container>
+
+<ng-container *ngIf="circles">
+<circle class="table"  [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(row[coll])?circleScale(row[coll]):'none'"
+ [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)"  [attr.r]="radScale(absHack(row[coll]))"></circle>
+</ng-container>
+
+<ng-container *ngIf="squares">
+<rect class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(row[coll])?squareScale(row[coll]):'none'"
+ [attr.x]="-radScale(absHack(row[coll]))" 
+[attr.y]="-radScale(absHack(row[coll]))"
+[attr.height]="radScale(absHack(row[coll]))*2"
+ [attr.width]="radScale(absHack(row[coll]))*2"
+  [attr.transform]="translateHack(xScale(j+1),yScale(i+1),squareRotate)"></rect>
+</ng-container>
+
 </ng-container>
 </ng-container>
+
+<text  class='table'   [attr.y]="yScale(i+1)+fontSize/4"> 
+<ng-container *ngFor="let coll of getKeys(row); let j=index">
+<tspan (click)="textClick(j,i)" [attr.ix]=coll [attr.x]="xScale(j+1)" >{{row[coll]}}</tspan>
+</ng-container>
+</text>
 </ng-container>
 </svg>

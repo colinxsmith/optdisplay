@@ -16,6 +16,18 @@
 #BUBBLE circle{
     fill:none;
     fill-opacity: 0.4;
-    stroke:brown;
+    stroke:none;
+    stroke-width: 2px;
+}
+#BUBBLE rect{
+    fill:none;
+    fill-opacity: 0.4;
+    stroke:none;
+    stroke-width: 2px;
+}
+#BUBBLE path{
+    fill:none;
+    fill-opacity: 0.4;
+    stroke:none;
     stroke-width: 2px;
 }
