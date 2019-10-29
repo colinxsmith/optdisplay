@@ -40,7 +40,7 @@
 </ng-container>
 </ng-container>
 
-<text  class="table"   [attr.transform]="translateHack(0,yScale(i+1)+fontSize/4,90)"> 
+<text  class="table"   [attr.transform]="translateHack(0,yScale(i+1)+fontSize/4)"> 
 <ng-container *ngFor="let coll of getKeys(row); let j=index">
 <tspan (click)="textClick(j,i)" [attr.ix]="coll" [attr.x]="xScale(j+1)" >{{DATA[dataOrder[i]][coll]}}</tspan>
 </ng-container>
