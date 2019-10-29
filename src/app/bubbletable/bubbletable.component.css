@@ -8,6 +8,9 @@
     fill:black;
     text-anchor: middle;
 }
+BUBBLE tspan.name{
+    text-anchor:end;
+}
 #BUBBLE rect.border{
     fill:none;
     stroke:red;
