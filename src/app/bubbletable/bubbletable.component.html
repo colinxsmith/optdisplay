@@ -1,14 +1,15 @@
 <svg id="BUBBLE" [attr.width]="width" [attr.height]="height">
-<rect [attr.width]="width" [attr.height]="height" [attr.x]="0" [attr.y]="0" class="border"></rect>
+<g [attr.transform]="translateHack(borderX,borderY)">
+<rect (click)="rectClick($event)"   [attr.width]="width-borderX*2" [attr.height]="height-borderY*2"  class="border"></rect>
 
-<text   class="label"  [attr.y]="fontSize"> 
+<text   class="labelX"  [attr.y]="fontSize-borderY/2"> 
 <ng-container *ngFor="let coll of getKeys(DATA[0]); let j=index">
-<tspan [attr.x]="xScale(j+1)" >{{coll}}</tspan>
+<tspan  [attr.class]="coll"  [attr.x]="xScale(j+1)" >{{coll}}</tspan>
 </ng-container>
 </text>
 
 <ng-container *ngFor="let row of DATA; let i=index;">
-<text   class="label"  [attr.y]="fontSize" [attr.x]="0" [attr.transform]="translateHack(fontSize,yScale(dataOrder[i]+1),270)">
+<text   class="labelY"  [attr.y]="fontSize" [attr.x]="0" [attr.transform]="translateHack(-fontSize-borderX/2,yScale(dataOrder[i]+1),270)">
 {{dataOrder[i]+1}}
 </text>
 
@@ -17,19 +18,19 @@
 <ng-container *ngIf="isNumberHack(DATA[dataOrder[i]][coll])">
 
 <ng-container *ngIf="paths">
-<path class="table" [attr.ij]="getIdHack(j,i)" [attr.d]="radarLine(vertexLine(radScale(absHack(DATA[dataOrder[i]][coll]))))"
+<path (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" class="table" [attr.ij]="getIdHack(j,i)" [attr.d]="radarLine(vertexLine(radScale(absHack(DATA[dataOrder[i]][coll]))))"
  [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?pathScale(DATA[dataOrder[i]][coll]):'none'"
 [attr.transform]="translateHack(xScale(j+1),yScale(i+1),pathRotate)">
   </path>
 </ng-container>
 
 <ng-container *ngIf="circles">
-<circle class="table"  [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?circleScale(DATA[dataOrder[i]][coll]):'none'"
+<circle (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" class="table"  [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?circleScale(DATA[dataOrder[i]][coll]):'none'"
  [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)"  [attr.r]="radScale(absHack(DATA[dataOrder[i]][coll]))"></circle>
 </ng-container>
 
 <ng-container *ngIf="squares">
-<rect class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?squareScale(DATA[dataOrder[i]][coll]):'none'"
+<rect (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?squareScale(DATA[dataOrder[i]][coll]):'none'"
  [attr.x]="-radScale(absHack(DATA[dataOrder[i]][coll]))" 
 [attr.y]="-radScale(absHack(DATA[dataOrder[i]][coll]))"
 [attr.height]="radScale(absHack(DATA[dataOrder[i]][coll]))*2"
@@ -42,8 +43,9 @@
 
 <text  class="table"   [attr.transform]="translateHack(0,yScale(i+1)+fontSize/4)"> 
 <ng-container *ngFor="let coll of getKeys(row); let j=index">
-<tspan (click)="textClick(j,i)" [attr.ix]="coll" [attr.x]="xScale(j+1)" >{{DATA[dataOrder[i]][coll]}}</tspan>
+<tspan (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" [attr.class]="coll"  [attr.x]="xScale(j+1)" >{{DATA[dataOrder[i]][coll]}}</tspan>
 </ng-container>
 </text>
 </ng-container>
+</g>
 </svg>

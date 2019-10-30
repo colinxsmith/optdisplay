@@ -3,12 +3,17 @@
     fill:green;
     text-anchor: middle;
 }
-#BUBBLE text.label{
+#BUBBLE text.labelX{
     font-size:25px;
     fill:black;
     text-anchor: middle;
 }
-BUBBLE tspan.name{
+#BUBBLE text.labelY{
+    font-size:25px;
+    fill:black;
+    text-anchor: middle;
+}
+#BUBBLE tspan.name{
     text-anchor:end;
 }
 #BUBBLE rect.border{
