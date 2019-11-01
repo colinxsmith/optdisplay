@@ -18,7 +18,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() squares = true;
   @Input() squareRotate = 60;
   @Input() pathRotate = 45;
+  @Input() labelYRotate = 270;
   @Input() paths = true;
+  @Input() animDuration = 2000;
   @Input() tip = d3.select('app-root').select('div.mainTip');
   getKeys = Object.keys;
   keys: string[];
@@ -102,78 +104,64 @@ export class BubbletableComponent implements OnInit, OnChanges {
   update() {
     this.updateCount++;
     console.log('update count', this.updateCount);
+    this.keys = this.getKeys(this.DATA[0]);
     this.xScale = d3.scaleLinear().domain([0, this.getKeys(this.DATA[0]).length + 1]).range([0, this.width - this.borderX * 2]);
     this.yScale = d3.scaleLinear().domain([0, this.DATA.length + 1]).range([0, this.height - this.borderY * 2]);
     this.fontSize = +d3.select(this.element.nativeElement).select('#BUBBLE').select('.table').style('font-size').replace('px', '');
     if (this.circles) {
-      const circleTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('circle.table').nodes() as SVGCircleElement[];
-      circleTable.forEach(d => {
-        const here = d3.select(d);
-        const ij = here.attr('ij');
-        here
-          .attr('cx', this.xScale(+ij.split(',')[0] + 1))
-          .attr('cy', this.yScale(+ij.split(',')[1] + 1));
-        here.transition().duration(2000)
-          .tween('circletext', (dd, i) => (t) => {
-            here.attr('cx', (t * (1 - t) + 1) * this.xScale(+ij.split(',')[0] + 1));
-            here.attr('cy', (1 - t) * this.height * 0.95 + t * this.yScale(+ij.split(',')[1] + 1));
-          });
-      });
+      const circleTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('circle.table');
+      circleTable.transition().duration(this.animDuration)
+        .tween('circleText', (d, i, j: Array<SVGCircleElement>) => t => {
+          const here = d3.select(j[i]);
+          const ij = here.attr('ij');
+          here.attr('cx', (t * (1 - t) + 1) * this.xScale(+ij.split(',')[0] + 1));
+          here.attr('cy', (1 - t) * this.height * 0.95 + t * this.yScale(+ij.split(',')[1] + 1));
+        });
     }
     if (this.squares) {
-      const squareTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('rect.table').nodes() as SVGRectElement[];
-      squareTable.forEach(d => {
-        const here = d3.select(d);
-        const ij = here.attr('ij');
-        here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1), this.yScale(+ij.split(',')[1] + 1)));
-        here.transition().duration(2000)
-          .tween('squaretext', (dd, i) => (t) => {
-            here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1), t * this.yScale(+ij.split(',')[1] + 1),
-              this.squareRotate * t));
-          });
-      });
+      const squareTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('rect.table');
+      squareTable.transition().duration(this.animDuration)
+        .tween('squareText', (d, i, j: Array<SVGRectElement>) => t => {
+          const here = d3.select(j[i]);
+          const ij = here.attr('ij');
+          here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1), t * this.yScale(+ij.split(',')[1] + 1),
+            this.squareRotate * t));
+        });
     }
     if (this.paths) {
-      const pathTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('path.table').nodes() as SVGRectElement[];
-      pathTable.forEach(d => {
-        const here = d3.select(d);
-        const ij = here.attr('ij');
-        here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1), this.yScale(+ij.split(',')[1] + 1)));
-        here.transition().duration(2000)
-          .tween('pathtext', (dd, i) => (t) => {
-            here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1),
-              (t * (1 - t) + 1) * this.yScale(+ij.split(',')[1] + 1), this.pathRotate * t));
-          });
-      });
+      const pathTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('path.table');
+      pathTable.transition().duration(this.animDuration)
+        .tween('pathText', (d, i, j: Array<SVGPathElement>) => t => {
+          const here = d3.select(j[i]);
+          const ij = here.attr('ij');
+          here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1),
+            (t * (1 - t) + 1) * this.yScale(+ij.split(',')[1] + 1), this.pathRotate * t));
+        });
     }
-    const textTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.table').nodes() as SVGTextElement[];
-    textTable.forEach((d, i) => {
-      const here = d3.select(d);
-      here.transition().duration(2000)
-        .tween('tabtext', dd => t => {
-          here
-            .attr('transform', `translate(0,${this.yScale(i + 1) + this.fontSize / 4}) rotate(${-45 * (1 - t)})`);
-        });
-    });
-    const labelY = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.labelY').nodes() as SVGTextElement[];
-    labelY.forEach((d, i) => {
-      const here = d3.select(d);
-      here.transition().duration(2000)
-        .tween('labYtext', dd => t => {
-          here
-            .attr('transform', `${this.translateHack(-this.fontSize - this.borderX / 2, this.yScale(this.dataOrder[i] + 1), t * 270)}`);
-        });
-    });
+    const textTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.table');
+    textTable.transition().duration(this.animDuration)
+      .tween('tabtext', (d, i, j: Array<SVGTextElement>) => t => {
+        const here = d3.select(j[i]);
+        const ij = here.attr('ij');
+        here.attr('transform', `translate(0,${this.yScale(+ij.split(',')[1] + 1) + this.fontSize / 4}) rotate(${-45 * (1 - t)})`);
+      });
+    const labelY = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.labelY');
+    labelY.call(this.wrapFunction, this.fontSize, this.fontSize / 30);
+    labelY.transition().duration(this.animDuration)
+      .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
+        const here = d3.select(j[i]);
+        here.attr('transform', `${this.translateHack(-this.fontSize - this.borderX / 2, this.yScale(i + 1),
+          t * this.labelYRotate)}`);
+      });
   }
-  textEnter(i: number, col: string, ee: MouseEvent) {
-    this.tip.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
-      .html(`${i + 1}<br>${col}<br>${this.DATA[this.dataOrder[i]][col]}`)
+  textEnter(i: number, col: string, ev: MouseEvent) {
+    this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
+      .html(`${this.dataOrder[i] + 1}<br>${col}<br>${this.DATA[this.dataOrder[i]][col]}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
   }
   textLeave() {
-    const tip = d3.select('app-root').select('div.mainTip');
-    tip.attr('style', `display:none`)
+    this.tip.attr('style', `display:none`)
       .html(``)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${1 - t * t}`);
@@ -211,4 +199,36 @@ export class BubbletableComponent implements OnInit, OnChanges {
     }
     this.update();
   }
+  wrapFunction = (text1: any,
+    width: number, lineHeight: number) =>  // Adapted from http://bl.ocks.org/mbostock/7555321
+    text1.each((_kk, i, j) => {
+      const text = d3.select(j[i]);
+      let newspan = text.select('tspan');
+      const words = newspan.text().split(' ').reverse(),
+        y = text.attr('y'),
+        x = text.attr('x'),
+        maxTs = text.selectAll('tspan').nodes().length,
+        dy = parseFloat(text.attr('dy'));
+      if (words.length === 1) {
+        return;
+      }
+      let word: string, line: string[] = [],
+        lineNumber = 0;
+      newspan.attr('x', x).attr('y', y).attr('dy', 0);
+      while (word = words.pop()) {
+        line.push(word);
+        newspan.text(line.join(' '));
+        if ((newspan.node() as SVGTSpanElement).getComputedTextLength() > width) {
+          line = [];
+          lineNumber++;
+          newspan = d3.select(text.selectAll('tspan').nodes()[lineNumber] as SVGTSpanElement);
+          newspan.attr('x', x).attr('y', y).attr('dy', `${lineNumber * lineHeight}`);
+        }
+      }
+      while (lineNumber < maxTs - 1) {
+        lineNumber++;
+        newspan = d3.select(text.selectAll('tspan').nodes()[lineNumber] as SVGTSpanElement);
+        newspan.attr('x', x).attr('y', y).attr('dy', 0).text('');
+      }
+    })
 }
