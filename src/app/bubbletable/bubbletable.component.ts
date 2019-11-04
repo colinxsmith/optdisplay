@@ -146,7 +146,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
         here.attr('transform', `translate(0,${this.yScale(+ij.split(',')[1] + 1) + this.fontSize / 4}) rotate(${-45 * (1 - t)})`);
       });
     const labelY = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.labelY');
-    labelY.call(this.wrapFunction, this.fontSize, this.fontSize / 30);
+//    labelY.call(this.wrapFunction, this.fontSize, this.fontSize * 1.4);
     labelY.transition().duration(this.animDuration)
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);

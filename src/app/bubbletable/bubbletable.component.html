@@ -48,7 +48,7 @@ class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrd
 </ng-container>
 </text>
 <text   class="labelY" [attr.dy]="fontSize*1.4" [attr.y]="fontSize" [attr.x]="0" [attr.transform]="translateHack(-fontSize-borderX/2,yScale(i+1),labelYRotate)">
-<tspan [attr.dy]="0">  {{dataOrder[i]+1}} </tspan>
+<tspan [attr.dy]="0">{{DATA[dataOrder[i]].name}} {{DATA[dataOrder[i]].name}} {{dataOrder[i]+1}}</tspan>
 <tspan [attr.x]="0" [attr.dy]="fontSize*1.4"></tspan>
 <tspan [attr.x]="0" [attr.dy]="fontSize*1.4*2"></tspan>
 </text>
