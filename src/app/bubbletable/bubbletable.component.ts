@@ -2,6 +2,7 @@ import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { isNumber } from 'util';
 import { lab } from 'd3';
+import { AttrAst, WrappedNodeExpr } from '@angular/compiler';
 @Component({
   selector: 'app-bubbletable',
   templateUrl: './bubbletable.component.html',
@@ -26,6 +27,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
   keys: string[];
   xScale: d3.ScaleLinear<number, number>;
   yScale: d3.ScaleLinear<number, number>;
+  leftLabel: string[] = [];
+  leftLabelA: string[][] = [];
   radScale: d3.ScaleLinear<number, number>;
   radarLine: d3.LineRadial<number>;
   format = d3.format('0.3');
@@ -41,6 +44,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
   vertexLine = (t: number) => [t, t / 3, t, t / 2, t, t / 2, t, t / 3];
   getIdHack = (x: number, y: number) => `${x},${y}`;
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
+  transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
   ngOnInit() {
     console.log('init');
     this.setup();
@@ -59,6 +63,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
           sin: +this.format(Math.sin(i) * 60), cos: +this.format(Math.cos(i) * 60), tan: +this.format(Math.tan(i) * 60)
         });
       }
+      this.DATA.forEach((d, i) => {
+        this.leftLabel.push(d.name + ` ${i} label test for wrapping`);
+      });
       this.keys = this.getKeys(this.DATA[0]);
       this.width = this.keys.length * this.fontSize * this.DATA[this.DATA.length - 1][this.keys[0]].length;
       this.height = this.DATA.length * this.fontSize * 4;
@@ -100,7 +107,40 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .curve(d3.curveCardinalClosed)
       .radius(d => d)
       .angle((d, i) => angScale(i));
+    this.leftLabelA = [];
+    if (this.leftLabel.length > 0) {
+      this.leftLabel.forEach((d, i) => {
+        const newd: string[] = [];
+        let word = '';
+        const mW = 5;
+        let line = '';
+        const words = d.split(' ').reverse();
+        while (word = words.pop()) {
+          line += word;
+          if (line.length >= mW) {
+            newd.push(line);
+            line = '';
+          } else {
+            line += ' ';
+          }
+        }
+        if (line.length) {
+          newd.push(line);
+        }
+        this.leftLabelA.push(newd);
+      });
+    }
   }
+  textFind = (ddd: any) => ddd.each((_kk, i, j) => {
+    const node = d3.select(j[i]);
+    const spans = node.select('tspan').nodes() as SVGTSpanElement[];
+    spans.forEach(span => {
+      console.log(span.getComputedTextLength());
+      console.log(span.textContent);
+      console.log(span.textContent.length, 'Average font-size ' + (span.getComputedTextLength() / span.textContent.length));
+      console.log(d3.select(span.parentNode).style('font-size'));
+    });
+  })
   update() {
     this.updateCount++;
     console.log('update count', this.updateCount);
@@ -146,7 +186,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
         here.attr('transform', `translate(0,${this.yScale(+ij.split(',')[1] + 1) + this.fontSize / 4}) rotate(${-45 * (1 - t)})`);
       });
     const labelY = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.labelY');
-//    labelY.call(this.wrapFunction, this.fontSize, this.fontSize * 1.4);
+    labelY.call(this.textFind);
+    //    labelY.call(this.wrapFunction, this.fontSize, this.fontSize * 1.4);
     labelY.transition().duration(this.animDuration)
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
