@@ -9,9 +9,9 @@
     text-anchor: middle;
 }
 #BUBBLE text.labelY{
-    font-size:25px;
+    font-size:12px;
     fill:black;
-    text-anchor: middle;
+    text-anchor: start;
 }
 #BUBBLE tspan.name{
     text-anchor:end;

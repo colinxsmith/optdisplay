@@ -1,8 +1,6 @@
 import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-import { isNumber } from 'util';
-import { lab } from 'd3';
-import { AttrAst, WrappedNodeExpr } from '@angular/compiler';
+import { isNumber, isNull } from 'util';
 @Component({
   selector: 'app-bubbletable',
   templateUrl: './bubbletable.component.html',
@@ -29,6 +27,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
   yScale: d3.ScaleLinear<number, number>;
   leftLabel: string[] = [];
   leftLabelA: string[][] = [];
+  leftLabelFontSize = 16;
   radScale: d3.ScaleLinear<number, number>;
   radarLine: d3.LineRadial<number>;
   format = d3.format('0.3');
@@ -107,40 +106,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .curve(d3.curveCardinalClosed)
       .radius(d => d)
       .angle((d, i) => angScale(i));
-    this.leftLabelA = [];
-    if (this.leftLabel.length > 0) {
-      this.leftLabel.forEach((d, i) => {
-        const newd: string[] = [];
-        let word = '';
-        const mW = 5;
-        let line = '';
-        const words = d.split(' ').reverse();
-        while (word = words.pop()) {
-          line += word;
-          if (line.length >= mW) {
-            newd.push(line);
-            line = '';
-          } else {
-            line += ' ';
-          }
-        }
-        if (line.length) {
-          newd.push(line);
-        }
-        this.leftLabelA.push(newd);
-      });
-    }
+    const newWidth = 2 * this.yScale(1) / 12;  // 12 is label font-size
+    this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
   }
-  textFind = (ddd: any) => ddd.each((_kk, i, j) => {
-    const node = d3.select(j[i]);
-    const spans = node.select('tspan').nodes() as SVGTSpanElement[];
-    spans.forEach(span => {
-      console.log(span.getComputedTextLength());
-      console.log(span.textContent);
-      console.log(span.textContent.length, 'Average font-size ' + (span.getComputedTextLength() / span.textContent.length));
-      console.log(d3.select(span.parentNode).style('font-size'));
-    });
-  })
   update() {
     this.updateCount++;
     console.log('update count', this.updateCount);
@@ -186,12 +154,11 @@ export class BubbletableComponent implements OnInit, OnChanges {
         here.attr('transform', `translate(0,${this.yScale(+ij.split(',')[1] + 1) + this.fontSize / 4}) rotate(${-45 * (1 - t)})`);
       });
     const labelY = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.labelY');
-    labelY.call(this.textFind);
-    //    labelY.call(this.wrapFunction, this.fontSize, this.fontSize * 1.4);
+    //  labelY.call(this.textFind);
     labelY.transition().duration(this.animDuration)
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
-        here.attr('transform', `${this.translateHack(-this.fontSize - this.borderX / 2, this.yScale(i + 1),
+        here.attr('transform', `${this.translateHack(- this.borderX, this.yScale(i + 1) - this.borderY / 4,
           t * this.labelYRotate)}`);
       });
   }
@@ -202,6 +169,18 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .styleTween('opacity', () => t => `${t * t}`);
   }
   textLeave() {
+    this.tip.attr('style', `display:none`)
+      .html(``)
+      .transition().duration(200)
+      .styleTween('opacity', () => t => `${1 - t * t}`);
+  }
+  labelEnter(i: number, label: string, ev: MouseEvent) {
+    this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
+      .html(`${label}`)
+      .transition().duration(200)
+      .styleTween('opacity', () => t => `${t * t}`);
+  }
+  labelLeave() {
     this.tip.attr('style', `display:none`)
       .html(``)
       .transition().duration(200)
@@ -239,37 +218,50 @@ export class BubbletableComponent implements OnInit, OnChanges {
       this.height = ev.pageY + 10 + this.borderY;
     }
     this.update();
+
+    const node = d3.select('#BUBBLE').select('text.labelY');
+    const newWidth = this.yScale(1) / +node.style('font-size').replace('px', '') * 2;
+    this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
   }
-  wrapFunction = (text1: any,
-    width: number, lineHeight: number) =>  // Adapted from http://bl.ocks.org/mbostock/7555321
-    text1.each((_kk, i, j) => {
-      const text = d3.select(j[i]);
-      let newspan = text.select('tspan');
-      const words = newspan.text().split(' ').reverse(),
-        y = text.attr('y'),
-        x = text.attr('x'),
-        maxTs = text.selectAll('tspan').nodes().length,
-        dy = parseFloat(text.attr('dy'));
-      if (words.length === 1) {
-        return;
+  wrapLabels = (labS: string[], mW: number) => {
+    console.log('wrapLabels', mW);
+    const labA: string[][] = [];
+    if (labS.length > 0) {
+      labS.forEach((d, i) => {
+        labA.push(this.wrapString(d, mW));
+      });
+    }
+    return labA;
+  }
+  wrapString = (d: string, mW: number) => {
+    const newd: string[] = [];
+    let word = '';
+    let line = '';
+    const words = d.split(' ').reverse();
+    while (word = words.pop()) {
+      if (line.length + word.length > mW) {
+        newd.push(line);
+        line = '';
+        line += word;
+        line += ' ';
+      } else {
+        line += word;
+        line += ' ';
       }
-      let word: string, line: string[] = [],
-        lineNumber = 0;
-      newspan.attr('x', x).attr('y', y).attr('dy', 0);
-      while (word = words.pop()) {
-        line.push(word);
-        newspan.text(line.join(' '));
-        if ((newspan.node() as SVGTSpanElement).getComputedTextLength() > width) {
-          line = [];
-          lineNumber++;
-          newspan = d3.select(text.selectAll('tspan').nodes()[lineNumber] as SVGTSpanElement);
-          newspan.attr('x', x).attr('y', y).attr('dy', `${lineNumber * lineHeight}`);
-        }
-      }
-      while (lineNumber < maxTs - 1) {
-        lineNumber++;
-        newspan = d3.select(text.selectAll('tspan').nodes()[lineNumber] as SVGTSpanElement);
-        newspan.attr('x', x).attr('y', y).attr('dy', 0).text('');
-      }
-    })
+    }
+    if (line.length) {
+      newd.push(line.substring(0, mW));
+    }
+    return newd;
+  }
+  textFind = (ddd: any) => ddd.each((_kk, i, j) => {
+    const node = d3.select(j[i]);
+    const spans = node.selectAll('tspan').nodes() as SVGTSpanElement[];
+    spans.forEach(span => {
+      console.log(span.getComputedTextLength());
+      console.log(span.textContent);
+      console.log(span.textContent.length, 'Average font-size ' + (span.getComputedTextLength() / span.textContent.length));
+      console.log(d3.select(span.parentNode).style('font-size'));
+    });
+  })
 }
