@@ -41,10 +41,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
   constructor(private element: ElementRef) {
   }
   vertexLine = (t: number) => [t, t / 3, t, t / 2, t, t / 2, t, t / 3];
-  getIdHack = (x: number, y: number) => {
-    console.log(x, y);
-    return `${x},${y}`;
-  }
+  getIdHack = (x: number, y: number) => `${x},${y}`
+  
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
   ngOnInit() {
