@@ -90,7 +90,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
     });
     const cScale = (k: number) => (k - dm) / (dM - dm);
     this.pathScale = (t: number) => {
-      const back = (d3.interpolateRgb('cyan', 'purple'))(cScale(t)); // optimizer compiler reports t.rgb() not a funtcion
+      const back = (d3.interpolateRgb('cyan', 'purple'))(cScale(t)); // optimizer compiler reports t.rgb() not a funtcion, use --build-optimizer=false in build
       return back;
     };
     this.circleScale = (t: number) => {
