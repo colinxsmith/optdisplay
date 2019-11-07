@@ -41,7 +41,10 @@ export class BubbletableComponent implements OnInit, OnChanges {
   constructor(private element: ElementRef) {
   }
   vertexLine = (t: number) => [t, t / 3, t, t / 2, t, t / 2, t, t / 3];
-  getIdHack = (x: number, y: number) => `${x},${y}`;
+  getIdHack = (x: number, y: number) => {
+    console.log(x, y);
+    return `${x},${y}`;
+  }
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
   ngOnInit() {
@@ -87,17 +90,17 @@ export class BubbletableComponent implements OnInit, OnChanges {
         }
       });
     });
-    const cScale = d3.scaleLinear().domain([dm, dM]).range([0, 1]);
+    const cScale = (k: number) => (k - dm) / (dM - dm);
     this.pathScale = (t: number) => {
-      const back = d3.interpolateRgb(d3.rgb('cyan'), d3.rgb('purple'))(cScale(t));
+      const back = (d3.interpolateRgb('cyan', 'purple'))(cScale(t)); // optimizer compiler reports t.rgb() not a funtcion
       return back;
     };
     this.circleScale = (t: number) => {
-      const back = d3.interpolateRgb(d3.rgb('red'), d3.rgb('blue'))(cScale(t));
+      const back = d3.interpolateRgb('red', 'blue')(cScale(t));
       return back;
     };
     this.squareScale = (t: number) => {
-      const back = d3.interpolateRgb(d3.rgb('yellow'), d3.rgb('orange'))(cScale(t));
+      const back = d3.interpolateRgb('yellow', 'orange')(cScale(t));
       return back;
     };
     this.radScale = d3.scaleSqrt().domain([am, aM]).range([0, this.yScale(0.5)]);
@@ -107,7 +110,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .radius(d => d)
       .angle((d, i) => angScale(i));
     const newWidth = 2 * this.yScale(1) / 12;  // 12 is label font-size
-    this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
+    if (this.leftLabel.length) {
+      this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
+    }
   }
   update() {
     this.updateCount++;
@@ -242,12 +247,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
       if (line.length + word.length > mW) {
         newd.push(line);
         line = '';
-        line += word;
-        line += ' ';
-      } else {
-        line += word;
-        line += ' ';
       }
+      line += word;
+      line += ' ';
     }
     if (line.length) {
       newd.push(line.substring(0, mW));
