@@ -10,8 +10,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() DATA: any = [];
   @Input() width = 800;
   @Input() height = 800;
-  @Input() borderX = 80;
-  @Input() borderY = 80;
+  @Input() borderX = 100;
+  @Input() borderY = 100;
   @Input() fontSize = 20;
   @Input() circles = true;
   @Input() squares = true;
@@ -41,8 +41,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
   constructor(private element: ElementRef) {
   }
   vertexLine = (t: number) => [t, t / 3, t, t / 2, t, t / 2, t, t / 3];
-  getIdHack = (x: number, y: number) => `${x},${y}`
-  
+  getIdHack = (x: number, y: number) => `${x},${y}`;
+
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
   ngOnInit() {
@@ -90,15 +90,18 @@ export class BubbletableComponent implements OnInit, OnChanges {
     });
     const cScale = (k: number) => (k - dm) / (dM - dm);
     this.pathScale = (t: number) => {
-      const back = (d3.interpolateRgb('cyan', 'purple'))(cScale(t)); // optimizer compiler reports t.rgb() not a funtcion, use --build-optimizer=false in build
+      //    const back = (d3.interpolateRgb('cyan', 'purple'))(cScale(t));
+      // optimizer compiler reports t.rgb() not a funtcion, use --build-optimizer=false in build
+      // so I wrote my own interpolate function which avoids d3.rgb()
+      const back = this.colourInterpolate('cyan', 'purple', cScale(t));
       return back;
     };
     this.circleScale = (t: number) => {
-      const back = d3.interpolateRgb('red', 'blue')(cScale(t));
+      const back = this.colourInterpolate('red', 'blue', cScale(t));
       return back;
     };
     this.squareScale = (t: number) => {
-      const back = d3.interpolateRgb('yellow', 'orange')(cScale(t));
+      const back = this.colourInterpolate('yellow', 'orange', cScale(t));
       return back;
     };
     this.radScale = d3.scaleSqrt().domain([am, aM]).range([0, this.yScale(0.5)]);
@@ -161,7 +164,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
     labelY.transition().duration(this.animDuration)
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
-        here.attr('transform', `${this.translateHack(- this.borderX, this.yScale(i + 1) - this.borderY / 4,
+        here.attr('transform', `${this.translateHack(- (this.labelYRotate ? this.borderX : this.borderX / 2),
+          this.yScale(i + 1) - this.borderY / 4,
           t * this.labelYRotate)}`);
       });
   }
@@ -264,4 +268,11 @@ export class BubbletableComponent implements OnInit, OnChanges {
       console.log(d3.select(span.parentNode).style('font-size'));
     });
   })
+  colourInterpolate = (c1: string, c2: string, t: number) => {
+    const r = (d3.color(c1) as d3.RGBColor).r * t + (d3.color(c2) as d3.RGBColor).r * (1 - t);
+    const g = (d3.color(c1) as d3.RGBColor).g * t + (d3.color(c2) as d3.RGBColor).g * (1 - t);
+    const b = (d3.color(c1) as d3.RGBColor).b * t + (d3.color(c2) as d3.RGBColor).b * (1 - t);
+    const back = `rgb(${r}, ${g}, ${b})`;
+    return back;
+  }
 }
