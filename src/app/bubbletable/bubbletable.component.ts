@@ -10,14 +10,14 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() DATA: any = [];
   @Input() width = 800;
   @Input() height = 800;
-  @Input() borderX = 100;
-  @Input() borderY = 100;
+  @Input() borderX = 80;
+  @Input() borderY = 80;
   @Input() fontSize = 20;
   @Input() circles = true;
   @Input() squares = true;
   @Input() squareRotate = 60;
   @Input() pathRotate = 45;
-  @Input() labelYRotate = 270;
+  @Input() labelYRotate = 360;
   @Input() paths = true;
   @Input() animDuration = 2000;
   @Input() tip = d3.select('app-root').select('div.mainTip');
@@ -164,10 +164,21 @@ export class BubbletableComponent implements OnInit, OnChanges {
     labelY.transition().duration(this.animDuration)
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
-        here.attr('transform', `${this.translateHack(- (this.labelYRotate ? this.borderX : this.borderX / 2),
-          this.yScale(i + 1) - this.borderY / 4,
-          t * this.labelYRotate)}`);
+        here
+          .attr('y', this.yScale(1) * this.sincosHack(this.labelYRotate, 0))
+          .attr('transform', `${this.translateHack(
+            0,
+            this.yScale(i) * this.sincosHack(this.labelYRotate),
+            t * this.labelYRotate)}`);
       });
+  }
+  sincosHack = (angle: number, sign = 1) => {
+    const rAngle = Math.PI / 180 * angle;
+    if (sign === 1) {
+      return Math.cos(rAngle) - Math.sin(rAngle);
+    } else {
+      return Math.cos(rAngle) + Math.sin(rAngle);
+    }
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
     this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
