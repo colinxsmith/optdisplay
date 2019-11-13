@@ -1,6 +1,7 @@
 import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { isNumber, isNull } from 'util';
+import { RGBColor } from 'd3';
 @Component({
   selector: 'app-bubbletable',
   templateUrl: './bubbletable.component.html',
@@ -8,18 +9,19 @@ import { isNumber, isNull } from 'util';
 })
 export class BubbletableComponent implements OnInit, OnChanges {
   @Input() DATA: any = [];
-  @Input() width = 800;
-  @Input() height = 800;
-  @Input() borderX = 80;
-  @Input() borderY = 80;
+  @Input() width = 1000;
+  @Input() height = 1000;
+  @Input() borderX = 100;
+  @Input() borderY = 100;
   @Input() fontSize = 20;
   @Input() circles = true;
   @Input() squares = true;
   @Input() squareRotate = 60;
   @Input() pathRotate = 45;
-  @Input() labelYRotate = 360;
+  @Input() labelYRotate = 270;
   @Input() paths = true;
   @Input() animDuration = 2000;
+  @Input() leftLabelFontSize = 16;
   @Input() tip = d3.select('app-root').select('div.mainTip');
   getKeys = Object.keys;
   keys: string[];
@@ -27,7 +29,6 @@ export class BubbletableComponent implements OnInit, OnChanges {
   yScale: d3.ScaleLinear<number, number>;
   leftLabel: string[] = [];
   leftLabelA: string[][] = [];
-  leftLabelFontSize = 16;
   radScale: d3.ScaleLinear<number, number>;
   radarLine: d3.LineRadial<number>;
   format = d3.format('0.3');
@@ -69,6 +70,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
       this.keys = this.getKeys(this.DATA[0]);
       this.width = this.keys.length * this.fontSize * this.DATA[this.DATA.length - 1][this.keys[0]].length;
       this.height = this.DATA.length * this.fontSize * 4;
+      this.borderX = this.width / 8;
+      this.borderY = this.height / 8;
     }
     this.dataOrder = Array(this.DATA.length);
     for (let i = 0; i < this.dataOrder.length; ++i) {
@@ -165,20 +168,11 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
         here
-          .attr('y', this.yScale(1) * this.sincosHack(this.labelYRotate, 0))
           .attr('transform', `${this.translateHack(
-            0,
-            this.yScale(i) * this.sincosHack(this.labelYRotate),
+            this.xScale(-0.55),
+            this.yScale(i + 0.5) + this.leftLabelFontSize * 0.75,
             t * this.labelYRotate)}`);
       });
-  }
-  sincosHack = (angle: number, sign = 1) => {
-    const rAngle = Math.PI / 180 * angle;
-    if (sign === 1) {
-      return Math.cos(rAngle) - Math.sin(rAngle);
-    } else {
-      return Math.cos(rAngle) + Math.sin(rAngle);
-    }
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
     this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
@@ -236,7 +230,6 @@ export class BubbletableComponent implements OnInit, OnChanges {
       this.height = ev.pageY + 10 + this.borderY;
     }
     this.update();
-
     const node = d3.select('#BUBBLE').select('text.labelY');
     const newWidth = this.yScale(1) / +node.style('font-size').replace('px', '') * 2;
     this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
@@ -280,9 +273,10 @@ export class BubbletableComponent implements OnInit, OnChanges {
     });
   })
   colourInterpolate = (c1: string, c2: string, t: number) => {
-    const r = (d3.color(c1) as d3.RGBColor).r * t + (d3.color(c2) as d3.RGBColor).r * (1 - t);
-    const g = (d3.color(c1) as d3.RGBColor).g * t + (d3.color(c2) as d3.RGBColor).g * (1 - t);
-    const b = (d3.color(c1) as d3.RGBColor).b * t + (d3.color(c2) as d3.RGBColor).b * (1 - t);
+    const myRGB = (cc: string) => d3.color(cc) as RGBColor;
+    const r = myRGB(c1).r * t + myRGB(c2).r * (1 - t);
+    const g = myRGB(c1).g * t + myRGB(c2).g * (1 - t);
+    const b = myRGB(c1).b * t + myRGB(c2).b * (1 - t);
     const back = `rgb(${r}, ${g}, ${b})`;
     return back;
   }
