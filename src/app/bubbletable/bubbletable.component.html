@@ -49,10 +49,10 @@ class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrd
 </text>
 <text   class="labelY" (mouseenter)="labelEnter(i,leftLabel[dataOrder[i]],$event)" (mouseleave)="labelLeave()" [attr.y]="yScale(-0.5)" 
 [attr.x]="-xScale(1)" [attr.transform]="translateHack(xScale(-0.55),yScale(i+1)+leftLabelFontSize*0.75,labelYRotate)">
-<tspan [attr.x]="xScale(-0.5)" [attr.dy]="0">{{leftLabelA[dataOrder[i]][0]}}</tspan>
-<tspan [attr.x]="xScale(-0.5)" [attr.dy]="leftLabelFontSize*0.75">{{leftLabelA[dataOrder[i]][1]}}</tspan>
-<tspan [attr.x]="xScale(-0.5)" [attr.dy]="leftLabelFontSize*0.75">{{leftLabelA[dataOrder[i]][2]}}</tspan>
-<tspan [attr.x]="xScale(-0.5)" [attr.dy]="leftLabelFontSize*0.75">{{leftLabelA[dataOrder[i]][3]}}</tspan>
+<tspan [attr.x]="xScale(-0.5)" [attr.dy]="'0em'">{{leftLabelA[dataOrder[i]][0]}}</tspan>
+<tspan [attr.x]="xScale(-0.5)" [attr.dy]="'1em'">{{leftLabelA[dataOrder[i]][1]}}</tspan>
+<tspan [attr.x]="xScale(-0.5)" [attr.dy]="'1em'">{{leftLabelA[dataOrder[i]][2]}}</tspan>
+<tspan [attr.x]="xScale(-0.5)" [attr.dy]="'1em'">{{leftLabelA[dataOrder[i]][3]}}</tspan>
 </text>
 </ng-container>
 </g>
