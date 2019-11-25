@@ -1,4 +1,4 @@
-<svg id="BUBBLE" [attr.width]="width" [attr.height]="height">
+<svg id="BUBBLE" [attr.width]="'100%'" [attr.height]="height">
 <g [attr.transform]="translateHack(borderX,borderY)">
 <rect (click)="rectClick($event)"   [attr.width]="width-borderX*2" [attr.height]="height-borderY*2"  class="border"></rect>
 
