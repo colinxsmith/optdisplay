@@ -18,7 +18,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() squares = true;
   @Input() squareRotate = 60;
   @Input() pathRotate = 45;
-  @Input() labelYRotate = 270;
+  @Input() labelYRotate = 360;
   @Input() paths = true;
   @Input() animDuration = 2000;
   @Input() leftLabelFontSize = 16;
@@ -168,10 +168,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
         here
-          .attr('transform', `${this.translateHack(
-            this.xScale(-0.55),
-            this.yScale(i + 0.5) + this.leftLabelFontSize * 0.75,
-            t * this.labelYRotate)}`);
+          .attr('transform', `${this.translateHack(-this.yScale(-i - 2) * t * Math.sin(Math.PI / 180 * this.labelYRotate), - this.yScale(i) * t * Math.sin(Math.PI / 180 * this.labelYRotate), t * this.labelYRotate)}`);
       });
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
