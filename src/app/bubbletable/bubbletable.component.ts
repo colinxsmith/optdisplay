@@ -228,7 +228,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
     }
     this.update();
     const node = d3.select('#BUBBLE').select('text.labelY');
-    const newWidth = this.yScale(1) / +node.style('font-size').replace('px', '') * 2;
+    const maxLength = this.yScale(1);
+    const newWidth = 2 * maxLength / +node.style('font-size').replace('px', '');
     this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
   }
   wrapLabels = (labS: string[], mW: number) => {

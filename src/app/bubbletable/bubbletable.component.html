@@ -47,9 +47,9 @@ class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrd
 [attr.class]="coll"  [attr.x]="xScale(j+1)" >{{DATA[dataOrder[i]][coll]}}</tspan>
 </ng-container>
 </text>
-<text   class="labelY" (mouseenter)="labelEnter(i,leftLabel[dataOrder[i]],$event)" (mouseleave)="labelLeave()" [attr.y]="yScale(i)" 
+<text   class="labelY" (mouseenter)="labelEnter(i,leftLabel[dataOrder[i]],$event)" (mouseleave)="labelLeave()" [attr.dataId]="dataOrder[i]" [attr.y]="yScale(i)" 
  [attr.transform]="translateHack(0,0,0)">
-<ng-container *ngFor="let line of leftLabelA[0]; let lineNo=index">
+<ng-container *ngFor="let line of leftLabelA[dataOrder[i]]; let lineNo=index">
     <tspan [attr.x]="xScale(-1)" [attr.dy]="lineNo>0?'1em':'3em'">{{leftLabelA[dataOrder[i]][lineNo]}}</tspan>
 </ng-container>
 </text>
