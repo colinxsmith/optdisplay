@@ -21,7 +21,6 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() labelYRotate = 360;
   @Input() paths = true;
   @Input() animDuration = 2000;
-  @Input() leftLabelFontSize = 16;
   @Input() tip = d3.select('app-root').select('div.mainTip');
   getKeys = Object.keys;
   keys: string[];
@@ -229,7 +228,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
     this.update();
     const node = d3.select('#BUBBLE').select('text.labelY');
     const maxLength = this.yScale(1);
-    const newWidth = 2 * maxLength / +node.style('font-size').replace('px', '');
+    const newWidth =  maxLength / +node.style('font-size').replace('px', '');
     this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
   }
   wrapLabels = (labS: string[], mW: number) => {
