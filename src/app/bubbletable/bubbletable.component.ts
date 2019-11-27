@@ -168,8 +168,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
         here
-          .attr('transform', `${this.translateHack(-this.yScale(-i - 2) * t * Math.sin(Math.PI / 180 * this.labelYRotate), - this.yScale(i) * t * Math.sin(Math.PI / 180 * this.labelYRotate), t * this.labelYRotate)}`);
-      });
+          .attr('transform', `${this.translateHack(this.yScale(0.5), this.yScale(i+1), t * this.labelYRotate)}`);
+            });
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
     this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
