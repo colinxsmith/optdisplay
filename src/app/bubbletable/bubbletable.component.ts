@@ -13,7 +13,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() height = 1000;
   @Input() borderX = 100;
   @Input() borderY = 100;
-  @Input() fontSize = 20;
+  @Input() fontSize = 26;
   @Input() circles = true;
   @Input() squares = true;
   @Input() squareRotate = 60;
@@ -64,7 +64,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
         });
       }
       this.DATA.forEach((d, i) => {
-        this.leftLabel.push(d.name + ` ${i} label test for wrapping`);
+        this.leftLabel.push(d.name + ` ${i} label test for wrapping. It works now on 27-11-2019.`);
       });
       this.keys = this.getKeys(this.DATA[0]);
       this.width = this.keys.length * this.fontSize * this.DATA[this.DATA.length - 1][this.keys[0]].length;
@@ -120,10 +120,11 @@ export class BubbletableComponent implements OnInit, OnChanges {
   update() {
     this.updateCount++;
     console.log('update count', this.updateCount);
+    this.fontSize = parseFloat(d3.select(this.element.nativeElement).select('#BUBBLE').style('font-size').replace('px', ''));
     this.keys = this.getKeys(this.DATA[0]);
     this.xScale = d3.scaleLinear().domain([0, this.getKeys(this.DATA[0]).length + 1]).range([0, this.width - this.borderX * 2]);
     this.yScale = d3.scaleLinear().domain([0, this.DATA.length + 1]).range([0, this.height - this.borderY * 2]);
-    this.fontSize = +d3.select(this.element.nativeElement).select('#BUBBLE').select('.table').style('font-size').replace('px', '');
+    this.radScale.range([0, this.yScale(0.5)]);
     if (this.circles) {
       const circleTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('circle.table');
       circleTable.transition().duration(this.animDuration)
@@ -167,8 +168,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
         here
-          .attr('transform', `${this.translateHack(this.yScale(0.5), this.yScale(i+1), t * this.labelYRotate)}`);
-            });
+          .attr('transform', `${this.translateHack(this.yScale(0.5), this.yScale(i + 1), t * this.labelYRotate)}`);
+      });
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
     this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
@@ -225,10 +226,12 @@ export class BubbletableComponent implements OnInit, OnChanges {
     if (this.height - this.borderY < ev.pageY + 10) {
       this.height = ev.pageY + 10 + this.borderY;
     }
+    this.borderX = this.width / 8;
+    this.borderY = this.height / 8;
     this.update();
     const node = d3.select('#BUBBLE').select('text.labelY');
-    const maxLength = this.yScale(1);
-    const newWidth =  maxLength / +node.style('font-size').replace('px', '');
+    const maxLength = this.borderX*0.9;
+    const newWidth =2* maxLength / +node.style('font-size').replace('px', '');
     this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
   }
   wrapLabels = (labS: string[], mW: number) => {
@@ -247,12 +250,14 @@ export class BubbletableComponent implements OnInit, OnChanges {
     let line = '';
     const words = d.split(' ').reverse();
     while (word = words.pop()) {
-      if (line.length + word.length > mW) {
+      if (line.length + word.length > mW + 2) {
         newd.push(line);
+        console.log(line, line.length, mW);
         line = '';
       }
       line += word;
       line += ' ';
+      console.log(line, line.length, mW);
     }
     if (line.length) {
       newd.push(line.substring(0, mW));

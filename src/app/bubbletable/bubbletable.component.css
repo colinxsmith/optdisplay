@@ -1,5 +1,7 @@
+#BUBBLE {
+    font-size:22px;
+}
 #BUBBLE text{
-    font-size:20px;
     fill:green;
     text-anchor: middle;
 }
@@ -9,7 +11,7 @@
     text-anchor: middle;
 }
 #BUBBLE text.labelY{
-    font-size:12px;
+    font-size:14px;
     fill:black;
     text-anchor: start;
 }
