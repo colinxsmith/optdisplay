@@ -112,7 +112,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .curve(d3.curveCardinalClosed)
       .radius(d => d)
       .angle((d, i) => angScale(i));
-    const newWidth = 2 * this.yScale(1) / 12;  // 12 is label font-size
+    const fontSize = parseFloat(d3.select('#BUBBLE').select('text').style('font-size'));
+    console.log(fontSize);
+    const newWidth = 1.8 * this.borderX / fontSize;
     if (this.leftLabel.length) {
       this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
     }
@@ -120,6 +122,14 @@ export class BubbletableComponent implements OnInit, OnChanges {
   update() {
     this.updateCount++;
     console.log('update count', this.updateCount);
+// This is where we get the correct font size for the labels on the left =========================
+    const fontS = parseFloat(d3.select('#BUBBLE').select('text.labelY').style('font-size'));
+    console.log(fontS);
+    const newWidth = 1.8 * this.borderX / fontS;
+    if (this.leftLabel.length) {
+      this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
+    }
+// ===============================================================================================
     this.fontSize = parseFloat(d3.select(this.element.nativeElement).select('#BUBBLE').style('font-size').replace('px', ''));
     this.keys = this.getKeys(this.DATA[0]);
     this.xScale = d3.scaleLinear().domain([0, this.getKeys(this.DATA[0]).length + 1]).range([0, this.width - this.borderX * 2]);
@@ -230,8 +240,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
     this.borderY = this.height / 8;
     this.update();
     const node = d3.select('#BUBBLE').select('text.labelY');
-    const maxLength = this.borderX*0.9;
-    const newWidth =2* maxLength / +node.style('font-size').replace('px', '');
+    const maxLength = this.borderX * 0.9;
+    console.log(node.style('font-size').replace('px', ''));
+    const newWidth = 2 * maxLength / +node.style('font-size').replace('px', '');
     this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
   }
   wrapLabels = (labS: string[], mW: number) => {
@@ -252,12 +263,12 @@ export class BubbletableComponent implements OnInit, OnChanges {
     while (word = words.pop()) {
       if (line.length + word.length > mW + 2) {
         newd.push(line);
-        console.log(line, line.length, mW);
+ //       console.log(line, line.length, mW);
         line = '';
       }
       line += word;
       line += ' ';
-      console.log(line, line.length, mW);
+  //    console.log(line, line.length, mW);
     }
     if (line.length) {
       newd.push(line.substring(0, mW));
