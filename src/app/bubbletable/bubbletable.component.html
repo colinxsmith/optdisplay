@@ -18,14 +18,14 @@
 <path (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" 
 class="table" [attr.ij]="getIdHack(j,i)" [attr.d]="radarLine(vertexLine(radScale(absHack(DATA[dataOrder[i]][coll]))))"
  [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?pathScale(DATA[dataOrder[i]][coll]):'none'"
-[attr.transform]="translateHack(xScale(j+1),yScale(i+1),pathRotate)">
+[attr.transform]="translateHack(xScale(j+1),yScale(i+1)-fontSize/4,pathRotate)">
   </path>
 </ng-container>
 
 <ng-container *ngIf="circles">
 <circle (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" 
 class="table"  [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?circleScale(DATA[dataOrder[i]][coll]):'none'"
- [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)"  [attr.r]="radScale(absHack(DATA[dataOrder[i]][coll]))"></circle>
+ [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)-fontSize/4"  [attr.r]="radScale(absHack(DATA[dataOrder[i]][coll]))"></circle>
 </ng-container>
 
 <ng-container *ngIf="squares">
@@ -35,13 +35,13 @@ class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrd
 [attr.y]="-radScale(absHack(DATA[dataOrder[i]][coll]))"
 [attr.height]="radScale(absHack(DATA[dataOrder[i]][coll]))*2"
  [attr.width]="radScale(absHack(DATA[dataOrder[i]][coll]))*2"
-  [attr.transform]="translateHack(xScale(j+1),yScale(i+1),squareRotate)"></rect>
+  [attr.transform]="translateHack(xScale(j+1),yScale(i+1)-fontSize/4,squareRotate)"></rect>
 </ng-container>
 
 </ng-container>
 </ng-container>
 
-<text  class="table"  [attr.ij]="getIdHack(0,i)"  [attr.transform]="translateHack(0,yScale(i+1)+fontSize/4)"> 
+<text  class="table"  [attr.ij]="getIdHack(0,i)"  [attr.transform]="translateHack(0,yScale(i+1))"> 
 <ng-container *ngFor="let coll of getKeys(row); let j=index">
 <tspan (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" 
 [attr.class]="coll"  [attr.x]="xScale(j+1)" >{{DATA[dataOrder[i]][coll]}}</tspan>
@@ -52,7 +52,7 @@ class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrd
   [attr.y]="-yScale(1)" 
    [attr.transform]="translateHack(yScale(0.5),yScale(i+1),0)">
   <ng-container *ngFor="let line of leftLabelA[dataOrder[i]]; let lineNo=index">
-      <tspan [attr.x]="-yScale(0.5)"    [attr.dy]="lineNo>0?'1em':'3em'">{{leftLabelA[dataOrder[i]][lineNo]}}</tspan>
+      <tspan [attr.x]="-yScale(0.5)"    [attr.dy]="lineNo>0?'1em':15/leftLabelA[dataOrder[i]].length+'em'">{{leftLabelA[dataOrder[i]][lineNo]}}</tspan>
   </ng-container>
   </text>
 </g>

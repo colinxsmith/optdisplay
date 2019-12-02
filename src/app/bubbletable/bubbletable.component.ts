@@ -1,6 +1,6 @@
 import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-import { isNumber, isNull } from 'util';
+import { isNumber } from 'util';
 import { RGBColor } from 'd3';
 @Component({
   selector: 'app-bubbletable',
@@ -122,14 +122,14 @@ export class BubbletableComponent implements OnInit, OnChanges {
   update() {
     this.updateCount++;
     console.log('update count', this.updateCount);
-// This is where we get the correct font size for the labels on the left =========================
+    // This is where we get the correct font size for the labels on the left =========================
     const fontS = parseFloat(d3.select('#BUBBLE').select('text.labelY').style('font-size'));
     console.log(fontS);
     const newWidth = 1.8 * this.borderX / fontS;
     if (this.leftLabel.length) {
       this.leftLabelA = this.wrapLabels(this.leftLabel, newWidth);
     }
-// ===============================================================================================
+    // ===============================================================================================
     this.fontSize = parseFloat(d3.select(this.element.nativeElement).select('#BUBBLE').style('font-size').replace('px', ''));
     this.keys = this.getKeys(this.DATA[0]);
     this.xScale = d3.scaleLinear().domain([0, this.getKeys(this.DATA[0]).length + 1]).range([0, this.width - this.borderX * 2]);
@@ -142,7 +142,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
           const here = d3.select(j[i]);
           const ij = here.attr('ij');
           here.attr('cx', (t * (1 - t) + 1) * this.xScale(+ij.split(',')[0] + 1));
-          here.attr('cy', (1 - t) * this.height * 0.95 + t * this.yScale(+ij.split(',')[1] + 1));
+          here.attr('cy', (1 - t) * this.height * 0.95 + t * this.yScale(+ij.split(',')[1] + 1) - this.fontSize / 4);
         });
     }
     if (this.squares) {
@@ -151,7 +151,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
         .tween('squareText', (d, i, j: Array<SVGRectElement>) => t => {
           const here = d3.select(j[i]);
           const ij = here.attr('ij');
-          here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1), t * this.yScale(+ij.split(',')[1] + 1),
+          here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1), t * this.yScale(+ij.split(',')[1] + 1)
+            - this.fontSize / 4,
             this.squareRotate * t));
         });
     }
@@ -162,7 +163,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
           const here = d3.select(j[i]);
           const ij = here.attr('ij');
           here.attr('transform', this.translateHack(this.xScale(+ij.split(',')[0] + 1),
-            (t * (1 - t) + 1) * this.yScale(+ij.split(',')[1] + 1), this.pathRotate * t));
+            (t * (1 - t) + 1) * this.yScale(+ij.split(',')[1] + 1) - this.fontSize / 4, this.pathRotate * t));
         });
     }
     const textTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.table');
@@ -170,7 +171,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .tween('tabtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
         const ij = here.attr('ij');
-        here.attr('transform', `translate(0,${this.yScale(+ij.split(',')[1] + 1) + this.fontSize / 4}) rotate(${-45 * (1 - t)})`);
+        here.attr('transform', `translate(0,${this.yScale(+ij.split(',')[1] + 1)}) rotate(${-45 * (1 - t)})`);
       });
     const labelY = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.labelY');
     //  labelY.call(this.textFind);
@@ -178,7 +179,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
       .tween('labYtext', (d, i, j: Array<SVGTextElement>) => t => {
         const here = d3.select(j[i]);
         here
-          .attr('transform', `${this.translateHack(this.yScale(0.5), this.yScale(i + 1), t * this.labelYRotate)}`);
+          .attr('transform', `${this.translateHack(this.yScale(0.5), this.yScale(i + 1),
+            t * this.labelYRotate)}`);
       });
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
@@ -263,12 +265,12 @@ export class BubbletableComponent implements OnInit, OnChanges {
     while (word = words.pop()) {
       if (line.length + word.length > mW + 2) {
         newd.push(line);
- //       console.log(line, line.length, mW);
+        //       console.log(line, line.length, mW);
         line = '';
       }
       line += word;
       line += ' ';
-  //    console.log(line, line.length, mW);
+      //    console.log(line, line.length, mW);
     }
     if (line.length) {
       newd.push(line.substring(0, mW));
