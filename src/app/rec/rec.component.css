@@ -1,0 +1,8 @@
+#RECEIVER rect{
+    fill:red;
+}
+#RECEIVER{
+    fill: goldenrod;
+    text-anchor: middle;
+    font-size: 250px;
+}

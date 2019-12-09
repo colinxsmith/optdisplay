@@ -15,6 +15,7 @@ import { BulktradeComponent } from './bulktrade/bulktrade.component';
 import { BulktestComponent } from './bulktest/bulktest.component';
 import { BulktradebarComponent } from './bulktradebar/bulktradebar.component';
 import { BubbletableComponent } from './bubbletable/bubbletable.component';
+import { RecComponent } from './rec/rec.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -24,6 +25,7 @@ const appRoutes: Routes = [
   { path: 'bulkbar', component: BulktradebarComponent },
   { path: 'bulktest', component: BulktestComponent },
   { path: 'bubbles', component: BubbletableComponent },
+  { path: 'receive', component: RecComponent },
   { path: '', redirectTo: '/etl', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },
 ];
@@ -39,7 +41,8 @@ const appRoutes: Routes = [
     BulktradeComponent,
     BulktestComponent,
     BulktradebarComponent,
-    BubbletableComponent
+    BubbletableComponent,
+    RecComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(
