@@ -12,17 +12,13 @@ export class RecComponent implements OnInit {
 
   ngOnInit() {
     console.log('init');
-    setTimeout(() => this.update());
   }
   clicker = () => {
     this.inputText = 'clicked';
-    setTimeout(() => this.update());
+    const g = d3.select('#RECEIVER').select('g');
+    g.attr('transform', this.translatehack(264.5, 90));
   }
-  translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
+  translatehack = (R: number, r: number) => `translate(${R * Math.sin(r / 180 * Math.PI)},${R * Math.cos(r / 180 * Math.PI)}) rotate(${r})`;
   update() {
-    const rect = d3.select('#RECEIVER').select('rect');
-    console.log('RECT', rect.attr('width'), rect.attr('height'));
-    const text = d3.select('#RECEIVER').select('text');
-    console.log('TEXT', text.attr('x'), text.attr('y'));
   }
 }
