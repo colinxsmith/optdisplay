@@ -1,7 +1,9 @@
-#RECEIVER rect{
-    fill:red;
+#RECEIVER rect {
+    fill: red;
+    fill-opacity: 1;
 }
-#RECEIVER{
+
+#RECEIVER {
     fill: goldenrod;
     text-anchor: middle;
     font-size: 250px;

@@ -12,16 +12,24 @@ export class RecComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     console.log('init');
+    this.update();
   }
   ngOnChanges() {
     console.log('changes');
+    this.update();
   }
   clicker = (ang: number) => {
     this.inputText = ang === 0 ? '' : 'clicked';
-    const g = d3.select('#RECEIVER').select('g');
-    g.attr('transform', `translate(400,400) rotate(${ang})`);
+    const g = d3.select('app-rec').select('#RECEIVER').select('g');
+    g.transition().duration(2000).ease(d3.easeBounce)
+      .styleTween('fill-opacity', () => t => `${t}`)
+      .attrTween('transform', () => t => `translate(400,400) rotate(${t * ang})`);
   }
   translatehack = (R: number, r: number) => `translate(${R * Math.sin(r / 180 * Math.PI)},${R * Math.cos(r / 180 * Math.PI)}) rotate(${r})`;
   update() {
+    const g = d3.select('app-rec').select('#RECEIVER').select('g'), ang = 135;
+    g.transition().duration(2000).ease(d3.easeBounce)
+      .styleTween('fill-opacity', () => t => `${t}`)
+      .attrTween('transform', () => t => `translate(400,400) rotate(${t * ang})`);
   }
 }
