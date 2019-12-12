@@ -12,6 +12,7 @@ export class RecComponent implements OnInit, OnChanges {
   fontSize = 25;
   clickAngle = 720;
   clickedMessage = 'clicked';
+  heightOveFontSize = '1em';
   translatehack = (x: number, y: number, theta = 0) => `translate(${x},${y}) rotate(${theta})`;
   constructor() { }
 
@@ -32,10 +33,8 @@ export class RecComponent implements OnInit, OnChanges {
     g.transition().duration(2000).ease(d3.easeBounce)
       .styleTween('fill-opacity', () => t => `${t}`)
       .attrTween('transform', () => t => `${transF} rotate(${t * ang})`);
-    setTimeout(() => {
-      const text = d3.select('app-rec').select('#RECEIVER').selectAll('text').nodes() as Array<SVGTextPathElement>;
-      console.log(text[j].getBoundingClientRect(), text[j].getBBox());
-    });
+    const text = d3.select('app-rec').select('#RECEIVER').select('text').node() as SVGTextPathElement;
+    this.heightOveFontSize = text.getBBox().height / parseFloat(d3.select(text).style('font-size')) + 'em';
   }
   update() {
     console.log('update');
@@ -48,12 +47,12 @@ export class RecComponent implements OnInit, OnChanges {
           .styleTween('fill-opacity', () => t => `${t}`)
           .attrTween('transform', () => t => `${transF} rotate(${t * ang})`);
       });
-    const text = d3.select('app-rec').select('#RECEIVER').selectAll('text').nodes() as SVGTextPathElement[];
-    text.forEach(d => console.log(d.getBoundingClientRect(), d.getBBox()));
+    const text = d3.select('app-rec').select('#RECEIVER').selectAll('text').nodes() as Array<SVGTextPathElement>;
+    this.heightOveFontSize = text[0].getBBox().height / parseFloat(d3.select(text[0]).style('font-size')) + 'em';
   }
   setup() {
     const fontHere = d3.select('app-rec').select('#RECEIVER');
-    this.fontSize = parseFloat(fontHere.style('font-size')) * 2;
+    this.fontSize = parseFloat(fontHere.style('font-size'));
     this.ww = this.fontSize * 10;
     fontHere.style('font-size', `${this.fontSize}px`);
   }
