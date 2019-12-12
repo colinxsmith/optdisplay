@@ -12,7 +12,9 @@ export class RecComponent implements OnInit, OnChanges {
   fontSize = 25;
   clickAngle = 720;
   clickedMessage = 'clicked';
-  heightOveFontSize = '1em';
+  heightOveFontSize = '1';
+  wArray = (ww: number) => [ww, ww * 3, ww * 2, ww * 5, ww * 6, ww * 4, ww * 7];
+  trans = (p: number) => this.ww / 2 + p * 2e-1;
   translatehack = (x: number, y: number, theta = 0) => `translate(${x},${y}) rotate(${theta})`;
   constructor() { }
 
@@ -49,6 +51,11 @@ export class RecComponent implements OnInit, OnChanges {
       });
     const text = d3.select('app-rec').select('#RECEIVER').selectAll('text').nodes() as Array<SVGTextPathElement>;
     this.heightOveFontSize = text[0].getBBox().height / parseFloat(d3.select(text[0]).style('font-size')) + 'em';
+    const rect = d3.select('app-rec').select('#RECEIVER').selectAll('rect').nodes() as Array<SVGRectElement>;
+    rect.forEach(d => {
+      d3.select(d)
+        .attr('height', this.heightOveFontSize);
+    });
   }
   setup() {
     const fontHere = d3.select('app-rec').select('#RECEIVER');
