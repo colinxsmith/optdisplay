@@ -30,7 +30,7 @@ import * as d3 from 'd3';
 `]
 })
 export class BulktradeComponent implements OnInit, OnChanges {
-  rimAnagle = 0.08 * Math.PI * 2;
+  rimAngle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   fontSize: number;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
@@ -96,7 +96,7 @@ export class BulktradeComponent implements OnInit, OnChanges {
     this.DATA.monitorFlagCategory.forEach(d => {
       totalV += d.value;
     });
-    this.scaleArc.domain([0, totalV]).range([Math.PI + this.rimAnagle, 3 * Math.PI - this.rimAnagle]);
+    this.scaleArc.domain([0, totalV]).range([Math.PI + this.rimAngle, 3 * Math.PI - this.rimAngle]);
   }
   arcPath(i: number, t = 1) {
     let sofar = 0;
@@ -131,6 +131,11 @@ export class BulktradeComponent implements OnInit, OnChanges {
     const fontSize = this.fontSize;
     const PATHS = d3.select(id).selectAll('path');
     const TEXTS = d3.select(id).selectAll('text');
+    console.log(this.rimAngle);
+    d3.select(TEXTS.nodes()[3] as SVGTextElement).attr('font-size', `${fontSize}px`);
+    this.rimAngle = Math.asin((TEXTS.nodes()[3] as SVGTextElement).getBoundingClientRect().width / this.side / 0.7);
+    this.scaleArc.range([Math.PI + this.rimAngle, Math.PI * 3 - this.rimAngle]);
+    console.log(this.rimAngle);
     PATHS.data(this.DATA.monitorFlagCategory);
     if (this.animate) {
       PATHS.transition().duration(this.durationTime).tween('ppp', (d, i, j) => t => {
