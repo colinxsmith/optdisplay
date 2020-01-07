@@ -12,3 +12,7 @@ div.mainTip {
     pointer-events: none;
     overflow: auto;
 }
+nav {
+    width:50%;
+    text-align:center;
+}
