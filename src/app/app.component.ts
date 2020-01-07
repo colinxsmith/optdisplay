@@ -7,4 +7,16 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'optdisplay';
+  routes = {
+    optlog: 'Optimiser Log Optimisation',
+    etl: 'ETL Optimisation',
+    gauge: 'NEW GAUGES',
+    proper: 'Test Angular',
+    bulk: 'Bulk Trade Dial in Angular',
+    bulkbar: 'Bulk Trade Bar in Angular',
+    bulktest: 'Bulk Trade Dial Test',
+    bubbles: 'General Bubbles Chart',
+    receive: 'Receiver Bar Test'
+  };
+  rKeys = Object.keys(this.routes);
 }
