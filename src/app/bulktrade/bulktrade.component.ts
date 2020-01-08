@@ -2,14 +2,15 @@ import { Component, OnInit, OnChanges, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-bulktrade',
-  template: `<svg id="BULK" width="0" height="0">
+  template: `<svg  id="BULK" width="0" height="0">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
   [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)"
   (mouseenter)="onMouseEnter(DATA.label,d,$event)"
   (mouseleave)="onMouseLeave()">
   </path>
-  <text    [style.font-size]="fontSize"px  [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
+  <text   [attr.class]="d.outlierStatusType.substr(0,1)"
+   [style.font-size]="fontSize"px  [attr.transform]="translateHack(side/2,side/2+(i-1)*160)">{{d.value}}</text>
   </ng-container>
   <text [style.font-size]="fontSize"px [attr.transform]="translateHack(side/2,side/2+320)">{{DATA.label}}</text>
   </svg>`,
@@ -22,10 +23,22 @@ import * as d3 from 'd3';
 #BULK path.A {
     fill: yellow;
 }
+#BULK text.O {
+  fill: red;
+}
+#BULK text.N {
+  fill: green;
+}
+#BULK text.A {
+  fill: yellow;
+}
 #BULK text {
     font-size: 80px;
     fill: grey;
     text-anchor: middle;
+}
+:host /DEEP/ {
+  background-color:darksalmon;
 }
 `]
 })
@@ -33,6 +46,7 @@ export class BulktradeComponent implements OnInit, OnChanges {
   rimAngle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   fontSize: number;
+
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
   @Input() square = true;
   @Input() toolTipObj = d3.select('app-root').select('div.mainTip');
@@ -40,7 +54,8 @@ export class BulktradeComponent implements OnInit, OnChanges {
   @Input() height = 800;
   @Input() animate = true;
   @Input() durationTime = 2000;
-  @Input() side: number;
+  @Input() title = 'alone';
+  side: number;
   @Input() DATA = {
     id: 1,
     type: 'stockLevelTotalRisk',
@@ -89,9 +104,9 @@ export class BulktradeComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
-    console.log('setup', this.DATA);
+    console.log('setup', this.DATA, this.title);
     this.side = Math.min(this.width, this.height); // Needed in arcPath
-    this.fontSize = this.side / 10;
+    this.fontSize = this.side / 8;
     let totalV = 0;
     this.DATA.monitorFlagCategory.forEach(d => {
       totalV += d.value;
@@ -125,17 +140,17 @@ export class BulktradeComponent implements OnInit, OnChanges {
   }
   update() {
     const id = this.element.nativeElement;
+    const fontSize = this.fontSize;
+    const font3 = fontSize * 1.1;
     d3.select(id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
-    const fontSize = this.fontSize;
-    const PATHS = d3.select(id).selectAll('path');
-    const TEXTS = d3.select(id).selectAll('text');
-    console.log(this.rimAngle);
-    d3.select(TEXTS.nodes()[3] as SVGTextElement).attr('font-size', `${fontSize}px`);
-    this.rimAngle = Math.asin((TEXTS.nodes()[3] as SVGTextElement).getBoundingClientRect().width / this.side / 0.7);
+    const PATHS: d3.Selection<SVGPathElement, number, any, unknown> = d3.select(id).selectAll('path');
+    const TEXTS: d3.Selection<SVGTextElement, unknown, any, unknown> = d3.select(id).selectAll('text');
+    const bottomText = TEXTS.filter((d, i) => i === 3);
+    bottomText.style('font-size', `${font3}px`);
+    this.rimAngle = Math.asin((bottomText.node() as SVGTextElement).getBoundingClientRect().width / this.side / 0.7);
     this.scaleArc.range([Math.PI + this.rimAngle, Math.PI * 3 - this.rimAngle]);
-    console.log(this.rimAngle);
     PATHS.data(this.DATA.monitorFlagCategory);
     if (this.animate) {
       PATHS.transition().duration(this.durationTime).tween('ppp', (d, i, j) => t => {
@@ -145,11 +160,14 @@ export class BulktradeComponent implements OnInit, OnChanges {
       TEXTS.transition().duration(this.durationTime * 2)
         .tween('ppp', (d, i, j) => t => {
           const HERE = d3.select(j[i] as SVGTextElement);
-          HERE.style('font-size', t * fontSize + 'px');
           if (i <= 2) {
-            HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * fontSize * 2 * (i - 1)})`);
+            HERE.style('font-size', t * fontSize + 'px');
+            const tH = j[i].getBoundingClientRect().height;
+            HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 + t * t * tH * (i - 1)})`);
           } else {
-            HERE.attr('transform', `translate(${this.side / 2},${this.side / 2 * t + t * fontSize * 2 * (i - 1)}) rotate(${360 * t})`);
+            HERE.style('font-size', t * font3 + 'px');
+            const tH = j[i].getBoundingClientRect().height;
+            HERE.attr('transform', `translate(${this.side / 2},${this.side * t - t * tH * 0.5}) rotate(${360 * t})`);
           }
         });
     } else {

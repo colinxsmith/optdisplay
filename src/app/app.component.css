@@ -3,17 +3,29 @@ div.mainTip {
     color: white;
     position: absolute;
     text-align: center;
-    font-size: 20px;
-    padding: 3px;
+    font-size: 150%;
+    padding: 1px 5px 2px 5px;
     border: 8px;
     border-radius: 4px;
+    bottom: inherit;
+    box-shadow: 1px 1px 3px #222222;
     font-weight: bold;
     font-family: Calibri, sans-serif;
     pointer-events: none;
     overflow: auto;
+    z-index: 3;
 }
 
 nav {
     width: 900px;
     text-align: center;
+}
+
+:host /DEEP/ {
+    background-color: rgb(238, 208, 208);
+}
+
+a {
+    background-color: rgb(169, 243, 169);
+    cursor: crosshair;
 }

@@ -1,7 +1,7 @@
 <ng-container *ngFor="let flagRow of DATA.preTradeMonitorFlags.monitorFlagRow; let ii=index">
-    <app-bulktrade [square]="ii%2?true:false"   [toolTipObj]="ttObj" [DATA]="flagRow" [width]="100" [height]="100"></app-bulktrade>
+    <app-bulktrade data-title="before" [square]="ii%2?true:false"   [toolTipObj]="ttObj" [DATA]="flagRow" [width]="100" [height]="100"></app-bulktrade>
 </ng-container>
-<app-bulktradebar [animate]="true" [durationTime]="500" [counter]="DATA.outlierStatusCounter.counter" [width]="200" [height]="100"></app-bulktradebar>
+<app-bulktradebar data-title="change" [animate]="true" [durationTime]="500" [counter]="DATA.outlierStatusCounter.counter" [width]="200" [height]="100"></app-bulktradebar>
 <ng-container *ngFor="let flagRow of DATA.postTradeMonitorFlags.monitorFlagRow;let ii=index">
-    <app-bulktrade [square]="ii%2?false:true" [durationTime]="1000" [DATA]="flagRow" [height]="100" [width]="100"></app-bulktrade>
+    <app-bulktrade data-title="after" [square]="ii%2?false:true" [durationTime]="1000" [DATA]="flagRow" [height]="100" [width]="100"></app-bulktrade>
 </ng-container>
