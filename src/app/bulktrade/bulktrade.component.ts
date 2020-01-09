@@ -54,7 +54,7 @@ export class BulktradeComponent implements OnInit, OnChanges {
   @Input() height = 800;
   @Input() animate = true;
   @Input() durationTime = 2000;
-  @Input() title = 'alone';
+  @Input() title = 'BULK';
   side: number;
   @Input() DATA = {
     id: 1,
@@ -105,6 +105,9 @@ export class BulktradeComponent implements OnInit, OnChanges {
   }
   setup() {
     console.log('setup', this.DATA, this.title);
+    if (!d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    }
     this.side = Math.min(this.width, this.height); // Needed in arcPath
     this.fontSize = this.side / 8;
     let totalV = 0;

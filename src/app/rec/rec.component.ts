@@ -7,6 +7,7 @@ import * as d3 from 'd3';
   styleUrls: ['./rec.component.css']
 })
 export class RecComponent implements OnInit, OnChanges {
+  title = 'RECEIVER';
   inputText = '';
   ww = 100;
   fontSize = 25;
@@ -58,6 +59,9 @@ export class RecComponent implements OnInit, OnChanges {
     });
   }
   setup() {
+    if (!d3.select('app-rec').attr('data-title')) {
+      d3.select('app-rec').attr('data-title', this.title);
+    }
     const fontHere = d3.select('app-rec').select('#RECEIVER');
     this.fontSize = parseFloat(fontHere.style('font-size'));
     this.ww = this.fontSize * 10;

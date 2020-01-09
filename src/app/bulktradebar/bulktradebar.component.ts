@@ -243,6 +243,7 @@ export class BulktradebarComponent implements OnInit, OnChanges {
   @Input() width = 600;
   @Input() height = 600;
   @Input() durationTime = 2000;
+  @Input() title = 'BULK CHANGE';
   @Input() counter: { name: string; outlier: number; almostOutlier: number; compliant: number; }[]
     = this.DATA.outlierStatusCounter.counter;
   constructor(private element: ElementRef) { }
@@ -255,6 +256,9 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
+    if (!d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    }
     let xMax = 0, xMin = 0;
     this.counter.forEach(d => {
       xMin = Math.min(d.almostOutlier, xMin);

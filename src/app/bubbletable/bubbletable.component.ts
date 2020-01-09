@@ -22,6 +22,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
   @Input() paths = true;
   @Input() animDuration = 2000;
   @Input() tip = d3.select('app-root').select('div.mainTip');
+  @Input() title = 'Bubble Table';
   getKeys = Object.keys;
   keys: string[];
   xScale: d3.ScaleLinear<number, number>;
@@ -56,6 +57,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
+    if (!d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    }
     if (!this.DATA.length) {
       for (let i = 0; i < 7; ++i) {
         this.DATA.push({
