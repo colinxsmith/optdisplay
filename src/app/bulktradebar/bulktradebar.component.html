@@ -1,4 +1,4 @@
-<svg id="BULKBAR" width="0" height="0">
+<svg id="BULKBAR" width="0" height="0" [style.background-color]="bcolor">
   <ng-container *ngFor="let flag of counter; let i=index">
   <rect [attr.transform]="translateHack(0,yScale(i))" [attr.x]="xScale.range()[0]" [attr.y]="0"
    [attr.width]="xScale.range()[1]-xScale.range()[0]" 

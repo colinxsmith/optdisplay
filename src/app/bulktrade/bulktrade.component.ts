@@ -2,7 +2,7 @@ import { Component, OnInit, OnChanges, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-bulktrade',
-  template: `<svg  id="BULK" width="0" height="0">
+  template: `<svg  id="BULK" width="0" height="0" [style.background-color]="bcolor">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"
   [attr.d]="arcPath(i)" [attr.transform]="translateHack(side/2,side/2)"
@@ -37,7 +37,7 @@ import * as d3 from 'd3';
     fill: grey;
     text-anchor: middle;
 }
-:host /DEEP/ {
+:host {
   background-color:darksalmon;
 }
 `]
@@ -48,6 +48,7 @@ export class BulktradeComponent implements OnInit, OnChanges {
   fontSize: number;
 
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
+  @Input() bcolor = '';
   @Input() square = true;
   @Input() toolTipObj = d3.select('app-root').select('div.mainTip');
   @Input() width = 800;
@@ -104,6 +105,9 @@ export class BulktradeComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
+    if (this.bcolor === '') {
+      this.bcolor = d3.select(this.element.nativeElement).style('background-color');
+    }
     console.log('setup', this.DATA, this.title);
     if (!d3.select(this.element.nativeElement).attr('data-title')) {
       d3.select(this.element.nativeElement).attr('data-title', this.title);

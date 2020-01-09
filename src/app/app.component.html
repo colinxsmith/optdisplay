@@ -2,7 +2,7 @@
 <tr>
 <ng-container *ngIf="rKeys?.length">
 <ng-container *ngFor="let key of rKeys">
-<a  [style.color]="'cornflowerblue'" [routerLink]="key" >{{routes[key]}}</a>
+<a   [attr.data-title]="key" [routerLink]="key" >{{routes[key]}}</a>
 <td> </td>
 </ng-container>
 </ng-container>

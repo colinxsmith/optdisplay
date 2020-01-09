@@ -239,6 +239,7 @@ export class BulktradebarComponent implements OnInit, OnChanges {
   absHack = Math.abs;
   groupSpace = 0.25;
   barSpace = 0.3;
+  @Input() bcolor = '';
   @Input() animate = true;
   @Input() width = 600;
   @Input() height = 600;
@@ -256,6 +257,9 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
+    if (this.bcolor === '') {
+      this.bcolor = d3.select(this.element.nativeElement).style('background-color');
+    }
     if (!d3.select(this.element.nativeElement).attr('data-title')) {
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
