@@ -2,34 +2,6 @@ body {
     font-family: Calibri, sans-serif;
 }
 
-[myattr]:hover:after {
-    opacity: 1;
-    transition: all 0.1s ease 0.5s;
-    visibility: visible;
-}
-
-[myattr]:after {
-    content: attr(myattr);
-    background-color: grey;
-    color: white;
-    font-size: 75%;
-    left: 0%;
-    position: absolute;
-    padding: 1px 5px 2px 5px;
-    bottom: unset;
-    white-space: nowrap;
-    box-shadow: 1px 1px 3px #222222;
-    opacity: 0;
-    border: 2px solid #4b0f0f;
-    border-radius: 4px;
-    z-index: 1;
-    visibility: hidden;
-}
-
-[myattr] {
-    position: relative;
-}
-
 [data-title]:hover:after {
     opacity: 1;
     transition: all 0.1s ease 0.5s;
@@ -55,5 +27,33 @@ body {
 }
 
 [data-title] {
+    position: relative;
+}
+
+[myattr]:hover:after {
+    opacity: 1;
+    transition: all 0.1s ease 0.5s;
+    visibility: visible;
+}
+
+[myattr]:after {
+    content: attr(myattr);
+    background-color: grey;
+    color: white;
+    font-size: 75%;
+    left: 0%;
+    position: absolute;
+    padding: 1px 5px 2px 5px;
+    bottom: unset;
+    white-space: nowrap;
+    box-shadow: 1px 1px 3px #222222;
+    opacity: 0;
+    border: 2px solid #4b0f0f;
+    border-radius: 4px;
+    z-index: 1;
+    visibility: hidden;
+}
+
+[myattr] {
     position: relative;
 }

@@ -86,25 +86,29 @@ export class BulktradeComponent implements OnInit, OnChanges {
     outlierStatusType: string;
   }, ee: MouseEvent) {
     if (d3.select(this.element.nativeElement).attr('myattr')) {
+      console.log('set myattr');
       d3.select(this.element.nativeElement).attr('myattr', `${ee.pageX},${ee.pageY}`);
-    }
-    if (d3.select(this.element.nativeElement).attr('data-title')) {
+    } else if (d3.select(this.element.nativeElement).attr('data-title')) {
+      console.log('set data-title');
       d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
     }
     this.toolTipObj.attr('style', `left:${ee.x}px;top:${ee.y}px;display:inline-block`)
       .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
+    console.log(this.title);
   }
   onMouseLeave() {
     if (d3.select(this.element.nativeElement).attr('myattr')) {
+      console.log('unset myattr');
       d3.select(this.element.nativeElement).attr('myattr', this.title);
-    }
-    if (d3.select(this.element.nativeElement).attr('data-title')) {
+    } else if (d3.select(this.element.nativeElement).attr('data-title')) {
+      console.log('unset data-title');
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
     this.toolTipObj.attr('style', `display:none`)
       .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
+    console.log(this.title);
   }
   constructor(private element: ElementRef) { }
   ngOnChanges() {
@@ -119,10 +123,10 @@ export class BulktradeComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('myattr')) {
+    /*if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('myattr')) {
       d3.select(this.element.nativeElement).attr('myattr', this.title);
       d3.select(this.element.nativeElement).attr('data-title', this.title);
-    }
+    }*/
     this.side = Math.min(this.width, this.height); // Needed in arcPath
     this.fontSize = this.side / 8;
     let totalV = 0;
