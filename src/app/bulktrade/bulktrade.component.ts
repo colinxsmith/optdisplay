@@ -85,13 +85,24 @@ export class BulktradeComponent implements OnInit, OnChanges {
     value: number;
     outlierStatusType: string;
   }, ee: MouseEvent) {
-    console.log(this.toolTipObj);
+    if (d3.select(this.element.nativeElement).attr('myattr')) {
+      d3.select(this.element.nativeElement).attr('myattr', `${ee.pageX},${ee.pageY}`);
+    }
+    if (d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
+    }
     this.toolTipObj.attr('style', `left:${ee.x}px;top:${ee.y}px;display:inline-block`)
       .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
+    if (d3.select(this.element.nativeElement).attr('myattr')) {
+      d3.select(this.element.nativeElement).attr('myattr', this.title);
+    }
+    if (d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    }
     this.toolTipObj.attr('style', `display:none`)
       .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
   }
@@ -108,8 +119,10 @@ export class BulktradeComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    console.log('setup', this.DATA, this.title);
-    if (!d3.select(this.element.nativeElement).attr('data-title')) {
+    if (d3.select(this.element.nativeElement).attr('myattr')) {
+      this.title = d3.select(this.element.nativeElement).attr('myattr');
+    }
+    if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('myattr')) {
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
     this.side = Math.min(this.width, this.height); // Needed in arcPath
@@ -146,7 +159,8 @@ export class BulktradeComponent implements OnInit, OnChanges {
     return `translate(${w},${h})`;
   }
   update() {
-    const id = this.element.nativeElement;
+    const id = this.element.nativeElement as HTMLElement;
+    console.log(id.getBoundingClientRect());
     const fontSize = this.fontSize;
     const font3 = fontSize * 1.1;
     d3.select(id).select('svg')

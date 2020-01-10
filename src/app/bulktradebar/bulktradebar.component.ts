@@ -257,11 +257,13 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
-    console.log(d3.select(this.element.nativeElement));
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    if (!d3.select(this.element.nativeElement).attr('data-title')) {
+    if (d3.select(this.element.nativeElement).attr('myattr')) {
+      this.title = d3.select(this.element.nativeElement).attr('myattr');
+    }
+    if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('myattr')) {
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
     let xMax = 0, xMin = 0;
@@ -281,6 +283,7 @@ export class BulktradebarComponent implements OnInit, OnChanges {
   }
   update() {
     const id = this.element.nativeElement as HTMLElement;
+    console.log(id.getBoundingClientRect());
     d3.select(id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
@@ -314,12 +317,24 @@ export class BulktradebarComponent implements OnInit, OnChanges {
 
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
+    if (d3.select(this.element.nativeElement).attr('myattr')) {
+      d3.select(this.element.nativeElement).attr('myattr', `${ee.pageX},${ee.pageY}`);
+    }
+    if (d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
+    }
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
       .html(`${name}<br>${type}<br>${value}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
+    if (d3.select(this.element.nativeElement).attr('myattr')) {
+      d3.select(this.element.nativeElement).attr('myattr', this.title);
+    }
+    if (d3.select(this.element.nativeElement).attr('data-title')) {
+      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    }
     this.toolTipObj.attr('style', `display:none`)
       .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
   }
