@@ -119,10 +119,8 @@ export class BulktradeComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    if (d3.select(this.element.nativeElement).attr('myattr')) {
-      this.title = d3.select(this.element.nativeElement).attr('myattr');
-    }
     if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('myattr')) {
+      d3.select(this.element.nativeElement).attr('myattr', this.title);
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
     this.side = Math.min(this.width, this.height); // Needed in arcPath
