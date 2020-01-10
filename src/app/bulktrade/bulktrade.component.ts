@@ -85,9 +85,9 @@ export class BulktradeComponent implements OnInit, OnChanges {
     value: number;
     outlierStatusType: string;
   }, ee: MouseEvent) {
-    if (d3.select(this.element.nativeElement).attr('myattr')) {
-      console.log('set myattr');
-      d3.select(this.element.nativeElement).attr('myattr', `${ee.pageX},${ee.pageY}`);
+    if (d3.select(this.element.nativeElement).attr('data-myattr')) {
+      console.log('set data-myattr');
+      d3.select(this.element.nativeElement).attr('data-myattr', `${ee.pageX},${ee.pageY}`);
     } else if (d3.select(this.element.nativeElement).attr('data-title')) {
       console.log('set data-title');
       d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
@@ -99,9 +99,9 @@ export class BulktradeComponent implements OnInit, OnChanges {
     console.log(this.title);
   }
   onMouseLeave() {
-    if (d3.select(this.element.nativeElement).attr('myattr')) {
-      console.log('unset myattr');
-      d3.select(this.element.nativeElement).attr('myattr', this.title);
+    if (d3.select(this.element.nativeElement).attr('data-myattr')) {
+      console.log('unset data-myattr');
+      d3.select(this.element.nativeElement).attr('data-myattr', this.title);
     } else if (d3.select(this.element.nativeElement).attr('data-title')) {
       console.log('unset data-title');
       d3.select(this.element.nativeElement).attr('data-title', this.title);
@@ -123,8 +123,8 @@ export class BulktradeComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    /*if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('myattr')) {
-      d3.select(this.element.nativeElement).attr('myattr', this.title);
+    /*if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('data-myattr')) {
+      d3.select(this.element.nativeElement).attr('data-myattr', this.title);
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }*/
     this.side = Math.min(this.width, this.height); // Needed in arcPath

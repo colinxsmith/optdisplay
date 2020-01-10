@@ -30,14 +30,14 @@ body {
     position: relative;
 }
 
-[myattr]:hover:after {
+[data-myattr]:hover:after {
     opacity: 1;
     transition: all 0.1s ease 0.5s;
     visibility: visible;
 }
 
-[myattr]:after {
-    content: attr(myattr);
+[data-myattr]:after {
+    content: attr(data-myattr);
     background-color: grey;
     color: white;
     font-size: 75%;
@@ -54,6 +54,6 @@ body {
     visibility: hidden;
 }
 
-[myattr] {
+[data-myattr] {
     position: relative;
 }
