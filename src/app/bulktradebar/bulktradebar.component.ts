@@ -257,6 +257,7 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
+    console.log(d3.select(this.element.nativeElement));
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }

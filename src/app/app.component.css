@@ -14,6 +14,7 @@ div.mainTip {
     pointer-events: none;
     overflow: auto;
     z-index: 3;
+    opacity: 1;
 }
 
 nav {
