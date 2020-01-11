@@ -48,6 +48,8 @@ export class BulktradeComponent implements OnInit, OnChanges {
   fontSize: number;
 
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
+  myAttr = false;
+  myTitle = false;
   @Input() bcolor = '';
   @Input() square = true;
   @Input() toolTipObj = d3.select('app-root').select('div.mainTip');
@@ -85,30 +87,26 @@ export class BulktradeComponent implements OnInit, OnChanges {
     value: number;
     outlierStatusType: string;
   }, ee: MouseEvent) {
-    if (d3.select(this.element.nativeElement).attr('data-myattr')) {
-      console.log('set data-myattr');
+    if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('data-myattr', `${ee.pageX},${ee.pageY}`);
-    } else if (d3.select(this.element.nativeElement).attr('data-title')) {
-      console.log('set data-title');
+    }
+    if (this.myTitle) {
       d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
     }
     this.toolTipObj.attr('style', `left:${ee.x}px;top:${ee.y}px;display:inline-block`)
       .html(`${label}<br>${data.outlierStatusType}<br>${data.value}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
-    console.log(this.title);
   }
   onMouseLeave() {
-    if (d3.select(this.element.nativeElement).attr('data-myattr')) {
-      console.log('unset data-myattr');
+    if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('data-myattr', this.title);
-    } else if (d3.select(this.element.nativeElement).attr('data-title')) {
-      console.log('unset data-title');
+    }
+    if (this.myTitle) {
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
     this.toolTipObj.attr('style', `display:none`)
       .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
-    console.log(this.title);
   }
   constructor(private element: ElementRef) { }
   ngOnChanges() {
@@ -123,10 +121,18 @@ export class BulktradeComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    /*if (!d3.select(this.element.nativeElement).attr('data-title') && !d3.select(this.element.nativeElement).attr('data-myattr')) {
+    if (d3.select(this.element.nativeElement).attr('data-title') === null &&
+      d3.select(this.element.nativeElement).attr('data-myattr') === null) {
       d3.select(this.element.nativeElement).attr('data-myattr', this.title);
-      d3.select(this.element.nativeElement).attr('data-title', this.title);
-    }*/
+    }
+    if (d3.select(this.element.nativeElement).attr('data-title') !== null) {
+      this.title = d3.select(this.element.nativeElement).attr('data-title');
+      this.myTitle = true;
+    }
+    if (d3.select(this.element.nativeElement).attr('data-myattr') !== null) {
+      this.title = d3.select(this.element.nativeElement).attr('data-myattr');
+      this.myAttr = true;
+    }
     this.side = Math.min(this.width, this.height); // Needed in arcPath
     this.fontSize = this.side / 8;
     let totalV = 0;
@@ -162,7 +168,6 @@ export class BulktradeComponent implements OnInit, OnChanges {
   }
   update() {
     const id = this.element.nativeElement as HTMLElement;
-    console.log(id.getBoundingClientRect());
     const fontSize = this.fontSize;
     const font3 = fontSize * 1.1;
     d3.select(id).select('svg')

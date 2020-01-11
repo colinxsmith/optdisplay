@@ -33,7 +33,7 @@ svg.new rect.minus{
 })
 export class ProperComponent implements OnInit {
   DATA: { x: number }[];
-  title='Proper Angular?';
+  title = 'Proper Angular?';
   w: number;
   h: number;
   gap = 0.02;
@@ -47,7 +47,7 @@ export class ProperComponent implements OnInit {
     setTimeout(() => this.update());
   }
   setup() {
-    if (!d3.select(this.mainElement.nativeElement).attr('data-title')) {
+    if (d3.select(this.mainElement.nativeElement).attr('data-title') === null) {
       d3.select(this.mainElement.nativeElement).attr('data-title', this.title);
     }
     console.log('init');

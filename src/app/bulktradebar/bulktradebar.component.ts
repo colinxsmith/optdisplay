@@ -239,6 +239,8 @@ export class BulktradebarComponent implements OnInit, OnChanges {
   absHack = Math.abs;
   groupSpace = 0.25;
   barSpace = 0.3;
+  myAttr = false;
+  myTitle = false;
   @Input() bcolor = '';
   @Input() animate = true;
   @Input() width = 600;
@@ -260,12 +262,18 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    /*  if (!d3.select(this.element.nativeElement).attr('data-myattr')) {
-          d3.select(this.element.nativeElement).attr('data-myattr', this.title);
-        }
-        if (!d3.select(this.element.nativeElement).attr('data-title')) {
-          d3.select(this.element.nativeElement).attr('data-title', this.title);
-        }*/
+    if (d3.select(this.element.nativeElement).attr('data-title') === null &&
+      d3.select(this.element.nativeElement).attr('data-myattr') === null) {
+      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    }
+    if (d3.select(this.element.nativeElement).attr('data-title') !== null) {
+      this.title = d3.select(this.element.nativeElement).attr('data-title');
+      this.myTitle = true;
+    }
+    if (d3.select(this.element.nativeElement).attr('data-myattr') !== null) {
+      this.title = d3.select(this.element.nativeElement).attr('data-myattr');
+      this.myAttr = true;
+    }
     let xMax = 0, xMin = 0;
     this.counter.forEach(d => {
       xMin = Math.min(d.almostOutlier, xMin);
@@ -283,7 +291,6 @@ export class BulktradebarComponent implements OnInit, OnChanges {
   }
   update() {
     const id = this.element.nativeElement as HTMLElement;
-    console.log(id.getBoundingClientRect());
     d3.select(id).select('svg')
       .attr('width', this.width)
       .attr('height', this.height);
@@ -317,29 +324,25 @@ export class BulktradebarComponent implements OnInit, OnChanges {
 
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
-    if (d3.select(this.element.nativeElement).attr('data-myattr')) {
-      console.log('set data-myattr');
+    if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('data-myattr', `${ee.pageX},${ee.pageY}`);
-    } else if (d3.select(this.element.nativeElement).attr('data-title')) {
-      console.log('set data-title');
+    }
+    if (this.myTitle) {
       d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
     }
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
       .html(`${name}<br>${type}<br>${value}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
-    console.log(this.title);
   }
   onMouseLeave() {
-    if (d3.select(this.element.nativeElement).attr('data-myattr')) {
-      console.log('unset data-myattr');
+    if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('data-myattr', this.title);
-    } else if (d3.select(this.element.nativeElement).attr('data-title')) {
-      console.log('unset data-title');
+    }
+    if (this.myTitle) {
       d3.select(this.element.nativeElement).attr('data-title', this.title);
     }
     this.toolTipObj.attr('style', `display:none`)
       .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);
-    console.log(this.title);
   }
 }
