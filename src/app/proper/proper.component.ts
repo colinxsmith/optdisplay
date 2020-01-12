@@ -47,8 +47,8 @@ export class ProperComponent implements OnInit {
     setTimeout(() => this.update());
   }
   setup() {
-    if (d3.select(this.mainElement.nativeElement).attr('data-title') === null) {
-      d3.select(this.mainElement.nativeElement).attr('data-title', this.title);
+    if (d3.select(this.mainElement.nativeElement).attr('greentitle') === null) {
+      d3.select(this.mainElement.nativeElement).attr('greentitle', this.title);
     }
     console.log('init');
     this.DATA = [];

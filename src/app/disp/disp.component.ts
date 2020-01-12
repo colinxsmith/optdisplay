@@ -59,6 +59,7 @@ export class DispComponent implements OnInit {
   }
   constructor(private dataService: DataService) { }
   ngOnInit() {
+    d3.select('app-disp').attr('title', 'Optimisation Results');
     this.displayServerData();
   }
   picture() {

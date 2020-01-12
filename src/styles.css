@@ -2,14 +2,14 @@ body {
     font-family: Calibri, sans-serif;
 }
 
-[data-title]:hover:after {
+[greentitle]:hover:after {
     opacity: 1;
     transition: all 0.1s ease 0.5s;
     visibility: visible;
 }
 
-[data-title]:after {
-    content: attr(data-title);
+[greentitle]:after {
+    content: attr(greentitle);
     background-color: #00FF00;
     color: rgb(24, 11, 11);
     font-size: 150%;
@@ -26,18 +26,18 @@ body {
     visibility: hidden;
 }
 
-[data-title] {
+[greentitle] {
     position: relative;
 }
 
-[data-myattr]:hover:after {
+[smallgreytitle]:hover:after {
     opacity: 1;
     transition: all 0.1s ease 0.5s;
     visibility: visible;
 }
 
-[data-myattr]:after {
-    content: attr(data-myattr);
+[smallgreytitle]:after {
+    content: attr(smallgreytitle);
     background-color: grey;
     color: white;
     font-size: 75%;
@@ -54,6 +54,6 @@ body {
     visibility: hidden;
 }
 
-[data-myattr] {
+[smallgreytitle] {
     position: relative;
 }

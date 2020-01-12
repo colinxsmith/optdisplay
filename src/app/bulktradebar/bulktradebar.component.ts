@@ -262,16 +262,16 @@ export class BulktradebarComponent implements OnInit, OnChanges {
     if (this.bcolor === '') {
       this.bcolor = d3.select(this.element.nativeElement).style('background-color');
     }
-    if (d3.select(this.element.nativeElement).attr('data-title') === null &&
-      d3.select(this.element.nativeElement).attr('data-myattr') === null) {
-      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    if (d3.select(this.element.nativeElement).attr('greentitle') === null &&
+      d3.select(this.element.nativeElement).attr('smallgreytitle') === null) {
+      d3.select(this.element.nativeElement).attr('greentitle', this.title);
     }
-    if (d3.select(this.element.nativeElement).attr('data-title') !== null) {
-      this.title = d3.select(this.element.nativeElement).attr('data-title');
+    if (d3.select(this.element.nativeElement).attr('greentitle') !== null) {
+      this.title = d3.select(this.element.nativeElement).attr('greentitle');
       this.myTitle = true;
     }
-    if (d3.select(this.element.nativeElement).attr('data-myattr') !== null) {
-      this.title = d3.select(this.element.nativeElement).attr('data-myattr');
+    if (d3.select(this.element.nativeElement).attr('smallgreytitle') !== null) {
+      this.title = d3.select(this.element.nativeElement).attr('smallgreytitle');
       this.myAttr = true;
     }
     let xMax = 0, xMin = 0;
@@ -324,11 +324,12 @@ export class BulktradebarComponent implements OnInit, OnChanges {
 
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
+    d3.select(this.element.nativeElement).attr('title', `${ee.pageX},${ee.pageY}`);
     if (this.myAttr) {
-      d3.select(this.element.nativeElement).attr('data-myattr', `${ee.pageX},${ee.pageY}`);
+      d3.select(this.element.nativeElement).attr('smallgreytitle', `${ee.pageX},${ee.pageY}`);
     }
     if (this.myTitle) {
-      d3.select(this.element.nativeElement).attr('data-title', `${ee.pageX},${ee.pageY}`);
+      d3.select(this.element.nativeElement).attr('greentitle', `${ee.pageX},${ee.pageY}`);
     }
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
       .html(`${name}<br>${type}<br>${value}`)
@@ -336,11 +337,12 @@ export class BulktradebarComponent implements OnInit, OnChanges {
       .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
+    d3.select(this.element.nativeElement).attr('title', this.title);
     if (this.myAttr) {
-      d3.select(this.element.nativeElement).attr('data-myattr', this.title);
+      d3.select(this.element.nativeElement).attr('smallgreytitle', this.title);
     }
     if (this.myTitle) {
-      d3.select(this.element.nativeElement).attr('data-title', this.title);
+      d3.select(this.element.nativeElement).attr('greentitle', this.title);
     }
     this.toolTipObj.attr('style', `display:none`)
       .html('').transition().duration(200).styleTween('opacity', () => t => `${1 - t * t}`);

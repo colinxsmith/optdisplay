@@ -59,8 +59,8 @@ export class RecComponent implements OnInit, OnChanges {
     });
   }
   setup() {
-    if (d3.select('app-rec').attr('data-myattr') === null) {
-      d3.select('app-rec').attr('data-myattr', this.title);
+    if (d3.select('app-rec').attr('smallgreytitle') === null) {
+      d3.select('app-rec').attr('smallgreytitle', this.title);
     }
     const fontHere = d3.select('app-rec').select('#RECEIVER');
     this.fontSize = parseFloat(fontHere.style('font-size'));

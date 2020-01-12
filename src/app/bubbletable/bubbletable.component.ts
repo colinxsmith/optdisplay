@@ -57,8 +57,8 @@ export class BubbletableComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   setup() {
-    if (!d3.select(this.element.nativeElement).attr('data-title')) {
-      d3.select(this.element.nativeElement).attr('data-title', this.title);
+    if (!d3.select(this.element.nativeElement).attr('greentitle')) {
+      d3.select(this.element.nativeElement).attr('greentitle', this.title);
     }
     if (!this.DATA.length) {
       for (let i = 0; i < 7; ++i) {

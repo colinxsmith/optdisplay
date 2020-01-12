@@ -50,6 +50,7 @@ export class EtlComponent implements OnInit {
   constructor(private dataService: DataService, private mainScreen: ElementRef) { }
 
   ngOnInit() {
+    d3.select(this.mainScreen.nativeElement).attr('greentitle', 'ETL Optimisation');
     (d3.select(this.mainScreen.nativeElement).select('#sticks').select('input').node() as HTMLInputElement).checked = this.useSticks;
     this.chooser();
   }
