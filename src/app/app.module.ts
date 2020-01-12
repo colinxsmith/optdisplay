@@ -11,9 +11,9 @@ import { EtlComponent } from './etl/etl.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { NewgaugeComponent } from './newgauge/newgauge.component';
 import { ProperComponent } from './proper/proper.component';
-import { BulktradeComponent } from './bulktrade/bulktrade.component';
-import { BulktestComponent } from './bulktest/bulktest.component';
-import { BulktradebarComponent } from './bulktradebar/bulktradebar.component';
+import { BulktradeComponent } from './bulk-trade/bulk-trade.component';
+import { BulktestComponent } from './bulk-test/bulk-test.component';
+import { BulktradebarComponent } from './bulk-trade-bar/bulk-trade-bar.component';
 import { BubbletableComponent } from './bubbletable/bubbletable.component';
 import { RecComponent } from './rec/rec.component';
 const appRoutes: Routes = [

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnChanges, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
-  selector: 'app-bulktrade',
+  selector: 'app-bulk-trade',
   template: `<svg  id="BULK" width="0" height="0" [style.background-color]="bcolor">
   <ng-container  *ngFor="let d of DATA.monitorFlagCategory; let i=index">
   <path [attr.class]="d.outlierStatusType.substr(0,1)"

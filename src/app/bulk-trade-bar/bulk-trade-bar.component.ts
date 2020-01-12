@@ -2,9 +2,9 @@ import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'app-bulktradebar',
-  templateUrl: './bulktradebar.component.html',
-  styleUrls: ['./bulktradebar.component.css']
+  selector: 'app-bulk-trade-bar',
+  templateUrl: './bulk-trade-bar.component.html',
+  styleUrls: ['./bulk-trade-bar.component.css']
 })
 export class BulktradebarComponent implements OnInit, OnChanges {
 

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BulktradeComponent } from './bulktrade.component';
+import { BulktradeComponent } from './bulk-trade.component';
 
 describe('BulktradeComponent', () => {
   let component: BulktradeComponent;
