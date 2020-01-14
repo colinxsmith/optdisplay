@@ -331,13 +331,17 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
     if (this.myTitle) {
       d3.select(this.element.nativeElement).attr('greentitle', `${ee.pageX},${ee.pageY}`);
     }
+    d3.select(this.element.nativeElement).style('--xx', `${ee.x}px`);
+    d3.select(this.element.nativeElement).style('--back', 'blue');
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
       .html(`${name}<br>${type}<br>${value}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
+    d3.select(this.element.nativeElement).style('--xx', '0%');
     d3.select(this.element.nativeElement).attr('title', this.title);
+    d3.select(this.element.nativeElement).style('--back', 'red');
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', this.title);
     }

@@ -87,6 +87,8 @@ export class BulkTradeComponent implements OnInit, OnChanges {
     value: number;
     outlierStatusType: string;
   }, ee: MouseEvent) {
+    d3.select(this.element.nativeElement).style('--xx', `${ee.x}px`);
+    d3.select(this.element.nativeElement).style('--back', 'blue');
     d3.select(this.element.nativeElement).attr('title', `${ee.pageX},${ee.pageY}`);
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', `${ee.pageX},${ee.pageY}`);
@@ -100,6 +102,9 @@ export class BulkTradeComponent implements OnInit, OnChanges {
       .styleTween('opacity', () => t => `${t * t}`);
   }
   onMouseLeave() {
+    d3.select(this.element.nativeElement).style('--xx', '0%');
+    d3.select(this.element.nativeElement).attr('title', this.title);
+    d3.select(this.element.nativeElement).style('--back', 'red');
     d3.select(this.element.nativeElement).attr('title', this.title);
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', this.title);
