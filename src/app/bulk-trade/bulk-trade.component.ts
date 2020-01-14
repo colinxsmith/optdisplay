@@ -42,7 +42,7 @@ import * as d3 from 'd3';
 }
 `]
 })
-export class BulktradeComponent implements OnInit, OnChanges {
+export class BulkTradeComponent implements OnInit, OnChanges {
   rimAngle = 0.08 * Math.PI * 2;
   scaleArc = d3.scaleLinear();
   fontSize: number;

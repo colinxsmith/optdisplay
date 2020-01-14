@@ -6,7 +6,7 @@ import * as d3 from 'd3';
   templateUrl: './bulk-trade-bar.component.html',
   styleUrls: ['./bulk-trade-bar.component.css']
 })
-export class BulktradebarComponent implements OnInit, OnChanges {
+export class BulkTradeBarComponent implements OnInit, OnChanges {
 
   @Input() toolTipObj = d3.select('app-root').select('div.mainTip');
   DATA = {
@@ -324,7 +324,7 @@ export class BulktradebarComponent implements OnInit, OnChanges {
 
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
-    d3.select(this.element.nativeElement).attr('title', `${ee.pageX},${ee.pageY}`);
+    d3.select(this.element.nativeElement).attr('title', `${ee.x},${ee.y}`);
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', `${ee.pageX},${ee.pageY}`);
     }

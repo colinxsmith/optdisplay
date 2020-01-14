@@ -39,12 +39,11 @@ body {
 [smallgreytitle]:after {
     content: attr(smallgreytitle);
     background-color: grey;
-    color: white;
-    font-size: 75%;
-    left: 0%;
+    color: whitesmoke;
+    font-size: 80%;
     position: absolute;
     padding: 1px 5px 2px 5px;
-    bottom: unset;
+    left: 0%;
     white-space: nowrap;
     box-shadow: 1px 1px 3px #222222;
     opacity: 0;

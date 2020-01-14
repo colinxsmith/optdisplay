@@ -11,9 +11,9 @@ import { EtlComponent } from './etl/etl.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { NewgaugeComponent } from './newgauge/newgauge.component';
 import { ProperComponent } from './proper/proper.component';
-import { BulktradeComponent } from './bulk-trade/bulk-trade.component';
+import { BulkTradeComponent } from './bulk-trade/bulk-trade.component';
 import { BulktestComponent } from './bulk-test/bulk-test.component';
-import { BulktradebarComponent } from './bulk-trade-bar/bulk-trade-bar.component';
+import { BulkTradeBarComponent } from './bulk-trade-bar/bulk-trade-bar.component';
 import { BubbletableComponent } from './bubbletable/bubbletable.component';
 import { RecComponent } from './rec/rec.component';
 const appRoutes: Routes = [
@@ -21,8 +21,8 @@ const appRoutes: Routes = [
   { path: 'etl', component: EtlComponent },
   { path: 'proper', component: ProperComponent },
   { path: 'gauge', component: NewgaugeComponent },
-  { path: 'bulk', component: BulktradeComponent },
-  { path: 'bulkbar', component: BulktradebarComponent },
+  { path: 'bulk', component: BulkTradeComponent },
+  { path: 'bulkbar', component: BulkTradeBarComponent },
   { path: 'bulktest', component: BulktestComponent },
   { path: 'bubbles', component: BubbletableComponent },
   { path: 'receive', component: RecComponent },
@@ -38,9 +38,9 @@ const appRoutes: Routes = [
     PageNotFoundComponent,
     NewgaugeComponent,
     ProperComponent,
-    BulktradeComponent,
+    BulkTradeComponent,
     BulktestComponent,
-    BulktradebarComponent,
+    BulkTradeBarComponent,
     BubbletableComponent,
     RecComponent
   ],
