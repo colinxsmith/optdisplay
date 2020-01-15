@@ -324,6 +324,14 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
 
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
+    const ww = (ee.x - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().left)
+      /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().width;
+    const hh = (ee.y - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().top)
+      /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height;
+//    console.log(ww, hh);
+    d3.select(this.element.nativeElement).style('--xx', `${100 * ww}%`);
+    d3.select(this.element.nativeElement).style('--yy', `${100 * hh}%`);
+    d3.select(this.element.nativeElement).style('--back', 'blue');
     d3.select(this.element.nativeElement).attr('title', `${ee.x},${ee.y}`);
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', `${ee.pageX},${ee.pageY}`);
@@ -331,8 +339,6 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
     if (this.myTitle) {
       d3.select(this.element.nativeElement).attr('greentitle', `${ee.pageX},${ee.pageY}`);
     }
-    d3.select(this.element.nativeElement).style('--xx', `${ee.x}px`);
-    d3.select(this.element.nativeElement).style('--back', 'blue');
     this.toolTipObj.attr('style', `left:${ee.x + 20}px;top:${ee.y + 20}px;display:inline-block`)
       .html(`${name}<br>${type}<br>${value}`)
       .transition().duration(200)
@@ -340,8 +346,9 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
   }
   onMouseLeave() {
     d3.select(this.element.nativeElement).style('--xx', '0%');
-    d3.select(this.element.nativeElement).attr('title', this.title);
+    d3.select(this.element.nativeElement).style('--yy', '0%');
     d3.select(this.element.nativeElement).style('--back', 'red');
+    d3.select(this.element.nativeElement).attr('title', this.title);
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', this.title);
     }
