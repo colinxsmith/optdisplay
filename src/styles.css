@@ -44,17 +44,19 @@ body {
     position: absolute;
     padding: 1px 5px 2px 5px;
     left: var(--xx);
+    bottom: var(--yy);
     white-space: nowrap;
     box-shadow: 1px 1px 3px #222222;
     opacity: 0;
     border: 2px solid #4b0f0f;
     border-radius: 4px;
-    z-index: 1;
+    z-index: 99999;
     visibility: hidden;
 }
 
 [smallgreytitle] {
     --back: grey;
     --xx: 0%;
+    --yy: unset;
     position: relative;
 }

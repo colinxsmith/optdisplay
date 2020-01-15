@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
+import { select } from 'd3';
 @Component({
   selector: 'app-bulk-trade',
   template: `<svg  id="BULK" width="0" height="0" [style.background-color]="bcolor">
@@ -87,9 +88,15 @@ export class BulkTradeComponent implements OnInit, OnChanges {
     value: number;
     outlierStatusType: string;
   }, ee: MouseEvent) {
-    d3.select(this.element.nativeElement).style('--xx', `${ee.x}px`);
+    const ww = (ee.x - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().left)
+      /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().width;
+    const hh = (ee.y - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().top)
+      /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height;
+//    console.log(ww, hh);
+    d3.select(this.element.nativeElement).style('--xx', `${100 * ww}%`);
+    d3.select(this.element.nativeElement).style('--yy', `${100 * hh}%`);
     d3.select(this.element.nativeElement).style('--back', 'blue');
-    d3.select(this.element.nativeElement).attr('title', `${ee.pageX},${ee.pageY}`);
+    d3.select(this.element.nativeElement).attr('title', `${ee.x},${ee.y}`);
     if (this.myAttr) {
       d3.select(this.element.nativeElement).attr('smallgreytitle', `${ee.pageX},${ee.pageY}`);
     }
@@ -103,7 +110,7 @@ export class BulkTradeComponent implements OnInit, OnChanges {
   }
   onMouseLeave() {
     d3.select(this.element.nativeElement).style('--xx', '0%');
-    d3.select(this.element.nativeElement).attr('title', this.title);
+    d3.select(this.element.nativeElement).style('--yy', '0%');
     d3.select(this.element.nativeElement).style('--back', 'red');
     d3.select(this.element.nativeElement).attr('title', this.title);
     if (this.myAttr) {
