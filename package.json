@@ -23,7 +23,7 @@
         "@types/d3": "^5.7.2",
         "classlist.js": "^1.1.20150312",
         "core-js": "^2.6.11",
-        "d3": "^5.14.2",
+        "d3": "^5.15.0",
         "font-awesome": "^4.7.0",
         "ng": "0.0.0",
         "rxjs": "^6.5.3",
@@ -32,8 +32,8 @@
         "zone.js": "^0.9.1"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "^0.803.20",
-        "@angular/cli": "^8.3.20",
+        "@angular-devkit/build-angular": "^0.803.23",
+        "@angular/cli": "^8.3.23",
         "@angular/compiler-cli": "^8.2.14",
         "@angular/language-service": "^8.2.14",
         "@types/jasmine": "^3.5.0",
