@@ -2,6 +2,9 @@ import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { isNumber } from 'util';
 import { RGBColor } from 'd3';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 @Component({
   selector: 'app-bubbletable',
   templateUrl: './bubbletable.component.html',
@@ -46,6 +49,16 @@ export class BubbletableComponent implements OnInit, OnChanges {
 
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
+  generatePdf(action = 'open') {
+    const documentDefinition = { content: 'This is an sample PDF printed with pdfMake' };
+    switch (action) {
+      case 'open': pdfMake.createPdf(documentDefinition).open(); break;
+      case 'print': pdfMake.createPdf(documentDefinition).print(); break;
+      case 'download': pdfMake.createPdf(documentDefinition).download(); break;
+      default: pdfMake.createPdf(documentDefinition).open(); break;
+    }
+  }
+
   ngOnInit() {
     console.log('init');
     this.setup();
