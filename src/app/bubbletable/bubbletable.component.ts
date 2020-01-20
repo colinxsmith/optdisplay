@@ -50,12 +50,29 @@ export class BubbletableComponent implements OnInit, OnChanges {
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
   generatePdf(action = 'open') {
-    const documentDefinition = { content: 'This is an sample PDF printed with pdfMake' };
+    const svgDefine = {
+      content: [
+        {
+          svg: `
+            <svg id="gauge"  viewBox="0 0 300 300">
+            <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
+            <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
+            <path transform="translate(150,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
+            <path transform="translate(150,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
+            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,90)" >34</text>
+            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,150)" >56</text>
+            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,210)" >67</text>
+            <text style="text-anchor:middle;fill:rgb(87, 78, 78);font-size:35px;" transform="translate(150,291.25) rotate(360)">RISK</text></svg>
+       `,
+          width: 500
+        }
+      ]
+    };
     switch (action) {
-      case 'open': pdfMake.createPdf(documentDefinition).open(); break;
-      case 'print': pdfMake.createPdf(documentDefinition).print(); break;
-      case 'download': pdfMake.createPdf(documentDefinition).download(); break;
-      default: pdfMake.createPdf(documentDefinition).open(); break;
+      case 'open': pdfMake.createPdf(svgDefine).open(); break;
+      case 'print': pdfMake.createPdf(svgDefine).print(); break;
+      case 'download': pdfMake.createPdf(svgDefine).download(); break;
+      default: pdfMake.createPdf(svgDefine).open(); break;
     }
   }
 
