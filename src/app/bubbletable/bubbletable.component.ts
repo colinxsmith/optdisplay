@@ -37,6 +37,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
   format = d3.format('0.3');
   dataOrder: number[];
   updateCount = 0;
+  A4w = 210;
+  A4h = 297;
+  A4fac = 2.81;
   pathScale: (t: number) => string;
   circleScale: (t: number) => string;
   squareScale: (t: number) => string;
@@ -51,10 +54,13 @@ export class BubbletableComponent implements OnInit, OnChanges {
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
   generatePdf(action = 'open') {
     const svgDefine = {
+      pageSize: 'A4',
+      pageMargins: 1,
       content: [
         {
           svg: `
-            <svg id="gauge"  viewBox="0 0 300 300">
+            <svg id="gauge"  viewBox="0 0 300 300" style="stroke-width:2px;stroke:orange;background-color:brown;">
+            <rect x="0" y="0" width="300" height="300"></rect>
             <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
             <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
             <path transform="translate(150,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
@@ -62,9 +68,43 @@ export class BubbletableComponent implements OnInit, OnChanges {
             <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,90)" >34</text>
             <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,150)" >56</text>
             <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,210)" >67</text>
-            <text style="text-anchor:middle;fill:rgb(87, 78, 78);font-size:35px;" transform="translate(150,291.25) rotate(360)">RISK</text></svg>
+            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(150,291.25)">RISK</text></svg>
        `,
-          width: 500
+          width: this.A4w * this.A4fac
+        },
+        {
+          svg: `
+          <svg id="gauge"  viewBox="0 0 900 300" style="opacity:0.95;stroke-width:2px;stroke:orange;background-color:brown;">
+          <rect x="0" y="0" width="300" height="300"></rect>
+          <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
+          <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
+          <path transform="translate(150,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
+          <path transform="translate(150,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,90)" >34</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,150)" >56</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,210)" >67</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(150,291.25)">RISK</text>
+          <rect x="300" y="0" width="300" height="300"></rect>
+          <path transform="translate(450,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
+          <path transform="translate(450,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
+          <path transform="translate(450,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
+          <path transform="translate(450,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(450,90)" >34</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(450,150)" >56</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(450,210)" >67</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(450,291.25)">RISK</text>
+          <rect x="600" y="0" width="300" height="300"></rect>
+          <path transform="translate(750,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
+          <path transform="translate(750,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
+          <path transform="translate(750,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
+          <path transform="translate(750,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(750,90)" >34</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(750,150)" >56</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(750,210)" >67</text>
+          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(750,291.25)">RISK</text>
+          </svg>
+       `,
+          width: this.A4w * this.A4fac
         }
       ]
     };
