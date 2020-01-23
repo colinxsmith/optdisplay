@@ -10,7 +10,7 @@ body {
 
 [greentitle]:after {
     content: attr(greentitle);
-    background-color: #00FF00;
+    background-image: linear-gradient(to bottom right, #00FF00, green);
     color: rgb(24, 11, 11);
     font-size: 150%;
     position: absolute;
