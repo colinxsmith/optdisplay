@@ -2,6 +2,12 @@ body {
     font-family: Calibri, sans-serif;
 }
 
+button:hover {
+    background-color: cyan;
+    transition: all 0.1s ease 0.3s;
+    cursor: crosshair;
+}
+
 [greentitle]:hover:after {
     opacity: 1;
     transition: all 0.1s ease 0.5s;

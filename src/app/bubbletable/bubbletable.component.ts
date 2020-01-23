@@ -59,7 +59,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
       content: [
         {
           svg: `
-            <svg id="gauge"  viewBox="0 0 300 300" style="stroke-width:2px;stroke:orange;background-color:brown;">
+            <svg id="gauge"  viewBox="0 0 300 300" style="stroke-width:1px;stroke:orange;background-color:brown;">
             <rect x="0" y="0" width="300" height="300"></rect>
             <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
             <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
@@ -74,7 +74,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
         },
         {
           svg: `
-          <svg id="gauge"  viewBox="0 0 900 300" style="opacity:0.95;stroke-width:2px;stroke:orange;background-color:brown;">
+          <svg id="gauge"  viewBox="0 0 900 300" style="opacity:0.95;stroke-width:1px;stroke:orange;background-color:brown;">
           <rect x="0" y="0" width="300" height="300"></rect>
           <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
           <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>

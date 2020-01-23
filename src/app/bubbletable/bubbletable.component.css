@@ -1,43 +1,51 @@
 #BUBBLE {
-    font-size:22px;
+    font-size: 22px;
 }
-#BUBBLE text{
-    fill:green;
+
+#BUBBLE text {
+    fill: green;
     text-anchor: middle;
 }
-#BUBBLE text.labelX{
-    font-size:25px;
-    fill:black;
+
+#BUBBLE text.labelX {
+    font-size: 25px;
+    fill: black;
     text-anchor: middle;
 }
-#BUBBLE text.labelY{
-    font-size:14px;
-    fill:black;
+
+#BUBBLE text.labelY {
+    font-size: 14px;
+    fill: black;
     text-anchor: start;
 }
-#BUBBLE tspan.name{
-    text-anchor:end;
+
+#BUBBLE tspan.name {
+    text-anchor: end;
 }
-#BUBBLE rect.border{
-    fill:none;
-    stroke:red;
+
+#BUBBLE rect.border {
+    fill: none;
+    stroke: red;
     stroke-width: 5px;
 }
-#BUBBLE circle{
-    fill:none;
+
+#BUBBLE circle {
+    fill: none;
     fill-opacity: 0.4;
-    stroke:none;
+    stroke: none;
     stroke-width: 2px;
 }
-#BUBBLE rect{
-    fill:none;
+
+#BUBBLE rect {
+    fill: none;
     fill-opacity: 0.4;
-    stroke:none;
+    stroke: none;
     stroke-width: 2px;
 }
-#BUBBLE path{
-    fill:none;
+
+#BUBBLE path {
+    fill: none;
     fill-opacity: 0.4;
-    stroke:none;
+    stroke: none;
     stroke-width: 2px;
 }
