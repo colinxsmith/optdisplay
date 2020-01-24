@@ -5,7 +5,7 @@ body {
 button:hover {
     background-color: cyan;
     transition: all 0.1s ease 0.3s;
-    cursor: crosshair;
+    cursor: pointer;
 }
 
 [greentitle]:hover:after {
