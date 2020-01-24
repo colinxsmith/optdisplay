@@ -16,7 +16,8 @@ export class AppComponent {
     bulkbar: 'Bulk Trade Bar in Angular',
     bulktest: 'Bulk Trade Dial Test',
     bubbles: 'General Bubbles Chart',
-    receive: 'Receiver Bar Test'
+    receive: 'Receiver Bar Test',
+    radar: 'Angular Radar Chart'
   };
   rKeys = Object.keys(this.routes);
 }
