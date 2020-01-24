@@ -1,0 +1,43 @@
+circle.gridCircle {
+    fill-opacity: 0.1;
+    stroke-opacity: 0.1;
+    filter: url(#glow);
+    fill: #aaa3a9;
+    stroke: rgba(255, 155, 97, 0.25);
+}
+
+path.gridZero {
+    fill: black;
+    stroke: black;
+    stroke-dasharray: 15, 15;
+    stroke-width: 2px;
+}
+
+line.line {
+    stroke: #f8e6e6;
+    stroke-width: 1.5px;
+    background-color: azure;
+}
+
+text.legendRadar {
+    font-size: 11px;
+    font-family: Calibri, sans-serif;
+    fill: #333333;
+    text-anchor: middle;
+    text-align: left;
+}
+
+text.axisRadar {
+    font-size: 11px;
+    font-stretch: expanded;
+    font-family: Calibri, sans-serif;
+    fill: #737373;
+    text-anchor: start;
+    text-align: center;
+}
+
+text.portlabs {
+    font-size: 11px;
+    text-anchor: middle;
+    font-family: Calibri, sans-serif;
+}
