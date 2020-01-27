@@ -2,8 +2,19 @@ circle.gridCircle {
     fill-opacity: 0.1;
     stroke-opacity: 0.1;
     filter: url(#glow);
-    fill: #aaa3a9;
+    fill: #7a7a7a;
     stroke: rgba(255, 155, 97, 0.25);
+}
+
+circle.radarCircle {
+    fill: rgb(255, 50, 50);
+    fill-opacity: 0.8;
+}
+
+circle.radarInvisibleCircle {
+    pointer-events: all;
+    fill: rgb(255, 50, 50);
+    fill-opacity: 0.8;
 }
 
 path.gridZero {
@@ -13,31 +24,39 @@ path.gridZero {
     stroke-width: 2px;
 }
 
+path.radarStroke {
+    fill: none;
+    stroke: rgb(255, 50, 50);
+}
+
+path.radarArea {
+    fill: rgb(255, 50, 50);
+    fill-opacity: 0.35;
+}
+
 line.line {
     stroke: #f8e6e6;
-    stroke-width: 1.5px;
-    background-color: azure;
+    stroke-opacity: 0;
 }
 
 text.legendRadar {
-    font-size: 11px;
+    font-size: 30px;
     font-family: Calibri, sans-serif;
     fill: #333333;
     text-anchor: middle;
-    text-align: left;
 }
 
 text.axisRadar {
-    font-size: 11px;
+    font-size: 21px;
     font-stretch: expanded;
     font-family: Calibri, sans-serif;
     fill: #737373;
-    text-anchor: start;
-    text-align: center;
+    text-anchor: middle;
 }
 
 text.portlabs {
-    font-size: 11px;
-    text-anchor: middle;
+    font-size: 30px;
+    text-anchor: end;
     font-family: Calibri, sans-serif;
+    fill: rgb(255, 50, 50);
 }
