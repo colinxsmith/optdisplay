@@ -18,6 +18,7 @@ export class RadarComponent implements OnInit {
   PI = Math.PI;
   portfolios = [
     {
+      name: 'Current',
       colour: 'red',
       port: [
         { axis: 'one', value: 0.2 }, { axis: 'two', value: -0.2 },
@@ -25,6 +26,7 @@ export class RadarComponent implements OnInit {
       ]
     },
     {
+      name: 'Proposed',
       colour: 'green',
       port: [
         { axis: 'one', value: 0.5 }, { axis: 'two', value: -0.5 },
@@ -32,6 +34,7 @@ export class RadarComponent implements OnInit {
       ]
     },
     {
+      name: 'Target',
       colour: 'grey',
       port: [
         { axis: 'one', value: -0.2 }, { axis: 'two', value: 0.2 },
@@ -49,7 +52,7 @@ export class RadarComponent implements OnInit {
   levelsRange: number[];
   radarLine = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
-  blobChooser = (k: number) => `M${this.radius * 0.75},${-this.radius * 0.95 + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
+  blobChooser = (k: number, x: number, y: number) => `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
   arcZ = (t: number) => d3.arc()({
     innerRadius: this.circScale(this.circVal.invert(0)),
     outerRadius: this.circScale(this.circVal.invert(0)),
@@ -64,13 +67,12 @@ export class RadarComponent implements OnInit {
   }
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
   picture() {
-    this.pMax = Math.max(1, d3.max(this.portfolios[0].port, d => d.value));
-    this.pMin = d3.min(this.portfolios[0].port, d => d.value);
-    if (this.pMin > 0) {
-      this.pMin = 0;
-    } else {
-      this.pMin = Math.min(-1, this.pMin);
-    }
+    this.pMax = 0;
+    this.pMin = 0;
+    this.portfolios.forEach(port => {
+      this.pMax = Math.max(this.pMax, d3.max(port.port, d => d.value));
+      this.pMin = Math.min(this.pMin, d3.min(port.port, d => d.value));
+    });
     this.rScale.domain([this.pMin, this.pMax]);
     this.circScale.domain([this.pMin < 0 ? -this.levels : 0, this.levels]);
     this.circVal.range([this.pMin, this.pMax]).domain([this.pMin < 0 ? -this.levels : 0, this.levels]);
@@ -93,9 +95,44 @@ export class RadarComponent implements OnInit {
         here.style('stroke-opacity', t);
         here.style('stroke-width', `${t * 2}px`);
       });
+    d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarInvisibleCircle')
+      .style('fill-opacity', 0);
+    d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
+      .style('fill-opacity', 0.5);
   }
   areaChoose(inout: boolean, i: number) {
-    const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
-    here.transition().duration(200).style('fill-opacity', inout ? 1 : 0.35);
+    d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea')
+      .style('fill-opacity', inout ? 0.05 : 0.35);
+    d3.select(this.element.nativeElement).select('svg').selectAll('text.portlabs')
+      .style('fill-opacity', inout ? 0.05 : 0.35);
+    d3.select(this.element.nativeElement).select('svg').selectAll('path.radarStroke')
+      .style('stroke-opacity', inout ? 0.2 : 0.35);
+    d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
+      .style('fill-opacity', inout ? 0.5 : 0.5);
+    if (inout) {
+      const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
+      here.transition().duration(200).style('fill-opacity', inout ? 0.8 : 0.35);
+      const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portlabs').nodes()[i] as SVGTextElement);
+      text.transition().duration(200).style('fill-opacity', inout ? 0.8 : 0.35);
+      const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
+      stroke.transition().duration(200).style('stroke-opacity', inout ? 0.8 : 0.35);
+    }
+    const circlesI = d3.select(this.element.nativeElement).select('svg')
+      .selectAll(`circle#i${i}.radarInvisibleCircle`);
+    circlesI.each((d, ii, jj: Array<SVGCircleElement>) => {
+      const circle = d3.select(jj[ii]);
+      circle.transition().duration(200).style('fill-opacity', 0);
+    });
+    const circles = d3.select(this.element.nativeElement).select('svg')
+      .selectAll(`circle#i${i}.radarCircle`);
+    circles.each((d, ii, jj: Array<SVGCircleElement>) => {
+      const circle = d3.select(jj[ii]);
+      circle.transition().duration(200).style('fill-opacity', inout ? 1 : 0.5);
+    });
+
+  }
+  circleChoose(inout: boolean, n: number) {
+    console.log(n);
+    d3.select(this.element.nativeElement).attr('title', inout ? `${n}` : '');
   }
 }
