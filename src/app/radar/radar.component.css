@@ -47,10 +47,10 @@ text.legendRadar {
 }
 
 text.axisRadar {
-    font-size: 21px;
+    font-size: 25px;
     font-stretch: expanded;
     font-family: Calibri, sans-serif;
-    fill: #737373;
+    fill: #33766b;
     text-anchor: middle;
 }
 

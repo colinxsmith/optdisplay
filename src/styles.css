@@ -38,7 +38,7 @@ button:hover {
 
 [smallgreytitle]:hover:after {
     opacity: 1;
-    transition: all 0.1s ease 0.5s;
+    transition: all 0.02s ease 0.05s;
     visibility: visible;
 }
 
@@ -46,7 +46,7 @@ button:hover {
     content: attr(smallgreytitle);
     background-color: var(--back);
     color: whitesmoke;
-    font-size: 80%;
+    font-size: var(--ff);
     position: absolute;
     padding: 1px 5px 2px 5px;
     left: var(--xx);
@@ -64,5 +64,6 @@ button:hover {
     --back: grey;
     --xx: 0%;
     --yy: unset;
+    --ff: 80%;
     position: relative;
 }

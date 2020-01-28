@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
+import { rgb } from 'd3';
 
 @Component({
   selector: 'app-radar',
@@ -19,7 +20,7 @@ export class RadarComponent implements OnInit {
   portfolios = [
     {
       name: 'Current',
-      colour: 'red',
+      colour: rgb(255, 50, 50),
       port: [
         { axis: 'one', value: 0.2 }, { axis: 'two', value: -0.2 },
         { axis: 'three', value: 0.7 }, { axis: 'four', value: -0.1 }, { axis: 'five', value: -0.5 }, { axis: 'six', value: -0.1 }
@@ -27,7 +28,7 @@ export class RadarComponent implements OnInit {
     },
     {
       name: 'Proposed',
-      colour: 'green',
+      colour: rgb(50, 190, 50),
       port: [
         { axis: 'one', value: 0.5 }, { axis: 'two', value: -0.5 },
         { axis: 'three', value: -0.1 }, { axis: 'four', value: 0.7 }, { axis: 'five', value: -0.5 }, { axis: 'six', value: -0.1 }
@@ -35,7 +36,7 @@ export class RadarComponent implements OnInit {
     },
     {
       name: 'Target',
-      colour: 'grey',
+      colour: rgb(128, 128, 128),
       port: [
         { axis: 'one', value: -0.2 }, { axis: 'two', value: 0.2 },
         { axis: 'three', value: 0.7 }, { axis: 'four', value: -0.1 }, { axis: 'five', value: -0.3 }, { axis: 'six', value: -0.3 }
@@ -111,28 +112,33 @@ export class RadarComponent implements OnInit {
       .style('fill-opacity', inout ? 0.5 : 0.5);
     if (inout) {
       const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
-      here.transition().duration(200).style('fill-opacity', inout ? 0.8 : 0.35);
+      here.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 0.7 : 0.35);
       const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portlabs').nodes()[i] as SVGTextElement);
-      text.transition().duration(200).style('fill-opacity', inout ? 0.8 : 0.35);
+      text.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 0.7 : 0.35);
       const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
-      stroke.transition().duration(200).style('stroke-opacity', inout ? 0.8 : 0.35);
+      stroke.transition().duration(inout ? 2 : 10).style('stroke-opacity', inout ? 0.7 : 0.35);
     }
-    const circlesI = d3.select(this.element.nativeElement).select('svg')
-      .selectAll(`circle#i${i}.radarInvisibleCircle`);
-    circlesI.each((d, ii, jj: Array<SVGCircleElement>) => {
-      const circle = d3.select(jj[ii]);
-      circle.transition().duration(200).style('fill-opacity', 0);
-    });
     const circles = d3.select(this.element.nativeElement).select('svg')
       .selectAll(`circle#i${i}.radarCircle`);
     circles.each((d, ii, jj: Array<SVGCircleElement>) => {
       const circle = d3.select(jj[ii]);
-      circle.transition().duration(200).style('fill-opacity', inout ? 1 : 0.5);
+      circle.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 1 : 0.5);
     });
 
   }
-  circleChoose(inout: boolean, n: number) {
-    console.log(n);
-    d3.select(this.element.nativeElement).attr('title', inout ? `${n}` : '');
+  circleChoose(inout: boolean, n: number, ee: MouseEvent, colour = 'grey') {
+    const ww = ee.x;
+    const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
+    if (inout) {
+      d3.select(this.element.nativeElement).style('--xx', `${ww - 30}px`);
+      d3.select(this.element.nativeElement).style('--yy', `${hh + 60}px`);
+    } else {
+      d3.select(this.element.nativeElement).style('--xx', '0%');
+      d3.select(this.element.nativeElement).style('--yy', 'unset');
+    }
+    d3.select(this.element.nativeElement).style('--back', colour);
+    d3.select(this.element.nativeElement).style('--ff', '100%');
+    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(n)}` : 'Radar');
+    d3.select(this.element.nativeElement).attr('title', inout ? `${this.percentFormat(n)}` : '');
   }
 }

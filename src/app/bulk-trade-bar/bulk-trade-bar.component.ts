@@ -325,12 +325,13 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
   }
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
     const ww = (ee.x - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().left)
-      /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().width;
-    const hh = (ee.y - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().top)
-      /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height;
-//    console.log(ww, hh);
+      / (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().width;
+    /*    const hh = (ee.y - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().top)
+          /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height;*/
+    const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
+    //    console.log(ww, hh);
     d3.select(this.element.nativeElement).style('--xx', `${100 * ww}%`);
-    d3.select(this.element.nativeElement).style('--yy', `${100 * hh}%`);
+    d3.select(this.element.nativeElement).style('--yy', `${hh + 60}px`);
     d3.select(this.element.nativeElement).style('--back', 'blue');
     d3.select(this.element.nativeElement).attr('title', `${ee.x},${ee.y}`);
     if (this.myAttr) {
