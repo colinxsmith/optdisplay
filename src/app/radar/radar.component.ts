@@ -96,10 +96,14 @@ export class RadarComponent implements OnInit {
         here.style('stroke-opacity', t);
         here.style('stroke-width', `${t * 2}px`);
       });
-    d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarInvisibleCircle')
-      .style('fill-opacity', 0);
+    d3.select(this.element.nativeElement).select('svg').select('path.gridZero').transition().duration(2000)
+      .attrTween('d', () => t => {
+        return this.arcZ(t);
+      });
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
       .style('fill-opacity', 0.5);
+    d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarInvisibleCircle')
+      .style('fill-opacity', 0);
   }
   areaChoose(inout: boolean, i: number) {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea')
@@ -126,7 +130,40 @@ export class RadarComponent implements OnInit {
     });
 
   }
-  circleChoose(inout: boolean, n: number, ee: MouseEvent, colour = 'grey') {
+  wrapLabels = (labS: string[], mW: number) => {
+    console.log('wrapLabels', mW);
+    const labA: string[][] = [];
+    if (labS.length > 0) {
+      labS.forEach((d, i) => {
+        labA.push(this.wrapString(d, mW));
+      });
+    }
+    return labA;
+  }
+  wrapString = (d: string, mW: number) => {
+    const newd: string[] = [];
+    let word = '';
+    let line = '';
+    const words = d.split(' ').reverse();
+    while (word = words.pop()) {
+      if (line.length + word.length > mW + 2) {
+        newd.push(line);
+        //       console.log(line, line.length, mW);
+        line = '';
+      }
+      line += word;
+      line += ' ';
+      //    console.log(line, line.length, mW);
+    }
+    if (line.length) {
+      newd.push(line.substring(0, mW));
+    }
+    return newd;
+  }
+  circleChoose(inout: boolean, asset: {
+    axis: string;
+    value: number;
+  }, ee: MouseEvent, i: number, colour = 'grey') {
     const ww = ee.x;
     const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
     if (inout) {
@@ -138,7 +175,8 @@ export class RadarComponent implements OnInit {
     }
     d3.select(this.element.nativeElement).style('--back', colour);
     d3.select(this.element.nativeElement).style('--ff', '100%');
-    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(n)}` : 'Radar');
-    d3.select(this.element.nativeElement).attr('title', inout ? `${this.percentFormat(n)}` : '');
+    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)}` : 'Radar');
+    d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
+    d3.select(d3.select(this.element.nativeElement).selectAll('text.legendRadar').nodes()[i] as SVGTextElement).classed('big', inout);
   }
 }

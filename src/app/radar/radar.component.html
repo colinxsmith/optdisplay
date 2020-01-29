@@ -22,7 +22,11 @@
 
 <ng-container *ngFor="let asset of portfolios[0].port;let i=index">
 <line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
-<text class="legendRadar" [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)" [attr.y]="rScale(pMax*1.1)*cSin(angleScale(i)-PI/2)">{{asset.axis}}</text>
+<text class="legendRadar" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)">
+<ng-container *ngFor="let line of [0,1,2];">
+<tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,15)[line]}}</tspan>
+</ng-container>
+</text>
 </ng-container>
 
 <ng-container *ngFor="let port of portfolios;let i=index">
@@ -46,7 +50,7 @@
 <ng-container *ngFor="let port of portfolios;let i=index">
 <ng-container *ngFor="let asset of port.port;let axis=index">
 <circle  [attr.id]="'i'+i"[attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" class="radarInvisibleCircle"
-[style.fill]="port.colour" (mouseenter)="circleChoose(true,asset.value,$event,port.colour)" (mouseleave)="circleChoose(false,0,$event)"
+[style.fill]="port.colour" (mouseenter)="circleChoose(true,asset,$event,axis,port.colour)" (mouseleave)="circleChoose(false,null,$event,axis)"
 [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" r="10" >
 </circle>
 </ng-container>

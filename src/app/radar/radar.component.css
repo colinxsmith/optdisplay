@@ -41,23 +41,28 @@ line.line {
 
 text.legendRadar {
     font-size: 30px;
-    font-family: Calibri, sans-serif;
     fill: #333333;
     text-anchor: middle;
+}
+
+text.legendRadar.big {
+    font-weight: bold;
 }
 
 text.axisRadar {
     font-size: 25px;
     font-stretch: expanded;
-    font-family: Calibri, sans-serif;
     fill: #33766b;
     text-anchor: middle;
+}
+
+text.axisRadar bold {
+    font-weight: bolder;
 }
 
 text.portlabs {
     font-size: 30px;
     text-anchor: end;
-    font-family: Calibri, sans-serif;
     fill: rgb(255, 50, 50);
     fill-opacity: 0.35;
 }
