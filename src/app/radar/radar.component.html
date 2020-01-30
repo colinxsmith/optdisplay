@@ -57,7 +57,7 @@ dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplen
 <ng-container *ngFor="let asset of port.port;let axis=index">
 <circle  [attr.id]="'i'+i"[attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" class="radarInvisibleCircle"
 [style.fill]="port.colour" (mouseenter)="circleChoose(true,asset,$event,axis,port.colour)" (mouseleave)="circleChoose(false,null,$event,axis)"
-[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" r="10" >
+[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" r="20" >
 </circle>
 </ng-container>
 
@@ -65,4 +65,3 @@ dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplen
 
 </g>
 </svg>
-
