@@ -1,51 +1,57 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
 import { rgb } from 'd3';
+import { isNull } from 'util';
 
 @Component({
   selector: 'app-radar',
   templateUrl: './radar.component.html',
   styleUrls: ['./radar.component.css']
 })
-export class RadarComponent implements OnInit {
+export class RadarComponent implements OnInit, OnChanges {
 
   @Input() R = 900;
-  @Input() dR = 50;
+  @Input() dR = 100;
   @Input() labelLength = 6; // Axis label max length in multiples of squaresize
-  @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
-  wraplength = 1000;
-  radius = this.R / 2 - this.dR;
-  squareSize = this.radius / 15;
-  pMin: number;
-  pMax: number;
-  PI = Math.PI;
-  portfolios = [
+  @Input() levels = 3; // Approximate number of value labels (twice this if negative data)
+  @Input() curved = true;
+  @Input() portfolios = [
     {
       name: 'Current',
       colour: rgb(255, 50, 50),
       port: [
         { axis: 'one two three four five six', value: 0.2 }, { axis: 'two two three four five six', value: -0.2 },
         { axis: 'three two three four five six', value: 0.7 },
-         { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.5 }, 
-         { axis: 'six seven eight nine ten', value: -0.1 }
+        { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.5 },
+        { axis: 'six seven eight nine ten', value: -0.1 }
       ]
     },
     {
       name: 'Proposed',
       colour: rgb(50, 190, 50),
       port: [
-        { axis: 'one two three four five six', value: 0.5 }, { axis: 'two', value: -0.5 },
-        { axis: 'three', value: -0.1 }, { axis: 'four', value: 0.7 }, { axis: 'five', value: -0.5 }, { axis: 'six', value: -0.1 }
+        { axis: 'one two three four five six', value: 0.5 }, { axis: 'two two three four five six', value: -0.5 },
+        { axis: 'three two three four five six', value: -0.1 },
+        { axis: 'four two three four five six', value: 0.7 }, { axis: 'five two three four five six', value: -0.5 },
+        { axis: 'six seven eight nine ten', value: -0.1 }
       ]
     },
     {
       name: 'Target',
       colour: rgb(128, 128, 128),
       port: [
-        { axis: 'one two three four five six', value: -0.2 }, { axis: 'two', value: 0.2 },
-        { axis: 'three', value: 0.7 }, { axis: 'four', value: -0.1 }, { axis: 'five', value: -0.3 }, { axis: 'six', value: -0.3 }
+        { axis: 'one two three four five six', value: -0.2 }, { axis: 'two two three four five six', value: 0.2 },
+        { axis: 'three two three four five six', value: 0.7 },
+        { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.3 },
+        { axis: 'six seven eight nine ten', value: -0.3 }
       ]
     }];
+  wraplength = 1000;
+  radius = this.R / 2 - this.dR;
+  squareSize = this.radius / 10;
+  pMin: number;
+  pMax: number;
+  PI = Math.PI;
   constructor(private element: ElementRef) { }
   cCos = Math.cos;
   cSin = Math.sin;
@@ -66,13 +72,17 @@ export class RadarComponent implements OnInit {
     padAngle: 0
   })
   ngOnInit() {
-    d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
-    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize * 1.1}px`);
+    this.picture();
+    setTimeout(() => this.update());
+  }
+  ngOnChanges() {
     this.picture();
     setTimeout(() => this.update());
   }
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
   picture() {
+    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
+    d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
     this.pMax = 0;
     this.pMin = 0;
     this.portfolios.forEach(port => {
@@ -84,17 +94,23 @@ export class RadarComponent implements OnInit {
     this.circVal.range([this.pMin, this.pMax]).domain([this.pMin < 0 ? -this.levels : 0, this.levels]);
     this.levelsRange = d3.range(this.pMin < 0 ? -this.levels : 0, this.levels + 1).reverse();
     this.radarLine
-      .curve(d3.curveCatmullRomClosed)
+      .curve(this.curved ? d3.curveCatmullRomClosed : d3.curveLinearClosed)
       .radius(d => this.rScale(d.value))
       .angle((d, i) => this.angleScale(i));
     this.radarLineZ
-      .curve(d3.curveCatmullRomClosed)
+      .curve(d3.curveCatmullRomClosed) // Always curved; we want it to follow the zero circular grid
       .radius(d => this.rScale(0))
       .angle((d, i) => this.angleScale(-i));
   }
   update() {
-    const leg = d3.select(this.element.nativeElement).select('svg').select('text.legendRadar').node() as SVGTextElement;
-    this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize;
+    d3.select(this.element.nativeElement).select('svg').selectAll('text.axisRadar').transition().duration(2000)
+      .styleTween('font-size', () => t => `${t * this.squareSize * 0.5}px`);
+    d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.legendRadar').transition().duration(2000)
+      .styleTween('visibility', () => t => t > 0.9 ? 'visible' : 'hidden');
+    const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.legendRadar').node() as SVGTextElement;
+    if (leg !== null) {
+      this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize;
+    }
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(2000).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
         const here = d3.select(j[i]);
@@ -111,7 +127,6 @@ export class RadarComponent implements OnInit {
       .style('fill-opacity', 0.5);
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarInvisibleCircle')
       .style('fill-opacity', 0);
-    d3.select(this.element.nativeElement).select('svg').selectAll('text.axisRadar').style('font-size', `${this.squareSize * 0.9}px`);
   }
   areaChoose(inout: boolean, i: number) {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea')
@@ -182,9 +197,9 @@ export class RadarComponent implements OnInit {
       d3.select(this.element.nativeElement).style('--yy', 'unset');
     }
     d3.select(this.element.nativeElement).style('--back', colour);
-    d3.select(this.element.nativeElement).style('--ff', '100%');
+    d3.select(this.element.nativeElement).style('--ff', '55%');
     d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)}` : 'Radar');
     d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
-    d3.select(d3.select(this.element.nativeElement).selectAll('text.legendRadar').nodes()[i] as SVGTextElement).classed('big', inout);
+    d3.select(d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.legendRadar').nodes()[i] as SVGTextElement).classed('big', inout);
   }
 }

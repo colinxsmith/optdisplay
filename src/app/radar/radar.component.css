@@ -43,18 +43,18 @@ line.line {
     stroke-opacity: 0;
 }
 
-text.legendRadar {
+text.legendRadar tspan {
     fill: #333333;
     text-anchor: start;
 }
 
-text.legendRadar.big {
+text.legendRadar.big tspan {
     font-weight: bold;
 }
 
 text.axisRadar {
     font-stretch: expanded;
-    fill: #33766b;
+    fill: darkmagenta;
     text-anchor: middle;
 }
 

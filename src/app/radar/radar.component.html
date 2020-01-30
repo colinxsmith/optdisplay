@@ -7,13 +7,17 @@
 <feMergeNode in="SourceGraphic"></feMergeNode>
 </feMerge>
 </filter>
-</defs><g [attr.transform]="translatehack(R*0.5,R*0.5)">
-
-
+</defs>
+<g [attr.transform]="translatehack(R*0.5,R*0.5)">
 
 <ng-container *ngFor="let r of levelsRange;">
 <circle class="gridCircle" [attr.r]="circScale(r)"></circle>
-<text class="axisRadar" y="0.5em" [attr.transform]="translatehack(0,-circScale(r))">{{percentFormat(circVal(r))}}</text>
+</ng-container>
+<ng-container *ngFor="let asset of portfolios[0].port;let i = index">
+<ng-container *ngFor="let r of levelsRange;">
+<text class="axisRadar" y="0.5em" [style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
+</ng-container>
+
 </ng-container>
 
 <ng-container *ngIf="pMin<0">
@@ -22,16 +26,18 @@
 
 <ng-container *ngFor="let asset of portfolios[0].port;let i=index">
 <line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
-<text class="legendRadar" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.1">
+<text class="legendRadar" [style.visibility]="'hidden'" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.05">
 <ng-container *ngFor="let line of [0,1,2,3];">
-<tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)" dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
+<tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)*0.95" 
+dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
 </ng-container>
 </text>
 </ng-container>
 
 <ng-container *ngFor="let port of portfolios;let i=index">
 <text 
-[style.fill]="port.colour" class="portlabs" x="-0.5em" [attr.transform]="translatehack(radius*1.015,-radius*0.95+squareSize*i)" >{{port.name}}</text>
+[style.fill]="port.colour" class="portlabs" x="-0.5em"(mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)"
+[attr.transform]="translatehack(radius*1.015,-radius*0.95+squareSize*i)" >{{port.name}}</text>
 <path 
 [style.fill]="port.colour" class="radarArea" (mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)" 
 [attr.d]="(pMin<0?radarLine(port.port)+radarLineZ(port.port):radarLine(port.port))+blobChooser(i,radius*1.015,-radius*0.95)">
