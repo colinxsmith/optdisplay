@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
 import { rgb } from 'd3';
 
@@ -9,11 +9,13 @@ import { rgb } from 'd3';
 })
 export class RadarComponent implements OnInit {
 
-  R = 900;
-  dR = 50;
+  @Input() R = 900;
+  @Input() dR = 50;
+  @Input() labelLength = 6; // Axis label max length in multiples of squaresize
+  @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
+  wraplength = 1000;
   radius = this.R / 2 - this.dR;
-  squareSize = this.radius / 10;
-  levels = 3;
+  squareSize = this.radius / 15;
   pMin: number;
   pMax: number;
   PI = Math.PI;
@@ -22,15 +24,17 @@ export class RadarComponent implements OnInit {
       name: 'Current',
       colour: rgb(255, 50, 50),
       port: [
-        { axis: 'one', value: 0.2 }, { axis: 'two', value: -0.2 },
-        { axis: 'three', value: 0.7 }, { axis: 'four', value: -0.1 }, { axis: 'five', value: -0.5 }, { axis: 'six', value: -0.1 }
+        { axis: 'one two three four five six', value: 0.2 }, { axis: 'two two three four five six', value: -0.2 },
+        { axis: 'three two three four five six', value: 0.7 },
+         { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.5 }, 
+         { axis: 'six seven eight nine ten', value: -0.1 }
       ]
     },
     {
       name: 'Proposed',
       colour: rgb(50, 190, 50),
       port: [
-        { axis: 'one', value: 0.5 }, { axis: 'two', value: -0.5 },
+        { axis: 'one two three four five six', value: 0.5 }, { axis: 'two', value: -0.5 },
         { axis: 'three', value: -0.1 }, { axis: 'four', value: 0.7 }, { axis: 'five', value: -0.5 }, { axis: 'six', value: -0.1 }
       ]
     },
@@ -38,7 +42,7 @@ export class RadarComponent implements OnInit {
       name: 'Target',
       colour: rgb(128, 128, 128),
       port: [
-        { axis: 'one', value: -0.2 }, { axis: 'two', value: 0.2 },
+        { axis: 'one two three four five six', value: -0.2 }, { axis: 'two', value: 0.2 },
         { axis: 'three', value: 0.7 }, { axis: 'four', value: -0.1 }, { axis: 'five', value: -0.3 }, { axis: 'six', value: -0.3 }
       ]
     }];
@@ -63,6 +67,7 @@ export class RadarComponent implements OnInit {
   })
   ngOnInit() {
     d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
+    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize * 1.1}px`);
     this.picture();
     setTimeout(() => this.update());
   }
@@ -88,6 +93,8 @@ export class RadarComponent implements OnInit {
       .angle((d, i) => this.angleScale(-i));
   }
   update() {
+    const leg = d3.select(this.element.nativeElement).select('svg').select('text.legendRadar').node() as SVGTextElement;
+    this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize;
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(2000).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
         const here = d3.select(j[i]);
@@ -104,6 +111,7 @@ export class RadarComponent implements OnInit {
       .style('fill-opacity', 0.5);
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarInvisibleCircle')
       .style('fill-opacity', 0);
+    d3.select(this.element.nativeElement).select('svg').selectAll('text.axisRadar').style('font-size', `${this.squareSize * 0.9}px`);
   }
   areaChoose(inout: boolean, i: number) {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea')
@@ -146,7 +154,7 @@ export class RadarComponent implements OnInit {
     let line = '';
     const words = d.split(' ').reverse();
     while (word = words.pop()) {
-      if (line.length + word.length > mW + 2) {
+      if (line.length + word.length > mW) {
         newd.push(line);
         //       console.log(line, line.length, mW);
         line = '';

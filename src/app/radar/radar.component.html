@@ -22,9 +22,9 @@
 
 <ng-container *ngFor="let asset of portfolios[0].port;let i=index">
 <line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
-<text class="legendRadar" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)">
-<ng-container *ngFor="let line of [0,1,2];">
-<tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,15)[line]}}</tspan>
+<text class="legendRadar" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.1">
+<ng-container *ngFor="let line of [0,1,2,3];">
+<tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)" dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
 </ng-container>
 </text>
 </ng-container>

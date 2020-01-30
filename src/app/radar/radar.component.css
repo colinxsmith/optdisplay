@@ -1,3 +1,7 @@
+:host {
+    font-size: 30px;
+}
+
 circle.gridCircle {
     fill-opacity: 0.1;
     stroke-opacity: 0.1;
@@ -40,9 +44,8 @@ line.line {
 }
 
 text.legendRadar {
-    font-size: 30px;
     fill: #333333;
-    text-anchor: middle;
+    text-anchor: start;
 }
 
 text.legendRadar.big {
@@ -50,7 +53,6 @@ text.legendRadar.big {
 }
 
 text.axisRadar {
-    font-size: 25px;
     font-stretch: expanded;
     fill: #33766b;
     text-anchor: middle;
@@ -61,7 +63,6 @@ text.axisRadar bold {
 }
 
 text.portlabs {
-    font-size: 30px;
     text-anchor: end;
     fill: rgb(255, 50, 50);
     fill-opacity: 0.35;
