@@ -19,7 +19,15 @@ div.mainTip {
 
 nav {
     width: 900px;
-    text-align: center;
+    height: 80px;
+    background-color: gold;
+    text-align: justify;
+    overflow: scroll;
+    overflow-y: hidden;
+}
+
+tr {
+    background-color: antiquewhite;
 }
 
 a {

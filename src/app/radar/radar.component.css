@@ -1,12 +1,12 @@
 :host {
-    font-size: 30px;
+    font-size: 25px;
 }
 
 circle.gridCircle {
     fill-opacity: 0.1;
     stroke-opacity: 0.1;
     filter: url(#glow);
-    fill: #7a7a7a;
+    fill: rgb(122, 122, 122);
     stroke: rgba(255, 155, 97, 0.25);
 }
 
@@ -18,12 +18,12 @@ circle.radarCircle {
 circle.radarInvisibleCircle {
     pointer-events: all;
     fill: rgb(255, 50, 50);
-    fill-opacity: 0.8;
+    fill-opacity: 0;
 }
 
 path.gridZero {
-    fill: black;
-    stroke: black;
+    fill: rgb(0, 0, 0);
+    stroke: rgb(0, 0, 0);
     stroke-dasharray: 15, 15;
     stroke-width: 2px;
 }
@@ -31,6 +31,7 @@ path.gridZero {
 path.radarStroke {
     fill: none;
     stroke: rgb(255, 50, 50);
+    stroke-width: 3px
 }
 
 path.radarArea {
@@ -39,30 +40,30 @@ path.radarArea {
 }
 
 line.line {
-    stroke: #f8e6e6;
+    stroke: rgb(248, 230, 230);
     stroke-opacity: 0;
 }
 
-text.legendRadar tspan {
-    fill: #333333;
+text.assetnames tspan {
+    fill: rgb(138, 102, 102);
     text-anchor: start;
 }
 
-text.legendRadar.big tspan {
+text.assetnames.big tspan {
     font-weight: bold;
 }
 
-text.axisRadar {
+text.axislabels {
     font-stretch: expanded;
-    fill: darkmagenta;
+    fill: rgb(139, 0, 139);
     text-anchor: middle;
 }
 
-text.axisRadar bold {
+text.axislabels bold {
     font-weight: bolder;
 }
 
-text.portlabs {
+text.portfoliolabels {
     text-anchor: end;
     fill: rgb(255, 50, 50);
     fill-opacity: 0.35;

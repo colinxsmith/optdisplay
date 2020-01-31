@@ -1,7 +1,6 @@
 import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
 import { rgb } from 'd3';
-import { isNull } from 'util';
 
 @Component({
   selector: 'app-radar',
@@ -15,43 +14,52 @@ export class RadarComponent implements OnInit, OnChanges {
   @Input() labelLength = 6; // Axis label max length in multiples of squaresize
   @Input() levels = 3; // Approximate number of value labels (twice this if negative data)
   @Input() curved = true;
-  @Input() portfolios = [
-    {
-      name: 'Current',
-      colour: rgb(255, 50, 50),
-      port: [
-        { axis: 'one two three four five six', value: 0.2 }, { axis: 'two two three four five six', value: -0.2 },
-        { axis: 'three two three four five six', value: 0.7 },
-        { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.5 },
-        { axis: 'six seven eight nine ten', value: -0.1 }
-      ]
-    },
-    {
-      name: 'Proposed',
-      colour: rgb(50, 190, 50),
-      port: [
-        { axis: 'one two three four five six', value: 0.5 }, { axis: 'two two three four five six', value: -0.5 },
-        { axis: 'three two three four five six', value: -0.1 },
-        { axis: 'four two three four five six', value: 0.7 }, { axis: 'five two three four five six', value: -0.5 },
-        { axis: 'six seven eight nine ten', value: -0.1 }
-      ]
-    },
-    {
-      name: 'Target',
-      colour: rgb(128, 128, 128),
-      port: [
-        { axis: 'one two three four five six', value: -0.2 }, { axis: 'two two three four five six', value: 0.2 },
-        { axis: 'three two three four five six', value: 0.7 },
-        { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.3 },
-        { axis: 'six seven eight nine ten', value: -0.3 }
-      ]
-    }];
-  wraplength = 1000;
+  @Input() portfolios: {
+    name: string;
+    colour: string;
+    port: {
+      axis: string;
+      value: number;
+    }[];
+  }[] = [
+      {
+        name: 'Current',
+        colour: 'rgb(255, 50, 50)',
+        port: [
+          { axis: 'one two three four five six', value: 0.2 }, { axis: 'two two three four five six', value: -0.2 },
+          { axis: 'three two three four five six', value: 0.7 },
+          { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.5 },
+          { axis: 'six seven eight nine ten', value: -0.1 }
+        ]
+      },
+      {
+        name: 'Proposed',
+        colour: 'rgb(50, 190, 50)',
+        port: [
+          { axis: 'one two three four five six', value: 0.5 }, { axis: 'two two three four five six', value: -0.5 },
+          { axis: 'three two three four five six', value: -0.1 },
+          { axis: 'four two three four five six', value: 0.7 }, { axis: 'five two three four five six', value: -0.5 },
+          { axis: 'six seven eight nine ten', value: -0.1 }
+        ]
+      },
+      {
+        name: 'Target',
+        colour: 'rgb(128, 128, 128)',
+        port: [
+          { axis: 'one two three four five six', value: -0.2 }, { axis: 'two two three four five six', value: 0.2 },
+          { axis: 'three two three four five six', value: 0.7 },
+          { axis: 'four two three four five six', value: -0.1 }, { axis: 'five two three four five six', value: -0.3 },
+          { axis: 'six seven eight nine ten', value: -0.3 }
+        ]
+      }];
+  wraplength = 100;
+  assetNamesFontScale = 0.95;
   radius = this.R / 2 - this.dR;
   squareSize = this.radius / 10;
   pMin: number;
   pMax: number;
   PI = Math.PI;
+  durationTime = 2000;
   constructor(private element: ElementRef) { }
   cCos = Math.cos;
   cSin = Math.sin;
@@ -80,8 +88,10 @@ export class RadarComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
+  toPxhack = (k: number) => `${k}px`;
   picture() {
     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
+    // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
     this.pMax = 0;
     this.pMin = 0;
@@ -103,26 +113,32 @@ export class RadarComponent implements OnInit, OnChanges {
       .angle((d, i) => this.angleScale(-i));
   }
   update() {
-    d3.select(this.element.nativeElement).select('svg').selectAll('text.axisRadar').transition().duration(2000)
-      .styleTween('font-size', () => t => `${t * this.squareSize * 0.5}px`);
-    d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.legendRadar').transition().duration(2000)
-      .styleTween('visibility', () => t => t > 0.9 ? 'visible' : 'hidden');
-    const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.legendRadar').node() as SVGTextElement;
+    d3.select(this.element.nativeElement).select('svg').selectAll('path.radarStroke')
+      .transition().duration(this.durationTime).styleTween('stroke-width', () => t => `${4 * t}px`);
+    d3.select(this.element.nativeElement).select('svg').selectAll('text.axislabels').transition().duration(this.durationTime)
+      .styleTween('font-size', () => t => `${t * this.squareSize * 0.4}px`);
+    d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').transition().duration(this.durationTime)
+      .styleTween('font-size', () => t => `${t * this.squareSize * this.assetNamesFontScale}px`)
+      .styleTween('visibility', () => t => t > 0.05 ? 'visible' : 'hidden');
+    const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.assetnames').node() as SVGTextElement;
     if (leg !== null) {
-      this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize;
+      this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize
+        / this.assetNamesFontScale;
     }
-    d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(2000).ease(d3.easeBounce)
+    d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(this.durationTime).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
         const here = d3.select(j[i]);
         here.attr('x2', t * this.rScale(this.pMax * 1.13) * this.cCos(this.angleScale(i) - this.PI / 2));
         here.attr('y2', t * this.rScale(this.pMax * 1.13) * this.cSin(this.angleScale(i) - this.PI / 2));
         here.style('stroke-opacity', t);
-        here.style('stroke-width', `${t * 2}px`);
+        here.style('stroke-width', `${t * 2} px`);
       });
-    d3.select(this.element.nativeElement).select('svg').select('path.gridZero').transition().duration(2000)
-      .attrTween('d', () => t => {
-        return this.arcZ(t);
-      });
+    if (this.pMin < 0) {
+      d3.select(this.element.nativeElement).select('svg').select('path.gridZero').transition().duration(this.durationTime)
+        .attrTween('d', () => t => {
+          return this.arcZ(t);
+        });
+    }
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
       .style('fill-opacity', 0.5);
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarInvisibleCircle')
@@ -130,20 +146,20 @@ export class RadarComponent implements OnInit, OnChanges {
   }
   areaChoose(inout: boolean, i: number) {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea')
-      .style('fill-opacity', inout ? 0.05 : 0.35);
-    d3.select(this.element.nativeElement).select('svg').selectAll('text.portlabs')
-      .style('fill-opacity', inout ? 0.05 : 0.35);
+      .style('fill-opacity', inout ? 0.1 : 0.35);
+    d3.select(this.element.nativeElement).select('svg').selectAll('text.portfoliolabels')
+      .style('fill-opacity', inout ? 0.1 : 0.35);
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarStroke')
-      .style('stroke-opacity', inout ? 0.2 : 0.35);
+      .style('stroke-opacity', inout ? 0.1 : 1);
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
-      .style('fill-opacity', inout ? 0.5 : 0.5);
+      .style('fill-opacity', inout ? 0.1 : 1);
     if (inout) {
       const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
       here.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 0.7 : 0.35);
-      const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portlabs').nodes()[i] as SVGTextElement);
+      const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portfoliolabels').nodes()[i] as SVGTextElement);
       text.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 0.7 : 0.35);
       const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
-      stroke.transition().duration(inout ? 2 : 10).style('stroke-opacity', inout ? 0.7 : 0.35);
+      stroke.transition().duration(inout ? 2 : 10).style('stroke-opacity', inout ? 1 : 0.35);
     }
     const circles = d3.select(this.element.nativeElement).select('svg')
       .selectAll(`circle#i${i}.radarCircle`);
@@ -190,16 +206,16 @@ export class RadarComponent implements OnInit, OnChanges {
     const ww = ee.x;
     const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
     if (inout) {
-      d3.select(this.element.nativeElement).style('--xx', `${ww - 30}px`);
-      d3.select(this.element.nativeElement).style('--yy', `${hh + 60}px`);
+      d3.select(this.element.nativeElement).style('--xx', `${ww - 30} px`);
+      d3.select(this.element.nativeElement).style('--yy', `${hh + 100} px`);
     } else {
       d3.select(this.element.nativeElement).style('--xx', '0%');
       d3.select(this.element.nativeElement).style('--yy', 'unset');
     }
     d3.select(this.element.nativeElement).style('--back', colour);
     d3.select(this.element.nativeElement).style('--ff', '55%');
-    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)}` : 'Radar');
-    d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
-    d3.select(d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.legendRadar').nodes()[i] as SVGTextElement).classed('big', inout);
+    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)} ` : 'Radar');
+    d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)} ` : '');
+    d3.select(d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
   }
 }

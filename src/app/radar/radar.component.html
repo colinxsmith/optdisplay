@@ -10,14 +10,13 @@
 </defs>
 <g [attr.transform]="translatehack(R*0.5,R*0.5)">
 
-<ng-container *ngFor="let r of levelsRange;">
+<ng-container *ngFor="let r of levelsRange">
 <circle class="gridCircle" [attr.r]="circScale(r)"></circle>
 </ng-container>
-<ng-container *ngFor="let asset of portfolios[0].port;let i = index">
-<ng-container *ngFor="let r of levelsRange;">
-<text class="axisRadar" y="0.5em" [style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
+<ng-container *ngFor="let asset of (portfolios[0].port.length<=10?portfolios[0].port:[0]);let i = index">
+<ng-container *ngFor="let r of levelsRange">
+<text class="axislabels" y="0.5em"[style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
 </ng-container>
-
 </ng-container>
 
 <ng-container *ngIf="pMin<0">
@@ -26,17 +25,17 @@
 
 <ng-container *ngFor="let asset of portfolios[0].port;let i=index">
 <line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
-<text class="legendRadar" [style.visibility]="'hidden'" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.05">
+<text class="assetnames" [style.visibility]="'hidden'" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.1">
 <ng-container *ngFor="let line of [0,1,2,3];">
 <tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)*0.95" 
-dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
+[attr.dx]="toPxhack(-wraplength*labelLength)" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
 </ng-container>
 </text>
 </ng-container>
 
 <ng-container *ngFor="let port of portfolios;let i=index">
 <text 
-[style.fill]="port.colour" class="portlabs" x="-0.5em"(mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)"
+[style.fill]="port.colour" class="portfoliolabels" x="-0.5em"(mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)"
 [attr.transform]="translatehack(radius*1.015,-radius*0.95+squareSize*i)" >{{port.name}}</text>
 <path 
 [style.fill]="port.colour" class="radarArea" (mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)" 
@@ -47,8 +46,7 @@ dx="-9.5%" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplen
 
 <ng-container *ngFor="let asset of port.port;let axis=index">
 <circle [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" class="radarCircle"
-[style.fill]="port.colour"
-[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" r="5" >
+[style.fill]="port.colour"[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" r="5" >
 </circle>
 </ng-container>
 
