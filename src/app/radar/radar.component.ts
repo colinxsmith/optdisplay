@@ -131,7 +131,7 @@ export class RadarComponent implements OnInit, OnChanges {
         here.attr('x2', t * this.rScale(this.pMax * 1.13) * this.cCos(this.angleScale(i) - this.PI / 2));
         here.attr('y2', t * this.rScale(this.pMax * 1.13) * this.cSin(this.angleScale(i) - this.PI / 2));
         here.style('stroke-opacity', t);
-        here.style('stroke-width', `${t * 2} px`);
+        here.style('stroke-width', `${t * 2}px`);
       });
     if (this.pMin < 0) {
       d3.select(this.element.nativeElement).select('svg').select('path.gridZero').transition().duration(this.durationTime)
@@ -206,8 +206,8 @@ export class RadarComponent implements OnInit, OnChanges {
     const ww = ee.x;
     const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
     if (inout) {
-      d3.select(this.element.nativeElement).style('--xx', `${ww - 30} px`);
-      d3.select(this.element.nativeElement).style('--yy', `${hh + 100} px`);
+      d3.select(this.element.nativeElement).style('--xx', `${ww - 30}px`);
+      d3.select(this.element.nativeElement).style('--yy', `${hh + 100}px`);
     } else {
       d3.select(this.element.nativeElement).style('--xx', '0%');
       d3.select(this.element.nativeElement).style('--yy', 'unset');
