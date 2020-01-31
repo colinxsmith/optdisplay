@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
-import { rgb } from 'd3';
 
 @Component({
   selector: 'app-radar',
@@ -90,8 +89,8 @@ export class RadarComponent implements OnInit, OnChanges {
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
   toPxhack = (k: number) => `${k}px`;
   picture() {
-    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
-    // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
+    //d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
+     this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
     this.pMax = 0;
     this.pMin = 0;
@@ -215,7 +214,7 @@ export class RadarComponent implements OnInit, OnChanges {
     d3.select(this.element.nativeElement).style('--back', colour);
     d3.select(this.element.nativeElement).style('--ff', '55%');
     d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)} ` : 'Radar');
-    d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)} ` : '');
+    d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
     d3.select(d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
   }
 }
