@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 })
 export class RadarComponent implements OnInit, OnChanges {
 
-  @Input() R = 900;
+  @Input() R = 400;
   @Input() dR = 100;
   @Input() labelLength = 6; // Axis label max length in multiples of squaresize
   @Input() levels = 3; // Approximate number of value labels (twice this if negative data)
@@ -89,8 +89,8 @@ export class RadarComponent implements OnInit, OnChanges {
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
   toPxhack = (k: number) => `${k}px`;
   picture() {
-    //d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
-     this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
+    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
+    // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
     this.pMax = 0;
     this.pMin = 0;
@@ -113,7 +113,7 @@ export class RadarComponent implements OnInit, OnChanges {
   }
   update() {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarStroke')
-      .transition().duration(this.durationTime).styleTween('stroke-width', () => t => `${4 * t}px`);
+      .transition().duration(this.durationTime).styleTween('stroke-width', () => t => `${4 * this.R / 900 * t}px`);
     d3.select(this.element.nativeElement).select('svg').selectAll('text.axislabels').transition().duration(this.durationTime)
       .styleTween('font-size', () => t => `${t * this.squareSize * 0.4}px`);
     d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').transition().duration(this.durationTime)
@@ -122,7 +122,7 @@ export class RadarComponent implements OnInit, OnChanges {
     const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.assetnames').node() as SVGTextElement;
     if (leg !== null) {
       this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize
-        / this.assetNamesFontScale;
+        / this.assetNamesFontScale * this.radius / 800;
     }
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(this.durationTime).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
