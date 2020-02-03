@@ -8,9 +8,10 @@ import * as d3 from 'd3';
 })
 export class RadarComponent implements OnInit, OnChanges {
 
-  @Input() R = 400;
-  @Input() dR = 100;
-  @Input() labelLength = 6; // Axis label max length in multiples of squaresize
+  @Input() scale = 3;
+  @Input() R = 900 * this.scale;
+  @Input() dR = 100 * this.scale;
+  @Input() labelLength = 4; // Axis label max length in multiples of squaresize
   @Input() levels = 3; // Approximate number of value labels (twice this if negative data)
   @Input() curved = true;
   @Input() portfolios: {
@@ -87,10 +88,10 @@ export class RadarComponent implements OnInit, OnChanges {
     setTimeout(() => this.update());
   }
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
-  toPxhack = (k: number) => `${k}px`;
+  toPxhack = (k: number) => `${k*this.scale}px`;
   picture() {
-    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
-    // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
+     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
+   // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
     this.pMax = 0;
     this.pMin = 0;
@@ -122,7 +123,8 @@ export class RadarComponent implements OnInit, OnChanges {
     const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.assetnames').node() as SVGTextElement;
     if (leg !== null) {
       this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize
-        / this.assetNamesFontScale * this.radius / 800;
+        * this.squareSize / 30
+        / this.assetNamesFontScale / this.radius * 350;
     }
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(this.durationTime).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
