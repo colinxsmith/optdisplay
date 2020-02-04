@@ -157,17 +157,17 @@ export class RadarComponent implements OnInit, OnChanges {
       .style('fill-opacity', inout ? 0.1 : 1);
 
     const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
-    here.transition().duration(inout ? 20 : 100).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+    here.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
     const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portfoliolabels').nodes()[i] as SVGTextElement);
-    text.transition().duration(inout ? 20 : 100).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+    text.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
     const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
-    stroke.transition().duration(inout ? 20 : 100).styleTween('stroke-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+    stroke.transition().duration(inout ? 200 : 2000).style('stroke-opacity', `${inout ? 0.7 : 1}`);
 
     const circles = d3.select(this.element.nativeElement).select('svg')
       .selectAll(`circle#i${i}.radarCircle`);
     circles.each((d, ii, jj: Array<SVGCircleElement>) => {
       const circle = d3.select(jj[ii]);
-      circle.transition().duration(inout ? 20 : 100).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+      circle.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 1 * t}`);
     });
 
   }
