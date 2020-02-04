@@ -132,10 +132,11 @@ export class RadarComponent implements OnInit, OnChanges {
         here.attr('x2', t * this.rScale(this.pMax * 1.13) * this.cCos(this.angleScale(i) - this.PI / 2));
         here.attr('y2', t * this.rScale(this.pMax * 1.13) * this.cSin(this.angleScale(i) - this.PI / 2));
         here.style('stroke-opacity', t);
-        here.style('stroke-width', `${t * 2}px`);
+        here.style('stroke-width', `${t * 2 * this.scale}px`);
       });
     if (this.pMin < 0) {
       d3.select(this.element.nativeElement).select('svg').select('path.gridZero').transition().duration(this.durationTime)
+        .styleTween('stroke-width', () => t => `${t * 2 * this.scale}px`)
         .attrTween('d', () => t => {
           return this.arcZ(t);
         });
