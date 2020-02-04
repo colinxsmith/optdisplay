@@ -9,8 +9,8 @@ import * as d3 from 'd3';
 export class RadarComponent implements OnInit, OnChanges {
 
   @Input() scale = 1;
-  @Input() R = 900 * this.scale;
-  @Input() dR = 100 * this.scale;
+  R = 900 * this.scale;
+  dR = 100 * this.scale;
   @Input() labelLength = 6; // Axis label max length in multiples of squaresize
   @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
   @Input() curved = true;
