@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 })
 export class RadarComponent implements OnInit, OnChanges {
 
-  @Input() scale = 3;
+  @Input() scale = 1;
   @Input() R = 900 * this.scale;
   @Input() dR = 100 * this.scale;
   @Input() labelLength = 4; // Axis label max length in multiples of squaresize
@@ -87,11 +87,11 @@ export class RadarComponent implements OnInit, OnChanges {
     this.picture();
     setTimeout(() => this.update());
   }
-  translatehack = (w: number, h: number) => `translate(${w},${h})`;
-  toPxhack = (k: number) => `${k*this.scale}px`;
+  translatehack = (w: number, h: number) => `translate(${w},${h})`
+  toPxhack = (k: number) => `${k * this.scale}px`;
   picture() {
-     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
-   // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
+    d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
+    // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
     this.pMax = 0;
     this.pMin = 0;
@@ -154,19 +154,19 @@ export class RadarComponent implements OnInit, OnChanges {
       .style('stroke-opacity', inout ? 0.1 : 1);
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
       .style('fill-opacity', inout ? 0.1 : 1);
-    if (inout) {
-      const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
-      here.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 0.7 : 0.35);
-      const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portfoliolabels').nodes()[i] as SVGTextElement);
-      text.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 0.7 : 0.35);
-      const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
-      stroke.transition().duration(inout ? 2 : 10).style('stroke-opacity', inout ? 1 : 0.35);
-    }
+
+    const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
+    here.transition().duration(inout ? 20 : 100).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+    const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portfoliolabels').nodes()[i] as SVGTextElement);
+    text.transition().duration(inout ? 20 : 100).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+    const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
+    stroke.transition().duration(inout ? 20 : 100).styleTween('stroke-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
+
     const circles = d3.select(this.element.nativeElement).select('svg')
       .selectAll(`circle#i${i}.radarCircle`);
     circles.each((d, ii, jj: Array<SVGCircleElement>) => {
       const circle = d3.select(jj[ii]);
-      circle.transition().duration(inout ? 2 : 10).style('fill-opacity', inout ? 1 : 0.5);
+      circle.transition().duration(inout ? 20 : 100).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
     });
 
   }
@@ -203,12 +203,12 @@ export class RadarComponent implements OnInit, OnChanges {
   circleChoose(inout: boolean, asset: {
     axis: string;
     value: number;
-  }, ee: MouseEvent, i: number, colour = 'grey') {
-    const ww = ee.x;
-    const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
+  }, port: number, i: number, colour = 'grey') {
+    const here = d3.select(d3.select(this.element.nativeElement).select('svg')
+      .selectAll('circle.radarInvisibleCircle').nodes()[i + port * this.portfolios[0].port.length] as SVGCircleElement);
     if (inout) {
-      d3.select(this.element.nativeElement).style('--xx', `${ww - 30}px`);
-      d3.select(this.element.nativeElement).style('--yy', `${hh + 100}px`);
+      d3.select(this.element.nativeElement).style('--xx', `${+here.attr('cx') + this.R * 0.5}px`);
+      d3.select(this.element.nativeElement).style('--yy', `${-+here.attr('cy') + this.R * 0.5}px`);
     } else {
       d3.select(this.element.nativeElement).style('--xx', '0%');
       d3.select(this.element.nativeElement).style('--yy', 'unset');
