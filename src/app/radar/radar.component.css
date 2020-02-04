@@ -6,8 +6,8 @@ circle.gridCircle {
     fill-opacity: 0.1;
     stroke-opacity: 0.1;
     filter: url(#glow);
-    fill: rgb(122, 122, 122);
-    stroke: rgba(255, 155, 97, 0.25);
+    fill: rgb(190, 153, 83);
+    stroke: rgba(190, 153, 83, 0.25);
 }
 
 circle.radarCircle {

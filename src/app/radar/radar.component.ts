@@ -11,8 +11,8 @@ export class RadarComponent implements OnInit, OnChanges {
   @Input() scale = 1;
   @Input() R = 900 * this.scale;
   @Input() dR = 100 * this.scale;
-  @Input() labelLength = 4; // Axis label max length in multiples of squaresize
-  @Input() levels = 3; // Approximate number of value labels (twice this if negative data)
+  @Input() labelLength = 6; // Axis label max length in multiples of squaresize
+  @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
   @Input() curved = true;
   @Input() portfolios: {
     name: string;
