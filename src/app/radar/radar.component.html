@@ -13,11 +13,6 @@
 <ng-container *ngFor="let r of levelsRange">
 <circle class="gridCircle" [attr.r]="circScale(r)"></circle>
 </ng-container>
-<ng-container *ngFor="let asset of (portfolios[0].port.length<=10?portfolios[0].port:[0]);let i = index">
-<ng-container *ngFor="let r of levelsRange">
-<text class="axislabels" y="0.5em"[style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
-</ng-container>
-</ng-container>
 
 <ng-container *ngIf="pMin<0">
 <path class="gridZero" [attr.d]="arcZ(1)"></path>
@@ -60,6 +55,11 @@ class="radarInvisibleCircle"
 </circle>
 </ng-container>
 
+</ng-container>
+<ng-container *ngFor="let asset of (portfolios[0].port.length<=10?portfolios[0].port:[0]);let i = index">
+<ng-container *ngFor="let r of levelsRange">
+<text class="axislabels" y="0.5em"[style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
+</ng-container>
 </ng-container>
 
 </g>
