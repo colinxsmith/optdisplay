@@ -66,13 +66,15 @@ export class RadarComponent implements OnInit, OnChanges {
   cSin = Math.sin;
   circVal = d3.scaleLinear<number, number>();
   percentFormat = d3.format('.1%');
-  angleScale = d3.scaleLinear<number, number>().domain([0, this.portfolios[0].port.length]).range([0, Math.PI * 2]);
+  angleScale = d3.scaleLinear<number, number>().domain([0, this.portfolios[0].port.length])
+    .range([0, Math.PI * 2]);
   levelsRange: number[];
   radarLine = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
   rScale = d3.scaleLinear<number, number>().range([0, this.radius]);
   circScale = d3.scaleLinear<number, number>().range([0, this.radius]);
-  blobChooser = (k: number, x: number, y: number) => `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
+  blobChooser = (k: number, x: number, y: number) =>
+    `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
   arcZ = (t: number) => d3.arc()({
     innerRadius: this.circScale(this.circVal.invert(0)),
     outerRadius: this.circScale(this.circVal.invert(0)),
@@ -109,6 +111,9 @@ export class RadarComponent implements OnInit, OnChanges {
     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
     // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', this.smallgreytitle);
+    d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames')
+      .style('font-size', `${this.squareSize * this.assetNamesFontScale}px`)
+      .style('visibility', 'visible');
     this.pMax = 0;
     this.pMin = 0;
     this.portfolios.forEach(port => {
@@ -133,11 +138,15 @@ export class RadarComponent implements OnInit, OnChanges {
       .transition().duration(this.durationTime).styleTween('stroke-width', () => t => `${4 * this.R / 900 * t}px`);
     d3.select(this.element.nativeElement).select('svg').selectAll('text.axislabels').transition().duration(this.durationTime)
       .styleTween('font-size', () => t => `${t * this.squareSize * 0.4}px`);
-    d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').transition().duration(this.durationTime)
+    d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames')
+      .style('font-size', `${this.squareSize * this.assetNamesFontScale}px`)
+      .style('visibility', 'visible')
+ /*     .transition().duration(this.durationTime)
       .styleTween('font-size', () => t => `${t * this.squareSize * this.assetNamesFontScale}px`)
-      .styleTween('visibility', () => t => t > 0.05 ? 'visible' : 'hidden');
+      .styleTween('visibility', () => t => t > 0.05 ? 'visible' : 'hidden')*/;
     const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.assetnames').node() as SVGTextElement;
     if (leg !== null && leg.getBoundingClientRect().width) {
+      console.log(leg.getBoundingClientRect().width);
       this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize
         * this.squareSize / 30
         / this.assetNamesFontScale / this.radius * 350;

@@ -1,5 +1,6 @@
-<div>
-<input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newscale($event)" (change)="newscale($event)">
-{{scl}}
-<app-radar  [smallgreytitle]="'USE'" [scale]="scl" ></app-radar>
+<div [style.display]="'flex'">
+    <div>
+        <input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (change)="newscale($event,true)" (input)="newscale($event,false)">
+    </div>
+    <app-radar [smallgreytitle]="'USE'" [scale]="scl"></app-radar>
 </div>

@@ -1,5 +1,4 @@
 import { Component, ElementRef } from '@angular/core';
-import * as d3 from 'd3';
 
 @Component({
   selector: 'app-use-radar',
@@ -12,7 +11,7 @@ export class UseRadarComponent {
 
   scl = 1;
   scale = 1000;
-  newscale(b: Event) {
+  newscale(b: Event, change: boolean) {
     const back = b.target as HTMLButtonElement;
     this.scl = +back.value / this.scale;
   }
