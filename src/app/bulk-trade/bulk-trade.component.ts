@@ -1,6 +1,5 @@
 import { Component, OnInit, OnChanges, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
-import { select } from 'd3';
 @Component({
   selector: 'app-bulk-trade',
   template: `<svg  id="BULK" width="0" height="0" [style.background-color]="bcolor">

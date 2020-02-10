@@ -1,0 +1,5 @@
+<div>
+<input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newscale($event)" (change)="newscale($event)">
+{{scl}}
+<app-radar  [smallgreytitle]="'USE'" [scale]="scl" ></app-radar>
+</div>

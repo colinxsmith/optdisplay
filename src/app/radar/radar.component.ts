@@ -9,8 +9,7 @@ import * as d3 from 'd3';
 export class RadarComponent implements OnInit, OnChanges {
 
   @Input() scale = 1;
-  R = 900 * this.scale;
-  dR = 100 * this.scale;
+  @Input() smallgreytitle = 'Radar';
   @Input() labelLength = 6; // Axis label max length in multiples of squaresize
   @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
   @Input() curved = true;
@@ -54,6 +53,8 @@ export class RadarComponent implements OnInit, OnChanges {
       }];
   wraplength = 100;
   assetNamesFontScale = 0.95;
+  R = 900 * this.scale;
+  dR = 100 * this.scale;
   radius = this.R / 2 - this.dR;
   squareSize = this.radius / 10;
   pMin: number;
@@ -63,14 +64,14 @@ export class RadarComponent implements OnInit, OnChanges {
   constructor(private element: ElementRef) { }
   cCos = Math.cos;
   cSin = Math.sin;
-  rScale = d3.scaleLinear<number, number>().range([0, this.radius]);
-  circScale = d3.scaleLinear<number, number>().range([0, this.radius]);
   circVal = d3.scaleLinear<number, number>();
   percentFormat = d3.format('.1%');
   angleScale = d3.scaleLinear<number, number>().domain([0, this.portfolios[0].port.length]).range([0, Math.PI * 2]);
   levelsRange: number[];
   radarLine = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
+  rScale = d3.scaleLinear<number, number>().range([0, this.radius]);
+  circScale = d3.scaleLinear<number, number>().range([0, this.radius]);
   blobChooser = (k: number, x: number, y: number) => `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
   arcZ = (t: number) => d3.arc()({
     innerRadius: this.circScale(this.circVal.invert(0)),
@@ -87,12 +88,27 @@ export class RadarComponent implements OnInit, OnChanges {
     this.picture();
     setTimeout(() => this.update());
   }
-  translatehack = (w: number, h: number) => `translate(${w},${h})`
+  translatehack = (w: number, h: number) => `translate(${w},${h})`;
   toPxhack = (k: number) => `${k * this.scale}px`;
   picture() {
+    this.toPxhack = (k: number) => `${k * this.scale}px`;
+    this.R = 900 * this.scale;
+    this.dR = 100 * this.scale;
+    this.radius = this.R / 2 - this.dR;
+    this.squareSize = this.radius / 10;
+    this.rScale = d3.scaleLinear<number, number>().range([0, this.radius]);
+    this.circScale = d3.scaleLinear<number, number>().range([0, this.radius]);
+    this.arcZ = (t: number) => d3.arc()({
+      innerRadius: this.circScale(this.circVal.invert(0)),
+      outerRadius: this.circScale(this.circVal.invert(0)),
+      startAngle: 0,
+      endAngle: Math.PI * 2 * t,
+      padAngle: 0
+    });
+    this.blobChooser = (k: number, x: number, y: number) => `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
     // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
-    d3.select(this.element.nativeElement).attr('smallgreytitle', 'Radar');
+    d3.select(this.element.nativeElement).attr('smallgreytitle', this.smallgreytitle);
     this.pMax = 0;
     this.pMin = 0;
     this.portfolios.forEach(port => {
@@ -121,7 +137,7 @@ export class RadarComponent implements OnInit, OnChanges {
       .styleTween('font-size', () => t => `${t * this.squareSize * this.assetNamesFontScale}px`)
       .styleTween('visibility', () => t => t > 0.05 ? 'visible' : 'hidden');
     const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.assetnames').node() as SVGTextElement;
-    if (leg !== null) {
+    if (leg !== null && leg.getBoundingClientRect().width) {
       this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize
         * this.squareSize / 30
         / this.assetNamesFontScale / this.radius * 350;
@@ -216,7 +232,7 @@ export class RadarComponent implements OnInit, OnChanges {
     }
     d3.select(this.element.nativeElement).style('--back', colour);
     d3.select(this.element.nativeElement).style('--ff', '55%');
-    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)} ` : 'Radar');
+    d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)} ` : this.smallgreytitle);
     d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
     d3.select(d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
   }
