@@ -5,7 +5,7 @@ input[type=range] {
 input[type=range]::-webkit-slider-runnable-track {
     width: 300px;
     height: 5px;
-    background: rgb(221, 221, 221);
+    background: rgb(219, 14, 14);
     border: none;
     border-radius: 3px;
 }
@@ -25,5 +25,5 @@ input[type=range]:focus {
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
-    background: #ccc;
+    background: rgb(95, 74, 74);
 }

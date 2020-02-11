@@ -137,22 +137,8 @@ export class RadarComponent implements OnInit, OnChanges {
       .styleTween('font-size', () => t => `${t * this.squareSize * 0.4}px`);
     d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames')
       .style('font-size', `${this.squareSize * this.assetNamesFontScale}px`)
-      .style('visibility', 'visible')
- /*     .transition().duration(this.durationTime)
-      .styleTween('font-size', () => t => `${t * this.squareSize * this.assetNamesFontScale}px`)
-      .styleTween('visibility', () => t => t > 0.05 ? 'visible' : 'hidden')*/;
-    const leg = d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').nodes()[1] as SVGTextElement;
-    const tlen = leg.getComputedTextLength();
-    const bigW = leg.getBoundingClientRect().width;
-    if (leg !== null && bigW) {
-      console.log('scale=', this.scale, leg.textContent);
-      console.log(leg.textContent.length, tlen, bigW);
-      this.wraplength = this.labelLength; // this.labelLength / 2 * leg.textContent.length / tlen * (this.squareSize * this.assetNamesFontScale);
-      console.log(leg.textContent.length, this.wraplength);
-      const textOut = this.wrapString(leg.textContent, this.wraplength);
-      console.log(textOut);
-      console.log(this.labelLength, textOut[0].length);
-    }
+      .style('visibility', 'visible');
+      this.wraplength = this.labelLength;
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(this.durationTime).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
         const here = d3.select(j[i]);
