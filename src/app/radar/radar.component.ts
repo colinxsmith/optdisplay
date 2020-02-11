@@ -10,7 +10,7 @@ export class RadarComponent implements OnInit, OnChanges {
 
   @Input() scale = 1;
   @Input() smallgreytitle = 'Radar';
-  @Input() labelLength = 6; // Axis label max length in multiples of squaresize
+  @Input() labelLength = 10; // Axis label max length in multiples of squaresize
   @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
   @Input() curved = true;
   @Input() portfolios: {
@@ -71,28 +71,23 @@ export class RadarComponent implements OnInit, OnChanges {
   levelsRange: number[];
   radarLine = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
-  rScale = d3.scaleLinear<number, number>().range([0, this.radius]);
-  circScale = d3.scaleLinear<number, number>().range([0, this.radius]);
-  blobChooser = (k: number, x: number, y: number) =>
-    `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
-  arcZ = (t: number) => d3.arc()({
-    innerRadius: this.circScale(this.circVal.invert(0)),
-    outerRadius: this.circScale(this.circVal.invert(0)),
-    startAngle: 0,
-    endAngle: Math.PI * 2 * t,
-    padAngle: 0
-  })
+  rScale: d3.ScaleLinear<number, number>;
+  circScale: d3.ScaleLinear<number, number>;
+  blobChooser: (k: number, x: number, y: number) => string;
+  arcZ: (t: number) => string;
+  toPxhack: (k: number) => string;
   ngOnInit() {
+    this.defineParm();
     this.picture();
     setTimeout(() => this.update());
   }
   ngOnChanges() {
+    this.defineParm();
     this.picture();
     setTimeout(() => this.update());
   }
   translatehack = (w: number, h: number) => `translate(${w},${h})`;
-  toPxhack = (k: number) => `${k * this.scale}px`;
-  picture() {
+  defineParm() {
     this.toPxhack = (k: number) => `${k * this.scale}px`;
     this.R = 900 * this.scale;
     this.dR = 100 * this.scale;
@@ -107,7 +102,9 @@ export class RadarComponent implements OnInit, OnChanges {
       endAngle: Math.PI * 2 * t,
       padAngle: 0
     });
-    this.blobChooser = (k: number, x: number, y: number) => `M${x},${y + (k - 0.75) * this.squareSize}l${this.squareSize},0,l0,${this.squareSize},l-${this.squareSize},0z`;
+    this.blobChooser = (k: number, x: number, y: number) => `M${x} ${y + (k - 0.75) * this.squareSize}l${this.squareSize} 0 l0 ${this.squareSize} l-${this.squareSize} 0z`;
+  }
+  picture() {
     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
     // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', this.smallgreytitle);
@@ -144,12 +141,17 @@ export class RadarComponent implements OnInit, OnChanges {
  /*     .transition().duration(this.durationTime)
       .styleTween('font-size', () => t => `${t * this.squareSize * this.assetNamesFontScale}px`)
       .styleTween('visibility', () => t => t > 0.05 ? 'visible' : 'hidden')*/;
-    const leg = d3.select(this.element.nativeElement).select('svg.radar').select('text.assetnames').node() as SVGTextElement;
-    if (leg !== null && leg.getBoundingClientRect().width) {
-      console.log(leg.getBoundingClientRect().width);
-      this.wraplength = leg.textContent.length / leg.getBoundingClientRect().width * this.labelLength * this.squareSize
-        * this.squareSize / 30
-        / this.assetNamesFontScale / this.radius * 350;
+    const leg = d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').nodes()[1] as SVGTextElement;
+    const tlen = leg.getComputedTextLength();
+    const bigW = leg.getBoundingClientRect().width;
+    if (leg !== null && bigW) {
+      console.log('scale=', this.scale, leg.textContent);
+      console.log(leg.textContent.length, tlen, bigW);
+      this.wraplength = this.labelLength; // this.labelLength / 2 * leg.textContent.length / tlen * (this.squareSize * this.assetNamesFontScale);
+      console.log(leg.textContent.length, this.wraplength);
+      const textOut = this.wrapString(leg.textContent, this.wraplength);
+      console.log(textOut);
+      console.log(this.labelLength, textOut[0].length);
     }
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(this.durationTime).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
@@ -160,7 +162,9 @@ export class RadarComponent implements OnInit, OnChanges {
         here.style('stroke-width', `${t * 2 * this.scale}px`);
       });
     if (this.pMin < 0) {
-      d3.select(this.element.nativeElement).select('svg').select('path.gridZero').transition().duration(this.durationTime)
+      d3.select(this.element.nativeElement).select('svg').select('path.gridZero')
+        .style('stroke-dasharray', `${15 * this.scale},${15 * this.scale}`)
+        .transition().duration(this.durationTime)
         .styleTween('stroke-width', () => t => `${t * 2 * this.scale}px`)
         .attrTween('d', () => t => {
           return this.arcZ(t);

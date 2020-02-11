@@ -1,7 +1,7 @@
 <svg [attr.width]="R" [attr.height]="R" x="0" y="0" class="radar">
 <defs>
 <filter id="glow">
-<feGaussianBlur stdDeviation="25" result="coloredBlur"></feGaussianBlur>
+<feGaussianBlur stdDeviation="60" result="coloredBlur"></feGaussianBlur>
 <feMerge>
 <feMergeNode in="coloredBlur"></feMergeNode>
 <feMergeNode in="SourceGraphic"></feMergeNode>
@@ -22,8 +22,8 @@
 <line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
 <text class="assetnames" [style.visibility]="'hidden'" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)">
 <ng-container *ngFor="let line of [0,1,2,3];">
-<tspan [attr.x]="rScale(pMax*1.1)*cCos(angleScale(i)-PI/2)*0.8" 
-[attr.dx]="toPxhack(-labelLength*wraplength)" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
+<tspan [attr.x]="rScale(pMax)*cCos(angleScale(i)-PI/2)" 
+[attr.dx]="-wrapString(asset.axis,wraplength)[0].length/4+'em'" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
 </ng-container>
 </text>
 </ng-container>

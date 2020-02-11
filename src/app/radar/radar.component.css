@@ -4,10 +4,10 @@
 
 circle.gridCircle {
     fill-opacity: 0.1;
-    stroke-opacity: 0.1;
+    stroke-opacity: 0.05;
     filter: url(#glow);
-    fill: rgb(190, 153, 83);
-    stroke: rgba(190, 153, 83, 0.25);
+    fill: rgb(235, 200, 136);
+    stroke: rgb(235, 200, 136);
 }
 
 circle.radarCircle {
@@ -30,13 +30,13 @@ path.gridZero {
 path.radarStroke {
     fill: none;
     stroke: rgb(255, 50, 50);
-    cursor:progress;
+    cursor: progress;
 }
 
 path.radarArea {
     fill: rgb(255, 50, 50);
     fill-opacity: 0.35;
-    cursor:progress;
+    cursor: progress;
 }
 
 line.line {
@@ -67,5 +67,5 @@ text.portfoliolabels {
     text-anchor: end;
     fill: rgb(255, 50, 50);
     fill-opacity: 0.35;
-    cursor:progress;
+    cursor: progress;
 }
