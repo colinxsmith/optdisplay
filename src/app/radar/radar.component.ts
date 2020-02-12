@@ -238,12 +238,13 @@ export class RadarComponent implements OnInit, OnChanges {
     }
     return newd;
   }
-  @Input() circleChoose(inout: boolean, asset: {
+  circleChoose(inout: boolean, asset: {
     axis: string;
     value: number;
   }, port: number, i: number, colour = 'grey') {
-    const here = d3.select(d3.select(this.element.nativeElement).select('svg')
+    const here = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
       .selectAll('circle.radarInvisibleCircle').nodes()[i + port * this.portfolios[0].port.length] as SVGCircleElement);
+    console.log(inout, asset, port, i, colour, +here.attr('cx'), this.R);
     if (inout) {
       d3.select(this.element.nativeElement).style('--xx', `${+here.attr('cx') + this.R * 0.5}px`);
       d3.select(this.element.nativeElement).style('--yy', `${-+here.attr('cy') + this.R * 0.5}px`);

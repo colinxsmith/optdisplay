@@ -33,8 +33,8 @@
 
 <ng-container *ngFor="let port of portfolios;let i=index">
 <text 
-[style.fill]="port.colour" class="portfoliolabels" x="-0.5em"(mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)"
-[attr.transform]="translatehack(radius*1.015,-radius*0.95+squareSize*i)" >{{port.name}}</text>
+[style.fill]="port.colour" class="portfoliolabels" x="-0.5em" (mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)"
+[attr.transform]="translatehack(radius*1.015,-radius*0.95+squareSize*i)">{{port.name}}</text>
 <path 
 [style.fill]="port.colour" class="radarArea" (mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)" 
 [attr.d]="(pMin<0?radarLine(port.port)+radarLineZ(port.port):radarLine(port.port))+blobChooser(i,radius*1.015,-radius*0.95)">
@@ -49,6 +49,11 @@
 </ng-container>
 
 </ng-container>
+<ng-container *ngFor="let asset of (portfolios[0].port.length<=10?portfolios[0].port:[0]);let i = index">
+<ng-container *ngFor="let r of levelsRange">
+<text class="axislabels" y="0.5em"[style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
+</ng-container>
+</ng-container>
 <ng-container *ngFor="let port of portfolios;let i=index">
 <ng-container *ngFor="let asset of port.port;let axis=index">
 <circle  [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
@@ -58,11 +63,6 @@ class="radarInvisibleCircle"
 </circle>
 </ng-container>
 
-</ng-container>
-<ng-container *ngFor="let asset of (portfolios[0].port.length<=10?portfolios[0].port:[0]);let i = index">
-<ng-container *ngFor="let r of levelsRange">
-<text class="axislabels" y="0.5em"[style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
-</ng-container>
 </ng-container>
 
 </g>
