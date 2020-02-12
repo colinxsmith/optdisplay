@@ -52,7 +52,7 @@ export class RadarComponent implements OnInit, OnChanges {
         ]
       }];
   wraplength = 100;
-  assetNamesFontScale = 0.95;
+  @Input() assetNamesFontScale = 0.95;
   R = 900 * this.scale;
   dR = 100 * this.scale;
   radius = this.R / 2 - this.dR;
@@ -66,8 +66,7 @@ export class RadarComponent implements OnInit, OnChanges {
   cSin = Math.sin;
   circVal = d3.scaleLinear<number, number>();
   percentFormat = d3.format('.1%');
-  angleScale = d3.scaleLinear<number, number>().domain([0, this.portfolios[0].port.length])
-    .range([0, Math.PI * 2]);
+  angleScale: d3.ScaleLinear<number, number>;
   levelsRange: number[];
   radarLine = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>().curve(d3.curveLinearClosed);
@@ -95,6 +94,8 @@ export class RadarComponent implements OnInit, OnChanges {
     this.squareSize = this.radius / 10;
     this.rScale = d3.scaleLinear<number, number>().range([0, this.radius]);
     this.circScale = d3.scaleLinear<number, number>().range([0, this.radius]);
+    this.angleScale = d3.scaleLinear<number, number>().domain([0, this.portfolios[0].port.length])
+      .range([0, Math.PI * 2]);
     this.arcZ = (t: number) => d3.arc()({
       innerRadius: this.circScale(this.circVal.invert(0)),
       outerRadius: this.circScale(this.circVal.invert(0)),
@@ -102,7 +103,8 @@ export class RadarComponent implements OnInit, OnChanges {
       endAngle: Math.PI * 2 * t,
       padAngle: 0
     });
-    this.blobChooser = (k: number, x: number, y: number) => `M${x} ${y + (k - 0.75) * this.squareSize}l${this.squareSize} 0 l0 ${this.squareSize} l-${this.squareSize} 0z`;
+    this.blobChooser = (k: number, x: number, y: number) => `M${x} ${y + (k - 0.75) * this.squareSize}l
+    ${this.squareSize} 0 l0 ${this.squareSize} l-${this.squareSize} 0z`;
   }
   picture() {
     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
@@ -117,6 +119,24 @@ export class RadarComponent implements OnInit, OnChanges {
       this.pMax = Math.max(this.pMax, d3.max(port.port, d => d.value));
       this.pMin = Math.min(this.pMin, d3.min(port.port, d => d.value));
     });
+    if (this.pMax > 1.5 && this.pMax < 2) {
+      this.pMax = 2;
+    }
+    if (this.pMin < -1.5 && this.pMin > -2) {
+      this.pMin = -2;
+    }
+    if (this.pMax > 0.5 && this.pMax < 1) {
+      this.pMax = 1;
+    }
+    if (this.pMin < -0.5 && this.pMin > -1) {
+      this.pMin = -1;
+    }
+    if (this.pMax <= -this.pMin) {
+      this.pMax = -this.pMin;
+    }
+    if (this.pMin >= -this.pMin) {
+      this.pMin = -this.pMax;
+    }
     this.rScale.domain([this.pMin, this.pMax]);
     this.circScale.domain([this.pMin < 0 ? -this.levels : 0, this.levels]);
     this.circVal.range([this.pMin, this.pMax]).domain([this.pMin < 0 ? -this.levels : 0, this.levels]);
@@ -134,11 +154,13 @@ export class RadarComponent implements OnInit, OnChanges {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarStroke')
       .transition().duration(this.durationTime).styleTween('stroke-width', () => t => `${4 * this.R / 900 * t}px`);
     d3.select(this.element.nativeElement).select('svg').selectAll('text.axislabels').transition().duration(this.durationTime)
-      .styleTween('font-size', () => t => `${t * this.squareSize * 0.4}px`);
+      .styleTween('font-size', () => t => `${t * this.squareSize * 0.6}px`);
     d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames')
       .style('font-size', `${this.squareSize * this.assetNamesFontScale}px`)
       .style('visibility', 'visible');
-      this.wraplength = this.labelLength;
+    d3.select(this.element.nativeElement).selectAll('text.portfoliolabels')
+      .style('font-size', `${this.squareSize * 0.8}px`);
+    this.wraplength = this.labelLength;
     d3.select(this.element.nativeElement).select('svg').selectAll('line.line').transition().duration(this.durationTime).ease(d3.easeBounce)
       .tween('line', (d, i, j: Array<SVGLineElement>) => t => {
         const here = d3.select(j[i]);
@@ -216,7 +238,7 @@ export class RadarComponent implements OnInit, OnChanges {
     }
     return newd;
   }
-  circleChoose(inout: boolean, asset: {
+  @Input() circleChoose(inout: boolean, asset: {
     axis: string;
     value: number;
   }, port: number, i: number, colour = 'grey') {
@@ -232,7 +254,10 @@ export class RadarComponent implements OnInit, OnChanges {
     d3.select(this.element.nativeElement).style('--back', colour);
     d3.select(this.element.nativeElement).style('--ff', '55%');
     d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)} ` : this.smallgreytitle);
-    d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
-    d3.select(d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
+    if (this.smallgreytitle !== null) {
+      d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
+    }
+    d3.select(d3.select(this.element.nativeElement)
+      .select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
   }
 }

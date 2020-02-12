@@ -20,10 +20,13 @@
 
 <ng-container *ngFor="let asset of portfolios[0].port;let i=index">
 <line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
-<text class="assetnames" [style.visibility]="'hidden'" [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)">
+<text class="assetnames" [style.visibility]="'hidden'" 
+[attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.2">
 <ng-container *ngFor="let line of [0,1,2,3];">
-<tspan [attr.x]="rScale(pMax)*cCos(angleScale(i)-PI/2)" 
-[attr.dx]="-wrapString(asset.axis,wraplength)[0].length/4+'em'" [attr.dy]="line===0?'-0.8em':'0.8em'">{{wrapString(asset.axis,wraplength)[line]}}</tspan>
+<tspan [attr.x]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cCos(angleScale(i)-PI/2):rScale(pMax)*cCos(angleScale(i)-PI/2)" 
+[attr.dx]="-wrapString(asset.axis,wraplength)[0].length/4+'em'" 
+[attr.dy]="line===0?'-0.8em':'0.8em'">
+{{wrapString(asset.axis,wraplength)[line]}}</tspan>
 </ng-container>
 </text>
 </ng-container>
@@ -40,7 +43,7 @@
 </path>
 
 <ng-container *ngFor="let asset of port.port;let axis=index">
-<circle [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)"class="radarCircle"
+<circle [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" class="radarCircle"
 [style.fill]="port.colour" [attr.r]="5*scale" >
 </circle>
 </ng-container>
@@ -48,10 +51,10 @@
 </ng-container>
 <ng-container *ngFor="let port of portfolios;let i=index">
 <ng-container *ngFor="let asset of port.port;let axis=index">
-<circle  [attr.id]="'i'+i"[attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
+<circle  [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
 class="radarInvisibleCircle"
 [style.fill]="port.colour" (mouseenter)="circleChoose(true,asset,i,axis,port.colour)" (mouseleave)="circleChoose(false,null,i,axis)"
- [attr.r]="20*scale" >
+[attr.r]="20*scale">
 </circle>
 </ng-container>
 
