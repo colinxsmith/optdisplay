@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -8,6 +8,8 @@ import * as d3 from 'd3';
 })
 export class RadarComponent implements OnInit, OnChanges {
 
+  @Output() selectPortfolio: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectAsset: EventEmitter<any> = new EventEmitter<any>();
   @Input() scale = 1;
   @Input() nicescale = false;
   @Input() smallgreytitle = 'Radar';
@@ -209,7 +211,11 @@ export class RadarComponent implements OnInit, OnChanges {
       const circle = d3.select(jj[ii]);
       circle.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 1 * t}`);
     });
-
+    this.selectPortfolio.emit({
+      portfolio: i,
+      inout: inout
+    }
+    );
   }
   wrapLabels = (labS: string[], mW: number) => {
     console.log('wrapLabels', mW);
@@ -270,5 +276,11 @@ export class RadarComponent implements OnInit, OnChanges {
     }
     d3.select(d3.select(this.element.nativeElement)
       .select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
+    this.selectAsset.emit({
+      portfolio: port,
+      asset: i,
+      inout: inout
+    }
+    );
   }
 }
