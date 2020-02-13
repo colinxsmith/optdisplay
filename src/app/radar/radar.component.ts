@@ -245,7 +245,6 @@ export class RadarComponent implements OnInit, OnChanges {
     axis: string;
     value: number;
   }, port: number, i: number, colour = 'grey') {
-    console.log(event);
     const here = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
       .selectAll('circle.radarInvisibleCircle').nodes()[i + port * this.portfolios[0].port.length] as SVGCircleElement);
     const mouseText = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
