@@ -9,7 +9,6 @@
 </filter>
 </defs>
 <g [attr.transform]="translatehack(R*0.5,R*0.5)">
-
 <ng-container *ngFor="let r of levelsRange">
 <circle class="gridCircle" [attr.r]="circScale(r)"></circle>
 </ng-container>
@@ -43,8 +42,10 @@
 </path>
 
 <ng-container *ngFor="let asset of port.port;let axis=index">
-<circle [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" class="radarCircle"
-[style.fill]="port.colour" [attr.r]="5*scale" >
+<circle [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" 
+[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
+class="radarCircle"
+[style.fill]="port.colour" [attr.r]="6*scale" >
 </circle>
 </ng-container>
 
@@ -56,11 +57,19 @@
 </ng-container>
 <ng-container *ngFor="let port of portfolios;let i=index">
 <ng-container *ngFor="let asset of port.port;let axis=index">
-<circle  [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
+<circle  [attr.id]="'i'+i" 
+[attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" 
+[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
 class="radarInvisibleCircle"
-[style.fill]="port.colour" (mouseenter)="circleChoose(true,asset,i,axis,port.colour)" (mouseleave)="circleChoose(false,null,i,axis)"
+[style.fill]="port.colour" (mouseenter)="circleChoose($event,true,asset,i,axis,port.colour)" (mouseleave)="circleChoose($event,false,null,i,axis)"
 [attr.r]="20*scale">
 </circle>
+<text class="mouseover"
+[attr.transform]="translatehack(rScale(asset.value)*cCos(angleScale(axis)-PI/2),rScale(asset.value)*cSin(angleScale(axis)-PI/2))"
+[attr.x]="0" 
+[attr.y]="'-0.25em'" >
+{{asset.value}}
+</text>
 </ng-container>
 
 </ng-container>

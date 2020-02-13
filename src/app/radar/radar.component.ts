@@ -9,6 +9,7 @@ import * as d3 from 'd3';
 export class RadarComponent implements OnInit, OnChanges {
 
   @Input() scale = 1;
+  @Input() nicescale = false;
   @Input() smallgreytitle = 'Radar';
   @Input() labelLength = 10; // Axis label max length in multiples of squaresize
   @Input() levels = 2; // Approximate number of value labels (twice this if negative data)
@@ -119,17 +120,19 @@ export class RadarComponent implements OnInit, OnChanges {
       this.pMax = Math.max(this.pMax, d3.max(port.port, d => d.value));
       this.pMin = Math.min(this.pMin, d3.min(port.port, d => d.value));
     });
-    if (this.pMax > 1.5 && this.pMax < 2) {
-      this.pMax = 2;
-    }
-    if (this.pMin < -1.5 && this.pMin > -2) {
-      this.pMin = -2;
-    }
-    if (this.pMax > 0.5 && this.pMax < 1) {
-      this.pMax = 1;
-    }
-    if (this.pMin < -0.5 && this.pMin > -1) {
-      this.pMin = -1;
+    if (this.nicescale) {
+      if (this.pMax > 1.5 && this.pMax < 2) {
+        this.pMax = 2;
+      }
+      if (this.pMin < -1.5 && this.pMin > -2) {
+        this.pMin = -2;
+      }
+      if (this.pMax > 0.5 && this.pMax < 1) {
+        this.pMax = 1;
+      }
+      if (this.pMin < -0.5 && this.pMin > -1) {
+        this.pMin = -1;
+      }
     }
     if (this.pMax <= -this.pMin) {
       this.pMax = -this.pMin;
@@ -238,17 +241,25 @@ export class RadarComponent implements OnInit, OnChanges {
     }
     return newd;
   }
-  circleChoose(inout: boolean, asset: {
+  circleChoose(event: Event, inout: boolean, asset: {
     axis: string;
     value: number;
   }, port: number, i: number, colour = 'grey') {
+    console.log(event);
     const here = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
       .selectAll('circle.radarInvisibleCircle').nodes()[i + port * this.portfolios[0].port.length] as SVGCircleElement);
-    console.log(inout, asset, port, i, colour, +here.attr('cx'), this.R);
+    const mouseText = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
+      .selectAll('text.mouseover').nodes()[i + port * this.portfolios[0].port.length] as SVGTextElement);
     if (inout) {
       d3.select(this.element.nativeElement).style('--xx', `${+here.attr('cx') + this.R * 0.5}px`);
       d3.select(this.element.nativeElement).style('--yy', `${-+here.attr('cy') + this.R * 0.5}px`);
+      mouseText
+        .style('opacity', 1)
+        .style('fill', colour)
+        .text(`${this.percentFormat(asset.value)}`);
     } else {
+      mouseText
+        .style('opacity', 0);
       d3.select(this.element.nativeElement).style('--xx', '0%');
       d3.select(this.element.nativeElement).style('--yy', 'unset');
     }
