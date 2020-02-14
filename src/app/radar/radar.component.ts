@@ -8,8 +8,15 @@ import * as d3 from 'd3';
 })
 export class RadarComponent implements OnInit, OnChanges {
 
-  @Output() selectPortfolio: EventEmitter<any> = new EventEmitter<any>();
-  @Output() selectAsset: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectAsset = new EventEmitter<{
+    portfolio: number;
+    asset: number;
+    inout: boolean;
+  }>();
+  @Output() selectPortfolio = new EventEmitter<{
+    portfolio: number;
+    inout: boolean;
+  }>();
   @Input() scale = 1;
   @Input() nicescale = false;
   @Input() smallgreytitle = 'Radar';
@@ -213,7 +220,7 @@ export class RadarComponent implements OnInit, OnChanges {
     });
     this.selectPortfolio.emit({
       portfolio: i,
-      inout: inout
+      inout
     }
     );
   }
@@ -279,7 +286,7 @@ export class RadarComponent implements OnInit, OnChanges {
     this.selectAsset.emit({
       portfolio: port,
       asset: i,
-      inout: inout
+      inout
     }
     );
   }
