@@ -50,7 +50,7 @@ button:hover {
     position: absolute;
     padding: 1px 5px 2px 5px;
     left: var(--xx);
-    bottom: var(--yy);
+    top: var(--yy);
     white-space: nowrap;
     box-shadow: 1px 1px 3px #222222;
     opacity: 0;

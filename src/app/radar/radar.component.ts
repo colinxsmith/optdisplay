@@ -263,8 +263,10 @@ export class RadarComponent implements OnInit, OnChanges {
     const mouseText = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
       .selectAll('text.mouseover').nodes()[i + port * this.portfolios[0].port.length] as SVGTextElement);
     if (inout) {
-      d3.select(this.element.nativeElement).style('--xx', `${+here.attr('cx') + this.R * 0.5}px`);
-      d3.select(this.element.nativeElement).style('--yy', `${-+here.attr('cy') + this.R * 0.5}px`);
+      const origin = d3.select(this.element.nativeElement).select('svg.radar').select('g').attr('transform').replace(/[translate()]*/g, '')
+        .split(',');
+      d3.select(this.element.nativeElement).style('--xx', `${this.squareSize*0.5+ +here.attr('cx') + parseFloat(origin[0])}px`);
+      d3.select(this.element.nativeElement).style('--yy', `${-this.squareSize+ +here.attr('cy') + parseFloat(origin[0])}px`);
       mouseText
         .style('opacity', 1)
         .style('fill', colour)
