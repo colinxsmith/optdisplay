@@ -284,7 +284,7 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
       xMax = Math.max(d.outlier, xMax);
     });
     this.xScale.domain([xMin, xMax]).rangeRound([0, this.width]);
-    this.yScale.domain([0, this.counter.length]).rangeRound([0.1 * this.height, this.height * 0.9]);
+    this.yScale.domain([0, this.counter.length]).range([0.1 * this.height, this.height * 0.9]);
   }
   translateHack(w: number, h: number) {
     return `translate(${w},${h})`;
@@ -326,12 +326,10 @@ export class BulkTradeBarComponent implements OnInit, OnChanges {
   onMouseEnter(name: string, value: number, type: string, ee: MouseEvent) {
     const ww = (ee.x - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().left)
       / (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().width;
-    /*    const hh = (ee.y - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().top)
-          /  (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height;*/
-    const hh = (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height - ee.y;
-    //    console.log(ww, hh);
-    d3.select(this.element.nativeElement).style('--xx', `${100 * ww}%`);
-    d3.select(this.element.nativeElement).style('--yy', `${hh + 60}px`);
+    const hh = (ee.y - (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().bottom)
+      / (d3.select(this.element.nativeElement).select('svg').node() as HTMLElement).getBoundingClientRect().height;
+    d3.select(this.element.nativeElement).style('--xx', `${100 * ww + 5}%`);
+    d3.select(this.element.nativeElement).style('--yy', `${500 * hh - 5}%`);
     d3.select(this.element.nativeElement).style('--back', 'blue');
     d3.select(this.element.nativeElement).attr('title', `${ee.x},${ee.y}`);
     if (this.myAttr) {
