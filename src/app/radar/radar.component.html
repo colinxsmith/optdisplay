@@ -12,13 +12,14 @@
 <ng-container *ngFor="let r of levelsRange">
 <circle class="gridCircle" [attr.r]="circScale(r)"></circle>
 </ng-container>
-
 <ng-container *ngIf="pMin<0">
 <path class="gridZero" [attr.d]="arcZ(1)"></path>
 </ng-container>
-
 <ng-container *ngFor="let asset of portfolios[0].port;let i=index">
-<line class="line" x1="0" y1="0" [attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  [attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)"></line>
+<line class="line" x1="0" y1="0" 
+[attr.x2]="rScale(pMax*1.13)*cCos(angleScale(i)-PI/2)"  
+[attr.y2]="rScale(pMax*1.13)*cSin(angleScale(i)-PI/2)">
+</line>
 <text class="assetnames" [style.visibility]="'hidden'" 
 [attr.y]="rScale(pMax)*cSin(angleScale(i)-PI/2)<0?rScale(pMax)*cSin(angleScale(i)-PI/2):rScale(pMax)*cSin(angleScale(i)-PI/2)*1.2">
 <ng-container *ngFor="let line of [0,1,2,3];">
@@ -29,8 +30,7 @@
 </ng-container>
 </text>
 </ng-container>
-
-<ng-container *ngFor="let port of portfolios;let i=index">
+<ng-container [attr.title]="'circle'" *ngFor="let port of portfolios;let i=index">
 <text 
 [style.fill]="port.colour" class="portfoliolabels" x="-0.5em" (mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)"
 [attr.transform]="translatehack(radius*1.015,-radius*0.95+squareSize*i)">{{port.name}}</text>
@@ -38,41 +38,44 @@
 [style.fill]="port.colour" class="radarArea" (mouseenter)="areaChoose(true,i)" (mouseleave)="areaChoose(false,i)" 
 [attr.d]="(pMin<0?radarLine(port.port)+radarLineZ(port.port):radarLine(port.port))+blobChooser(i,radius*1.015,-radius*0.95)">
 </path>
-<path [style.stroke]="port.colour"class="radarStroke"  [attr.d]="radarLine(port.port)">
+<path [style.stroke]="port.colour" class="radarStroke"  [attr.d]="radarLine(port.port)">
 </path>
-
 <ng-container *ngFor="let asset of port.port;let axis=index">
-<circle [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" 
+<circle  [attr.id]="'i'+i" [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" 
 [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
 class="radarCircle"
 [style.fill]="port.colour" [attr.r]="6*scale" >
 </circle>
 </ng-container>
-
 </ng-container>
 <ng-container *ngFor="let asset of (portfolios[0].port.length<=10?portfolios[0].port:[0]);let i = index">
 <ng-container *ngFor="let r of levelsRange">
-<text class="axislabels" y="0.5em"[style.font-size]="'0px'"[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">{{percentFormat(circVal(r))}}</text>
+<text class="axislabels" 
+y="0.5em" 
+[style.font-size]="'0px'" 
+[attr.transform]="translatehack(circScale(r)*cCos(angleScale(i)-PI/2),circScale(r)*cSin(angleScale(i)-PI/2))">
+{{percentFormat(circVal(r))}}
+</text>
 </ng-container>
 </ng-container>
 <ng-container *ngFor="let port of portfolios;let i=index">
 <ng-container *ngFor="let asset of port.port;let axis=index">
-<circle  [attr.id]="'i'+i" 
-[attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" 
-[attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
-class="radarInvisibleCircle"
-[style.fill]="port.colour" (mouseenter)="circleChoose($event,true,asset,i,axis,port.colour)" (mouseleave)="circleChoose($event,false,null,i,axis)"
-[attr.r]="20*scale">
-</circle>
-<text class="mouseover"
-[attr.transform]="translatehack(rScale(asset.value)*cCos(angleScale(axis)-PI/2),rScale(asset.value)*cSin(angleScale(axis)-PI/2))"
-[attr.x]="0" 
-[attr.y]="'-0.25em'" >
-{{asset.value}}
-</text>
+    <g>
+        <text class="mouseover"
+        [attr.transform]="translatehack(rScale(asset.value)*cCos(angleScale(axis)-PI/2),rScale(asset.value)*cSin(angleScale(axis)-PI/2))"
+        [attr.x]="0" 
+        [attr.y]="'-0.25em'" >
+        {{asset.value}}
+        </text>
+        <circle  [attr.id]="'i'+i+axis"
+        [attr.cx]="rScale(asset.value)*cCos(angleScale(axis)-PI/2)" 
+        [attr.cy]="rScale(asset.value)*cSin(angleScale(axis)-PI/2)" 
+        class="radarInvisibleCircle"
+        [style.fill]="port.colour" (mouseenter)="circleChoose($event,true,asset,i,axis,port.colour)" (mouseleave)="circleChoose($event,false,null,i,axis)"
+        [attr.r]="40*scale">
+        </circle>
+    </g>
 </ng-container>
-
 </ng-container>
-
 </g>
 </svg>

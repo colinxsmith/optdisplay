@@ -120,6 +120,8 @@ export class RadarComponent implements OnInit, OnChanges {
     d3.select(this.element.nativeElement).style('font-size', `${this.squareSize}px`);
     // this.squareSize = parseFloat(d3.select(this.element.nativeElement).style('font-size'));
     d3.select(this.element.nativeElement).attr('smallgreytitle', this.smallgreytitle);
+    d3.select(this.element.nativeElement).style('--ff', '55%');
+    d3.select(this.element.nativeElement).attr('title', this.smallgreytitle);
     d3.select(this.element.nativeElement).select('svg.radar').selectAll('text.assetnames')
       .style('font-size', `${this.squareSize * this.assetNamesFontScale}px`)
       .style('visibility', 'visible');
@@ -197,27 +199,28 @@ export class RadarComponent implements OnInit, OnChanges {
   }
   areaChoose(inout: boolean, i: number) {
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea')
-      .style('fill-opacity', inout ? 0.1 : 0.35);
+      .style('fill-opacity', inout ? 0.1 : 0.7);
     d3.select(this.element.nativeElement).select('svg').selectAll('text.portfoliolabels')
-      .style('fill-opacity', inout ? 0.1 : 0.35);
+      .style('fill-opacity', inout ? 0.1 : 0.7);
     d3.select(this.element.nativeElement).select('svg').selectAll('path.radarStroke')
-      .style('stroke-opacity', inout ? 0.1 : 1);
+      .style('stroke-opacity', inout ? 0.1 : 0.7);
     d3.select(this.element.nativeElement).select('svg').selectAll('circle.radarCircle')
-      .style('fill-opacity', inout ? 0.1 : 1);
+      .style('fill-opacity', inout ? 0.1 : 0.7);
+    if (inout) {
+      const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
+      here.transition().duration(inout ? 100 : 10).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0 * t}`);
+      const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portfoliolabels').nodes()[i] as SVGTextElement);
+      text.transition().duration(inout ? 100 : 10).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0 * t}`);
+      const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
+      stroke.transition().duration(inout ? 100 : 10).styleTween('stroke-opacity', () => t => `${inout ? 0.7 * t : 0 * t}`);
 
-    const here = d3.select(d3.select(this.element.nativeElement).select('svg').selectAll('path.radarArea').nodes()[i] as SVGPathElement);
-    here.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
-    const text = d3.select(d3.select(here.node().parentNode).selectAll('text.portfoliolabels').nodes()[i] as SVGTextElement);
-    text.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0.35 * t}`);
-    const stroke = d3.select(d3.select(here.node().parentNode).selectAll('path.radarStroke').nodes()[i] as SVGPathElement);
-    stroke.transition().duration(inout ? 200 : 2000).style('stroke-opacity', `${inout ? 0.7 : 1}`);
-
-    const circles = d3.select(this.element.nativeElement).select('svg')
-      .selectAll(`circle#i${i}.radarCircle`);
-    circles.each((d, ii, jj: Array<SVGCircleElement>) => {
-      const circle = d3.select(jj[ii]);
-      circle.transition().duration(inout ? 200 : 2000).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 1 * t}`);
-    });
+      const circles = d3.select(this.element.nativeElement).select('svg')
+        .selectAll(`circle#i${i}.radarCircle`);
+      circles.each((d, ii, jj: Array<SVGCircleElement>) => {
+        const circle = d3.select(jj[ii]);
+        circle.transition().duration(inout ? 100 : 10).styleTween('fill-opacity', () => t => `${inout ? 0.7 * t : 0 * t}`);
+      });
+    }
     this.selectPortfolio.emit({
       portfolio: i,
       inout
@@ -254,40 +257,48 @@ export class RadarComponent implements OnInit, OnChanges {
     }
     return newd;
   }
-  circleChoose(event: Event, inout: boolean, asset: {
+  circleChoose(event: MouseEvent, inout: boolean, asset: {
     axis: string;
     value: number;
-  }, port: number, i: number, colour = 'grey') {
-    const here = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
-      .selectAll('circle.radarInvisibleCircle').nodes()[i + port * this.portfolios[0].port.length] as SVGCircleElement);
+  }, port: number, portNumber: number, colour = 'grey', inlineLabel = true) {
+    /*  const here = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
+        .selectAll('circle.radarInvisibleCircle').nodes()[portNumber + port * this.portfolios[0].port.length] as SVGCircleElement);*/
+    const here = d3.select(this.element.nativeElement).select(`#i${port}${portNumber}`);
     const mouseText = d3.select(d3.select(this.element.nativeElement).select('svg.radar')
-      .selectAll('text.mouseover').nodes()[i + port * this.portfolios[0].port.length] as SVGTextElement);
+      .selectAll('text.mouseover').nodes()[portNumber + port * this.portfolios[0].port.length] as SVGTextElement);
     if (inout) {
-      const origin = d3.select(this.element.nativeElement).select('svg.radar').select('g').attr('transform').replace(/[translate()]*/g, '')
-        .split(',');
-      d3.select(this.element.nativeElement).style('--xx', `${this.squareSize*0.5+ +here.attr('cx') + parseFloat(origin[0])}px`);
-      d3.select(this.element.nativeElement).style('--yy', `${-this.squareSize+ +here.attr('cy') + parseFloat(origin[0])}px`);
-      mouseText
-        .style('opacity', 1)
-        .style('fill', colour)
-        .text(`${this.percentFormat(asset.value)}`);
+      const origin = d3.select(this.element.nativeElement).select('svg.radar').select('g').attr('transform').replace(',', ' ')
+        .replace(/[translate()]*/g, '')
+        .split(' ');
+      d3.select(this.element.nativeElement).style('--xx', `${+here.attr('cx') + parseFloat(origin[0])}px`);
+      d3.select(this.element.nativeElement).style('--yy', `${this.squareSize + +here.attr('cy') - parseFloat(origin[1])}px`);
+//      console.log(event.pageX, event.pageY, here.attr('cx'), here.attr('cy'));
+//      console.log(+here.attr('cx') + parseFloat(origin[0]), this.squareSize + +here.attr('cy') - parseFloat(origin[1]));
+      if (inlineLabel) {
+        mouseText
+          .style('opacity', 1)
+          .style('fill', colour)
+          .text(`${this.percentFormat(asset.value)}`);
+      }
     } else {
-      mouseText
-        .style('opacity', 0);
+      if (inlineLabel) {
+        mouseText
+          .style('opacity', 0);
+      }
       d3.select(this.element.nativeElement).style('--xx', '0%');
-      d3.select(this.element.nativeElement).style('--yy', 'unset');
+      d3.select(this.element.nativeElement).style('--yy', '0%');
     }
     d3.select(this.element.nativeElement).style('--back', colour);
     d3.select(this.element.nativeElement).style('--ff', '55%');
     d3.select(this.element.nativeElement).attr('smallgreytitle', inout ? `${this.percentFormat(asset.value)} ` : this.smallgreytitle);
     if (this.smallgreytitle !== null) {
-      d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : '');
+      d3.select(this.element.nativeElement).attr('title', inout ? `${asset.axis} ${this.percentFormat(asset.value)}` : this.smallgreytitle);
     }
     d3.select(d3.select(this.element.nativeElement)
-      .select('svg.radar').selectAll('text.assetnames').nodes()[i] as SVGTextElement).classed('big', inout);
+      .select('svg.radar').selectAll('text.assetnames').nodes()[portNumber] as SVGTextElement).classed('big', inout);
     this.selectAsset.emit({
       portfolio: port,
-      asset: i,
+      asset: portNumber,
       inout
     }
     );
