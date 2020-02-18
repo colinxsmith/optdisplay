@@ -271,7 +271,7 @@ export class RadarComponent implements OnInit, OnChanges {
         .replace(/[translate()]*/g, '')
         .split(' ');
       d3.select(this.element.nativeElement).style('--xx', `${+here.attr('cx') + parseFloat(origin[0])}px`);
-      d3.select(this.element.nativeElement).style('--yy', `${this.squareSize + +here.attr('cy') - parseFloat(origin[1])}px`);
+      d3.select(this.element.nativeElement).style('--yy', `${+here.attr('cy') - parseFloat(origin[1])}px`);
 //      console.log(event.pageX, event.pageY, here.attr('cx'), here.attr('cy'));
 //      console.log(+here.attr('cx') + parseFloat(origin[0]), this.squareSize + +here.attr('cy') - parseFloat(origin[1]));
       if (inlineLabel) {

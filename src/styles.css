@@ -63,7 +63,7 @@ button:hover {
 [smallgreytitle] {
     --back: grey;
     --xx: 0%;
-    --yy: unset;
+    --yy: 0%;
     --ff: 80%;
     position: relative;
 }
