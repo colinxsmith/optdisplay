@@ -12,7 +12,7 @@ export class UseRadarComponent {
   scl = 1;
   scale = 1000;
   newscale(b: Event, change: boolean) {
-    const back = b.target as HTMLButtonElement;
+    const back = b.target as HTMLInputElement;
     this.scl = +back.value / this.scale;
   }
 }
