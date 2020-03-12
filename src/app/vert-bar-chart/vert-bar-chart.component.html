@@ -1,0 +1,58 @@
+<ng-container *ngIf="DATA&&DATA[0]">
+    <svg class="stockbars" [attr.width]="ww*scaleHere" [attr.height]="hh*scaleHere" style="vertical-align: top;">
+        <g [attr.transform]="translatehack(margin.left,margin.top)">
+            <text class="labels" [attr.transform]="'rotate(-90)'" [attr.x]="-height/2" [attr.y]="-margin.left*0.6" >{{yText}}</text>
+            <text class="labels" [attr.transform]="translatehack(0,height)" [attr.x]="width/2" [attr.y]="margin.bottom*0.9">{{xText}}</text>
+            <rect [attr.width]="width" [attr.y]="height" [attr.height]="2+'px'" [style.fill]="'black'"></rect>
+            <rect [attr.height]="height" [attr.x]="0" [attr.width]="2+'px'" [style.fill]="'black'"></rect>
+            <rect width="0.5em" [attr.y]="y(niceTop)" height="2px" [style.fill]="niceTop>keepBarMax?'none':'black'" x="-0.5em"></rect>
+            <rect width="0.5em" [attr.y]="y(niceBot)" height="2px" [style.fill]="niceBot<keepBarMin?'none':'black'" x="-0.5em"></rect>
+                <ng-container *ngFor="let delt of delts">                    
+            <rect width="0.5em" [attr.y]="y(delt)" height="2px" [style.fill]="out(delt,keepBarMax,keepBarMin)?'none':'black'" x="-0.5em"></rect>
+            <text [attr.transform]="translatehack(0,y(delt))"
+             x="-0.5em" [attr.y]="'0.5em'" class="axisNames">
+                {{out(delt,keepBarMax,keepBarMin)?'':percent(delt)}}</text>
+                </ng-container>
+            <ng-container *ngFor="let d of DATA;let i=index">
+                <text class="axisNames" id="bottom"
+                x="-5em"
+                [style.text-anchor]="'end'"
+                [attr.transform]="translatehack((i+0.25)*width/DATA.length,height,-70)">
+                <tspan x="-1em" y="1em">{{nameSplit(d.axis)[0]}}</tspan>
+                <tspan x="-1em" y="1em" dy="0.8em">{{nameSplit(d.axis)[1]}}</tspan>
+                </text>
+            </ng-container>
+            <ng-container *ngFor="let d of DATA;let i=index">
+                <rect 
+                [attr.class]="'proper'"
+                [attr.x]="i*width/DATA.length" 
+                [attr.width]="width/DATA.length*0.95" 
+                [attr.height]="d.value<=0?(y(d.value)-y(0)):(y(0)-y(d.value))"
+                [attr.y]="d.value<=0?y(0):y(d.value)"
+                [attr.rectid]="''+d.index"
+                [attr.axis]="d.axis"
+                [style.fill-opacity]="0.35"
+                [style.fill]="d.value>=0?colour[0]:colour[1]"
+                (mouseenter)="mousey($event,i,d,true)"
+                (mouseleave)="mousey($event,i,d,false)"
+                >
+                </rect>
+                <rect 
+                [attr.class]="'rim'"
+                [attr.x]="i*width/DATA.length" 
+                [attr.width]="width/DATA.length" 
+                [attr.height]="2"
+                [attr.y]="d.value<=0?y(0)-2:y(0)"
+                [attr.rectid]="''+d.index"
+                [attr.axis]="d.axis"
+                [style.fill-opacity]="0"
+                [style.stroke-opacity]="0"
+                [style.fill]="d.value>=0?colour[0]:colour[1]"
+                (mouseenter)="mousey($event,i,d,true)"
+                (mouseleave)="mousey($event,i,d,false)"
+                >
+                </rect>
+            </ng-container>
+        </g>
+</svg>
+</ng-container>

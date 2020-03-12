@@ -1,0 +1,16 @@
+@import "base";
+text.labels {
+    stroke-width: 0.5px;
+    font: Calibri, sans-serif;
+    font-size: large;
+    text-anchor: middle;
+    fill: rgb(170, 163, 169);
+}
+
+text.axisNames {
+    stroke-width: 0.5px;
+    font: 9px Calibri, sans-serif;
+    text-anchor: end;
+    fill: rgb(170, 163, 169);
+    text-transform: uppercase;
+}

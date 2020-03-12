@@ -18,6 +18,7 @@ import { BubbletableComponent } from './bubbletable/bubbletable.component';
 import { RecComponent } from './rec/rec.component';
 import { RadarComponent } from './radar/radar.component';
 import { UseRadarComponent } from './use-radar/use-radar.component';
+import { VertBarChartComponent } from './vert-bar-chart/vert-bar-chart.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -47,7 +48,8 @@ const appRoutes: Routes = [
     BubbletableComponent,
     RecComponent,
     RadarComponent,
-    UseRadarComponent
+    UseRadarComponent,
+    VertBarChartComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(
