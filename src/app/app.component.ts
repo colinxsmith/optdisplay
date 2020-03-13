@@ -17,7 +17,9 @@ export class AppComponent {
     bulktest: 'Bulk Trade Dial Test',
     bubbles: 'General Bubbles Chart',
     receive: 'Receiver Bar Test',
-    radar: 'Angular Radar Chart'
+    radar: 'Angular Radar Chart',
+    vertbar: 'Bar Chart',
+    dartboard: 'Dart Board'
   };
   rKeys = Object.keys(this.routes);
 }

@@ -19,6 +19,7 @@ import { RecComponent } from './rec/rec.component';
 import { RadarComponent } from './radar/radar.component';
 import { UseRadarComponent } from './use-radar/use-radar.component';
 import { VertBarChartComponent } from './vert-bar-chart/vert-bar-chart.component';
+import { DartboardComponent } from './dartboard/dartboard.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -30,6 +31,8 @@ const appRoutes: Routes = [
   { path: 'bubbles', component: BubbletableComponent },
   { path: 'receive', component: RecComponent },
   { path: 'radar', component: UseRadarComponent },
+  { path: 'vertbar', component: VertBarChartComponent },
+  { path: 'dartboard', component: DartboardComponent },
   { path: '', redirectTo: '/etl', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },
 ];
@@ -49,7 +52,8 @@ const appRoutes: Routes = [
     RecComponent,
     RadarComponent,
     UseRadarComponent,
-    VertBarChartComponent
+    VertBarChartComponent,
+    DartboardComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(
