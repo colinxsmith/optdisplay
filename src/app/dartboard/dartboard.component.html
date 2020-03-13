@@ -1,4 +1,7 @@
-<svg [attr.width]="ww" [attr.height]="hh" >
+<svg [attr.width]="ww" [attr.height]="hh">
 <g [attr.transform]="translatehack(ww/2,hh/2)">
+    <ng-container *ngFor="let d of picdata">
+<path [attr.d]="arc(d.current)"></path>
+    </ng-container>
 </g>
 </svg>

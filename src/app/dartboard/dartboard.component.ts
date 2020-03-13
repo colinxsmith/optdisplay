@@ -145,7 +145,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     index: number;
     size: number;
   }>;
-  colours: d3.ScaleLinear<number, RGBColor>;
+  colours: d3.ScaleLinear<string, string>;
   tac = '';
   sac = '';
   ww = 960;
@@ -186,13 +186,14 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     this.radius = (Math.min(this.width, this.height) / 2) - 10;
     this.x = d3.scaleLinear().range([0, 2 * Math.PI]);
     this.y = d3.scaleLinear().range([0, this.radius]);
-    this.arc = d3.arc()
-      .startAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))))
-      .endAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))))
+    const arc = d3.arc<d3.DefaultArcObject>();
+    arc
+      .startAngle((d) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))))
+      .endAngle((d) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))))
       .padAngle(2e-2 / (2 * Math.PI))
-      .cornerRadius((d: any) => d.depth >= 3 ? 3 : 1)
-      .innerRadius((d: any) => Math.max(0, this.y(d.y0) + 1))
-      .outerRadius((d: any) => Math.max(0, this.y(d.y1)));
+      .cornerRadius((d) => d.depth >= 3 ? 3 : 1)
+      .innerRadius((d) => Math.max(0, this.y(d.y0) + 1))
+      .outerRadius((d) => Math.max(0, this.y(d.y1)));
 
 
     this.tacs = [];
@@ -285,8 +286,9 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     console.log(this.dnew, iii);
     this.picdata = d3.partition()(this.dnew).descendants();
     console.log(this.picdata);
-    const colours = d3.scaleLinear<number, RGBColor>().domain([0, iii + 100])
-      .interpolate(d3.interpolateHcl)
-      .range([d3.rgb('#ff5544'), d3.rgb('white')]);
+    this.colours = d3.scaleLinear<string>()
+      .domain([0, iii + 100])
+      .range(['#ff5544', 'white'])
+      .interpolate((d3.interpolateHcl));
   }
 }
