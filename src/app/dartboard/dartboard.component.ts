@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-import { RGBColor } from 'd3';
+import { AttrAst } from '@angular/compiler';
 
 @Component({
   selector: 'app-dartboard',
@@ -164,13 +164,12 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
   y = d3.scaleLinear().range([0, this.radius]);
   partition = d3.partition();
   picdata: d3.HierarchyRectangularNode<unknown>[];
-  arc = d3.arc();
-  constructor() { }
+  constructor(private element: ElementRef) { }
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
 
   ngOnInit() {
-
     this.init();
+    this.update();
   }
   init() {
     this.ww = 960;
@@ -186,15 +185,6 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     this.radius = (Math.min(this.width, this.height) / 2) - 10;
     this.x = d3.scaleLinear().range([0, 2 * Math.PI]);
     this.y = d3.scaleLinear().range([0, this.radius]);
-    const arc = d3.arc<d3.DefaultArcObject>();
-    arc
-      .startAngle((d) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))))
-      .endAngle((d) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))))
-      .padAngle(2e-2 / (2 * Math.PI))
-      .cornerRadius((d) => d.depth >= 3 ? 3 : 1)
-      .innerRadius((d) => Math.max(0, this.y(d.y0) + 1))
-      .outerRadius((d) => Math.max(0, this.y(d.y1)));
-
 
     this.tacs = [];
     this.lines = this.rawData.split('\n');
@@ -280,15 +270,43 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       d.index = iii++;
     });
     this.dnew = d3.hierarchy(this.datas);
-    console.log(this.dnew);
     iii = 0;
     this.dnew.sum(d => { iii++; return d.size; });
-    console.log(this.dnew, iii);
     this.picdata = d3.partition()(this.dnew).descendants();
-    console.log(this.picdata);
     this.colours = d3.scaleLinear<string>()
-      .domain([0, iii + 100])
-      .range(['#ff5544', 'white'])
+      .domain([0, iii])
+      .range(['green', 'white'])
       .interpolate((d3.interpolateHcl));
+  }
+  mouser(ee: MouseEvent, i: number,data:d3.HierarchyRectangularNode<unknown>, inout: true) {
+    if (inout) {
+      d3.select('app-root').select('div.mainTip')
+        .style('opacity', 1)
+        .style('display', 'inline-block')
+        .style('left', `${ee.pageX}px`)
+        .style('top', `${ee.pageY}px`)
+        .html(`Node:${i}<br>Value:${data.value}`);
+    } else {
+      d3.select('app-root').select('div.mainTip')
+        .style('opacity', 0)
+        .style('display', 'none');
+    }
+  }
+  arcPath(d: d3.HierarchyRectangularNode<unknown>, t = 1) {
+    const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
+    return ARC({
+      innerRadius: Math.max(0, this.y(d.y0) + 1),
+      outerRadius: Math.max(0, t * this.y(d.y1)),
+      startAngle: Math.max(0, t * Math.min(2 * Math.PI, this.x(d.x0))),
+      endAngle: Math.max(0, t * Math.min(2 * Math.PI, this.x(d.x1))),
+      padAngle: 2e-2 / (2 * Math.PI)
+    });
+  }
+  update() {
+    setTimeout(() => {
+      d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
+        .transition().duration(2000)
+        .attrTween('d', d => t => this.arcPath(d, t));
+    });
   }
 }
