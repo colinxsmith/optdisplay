@@ -7,7 +7,7 @@
             (mouseenter)="mouser($event,i,d,true)"
             (mouseleave)="mouser($event,i,d,false)"
             id="face"
-            [attr.d]="arcPath(d)" [style.fill]="colours(i)"></path>
+            [attr.d]="arcPath(d)" [style.fill]="colours(d.data.index?d.data.index:picdata.length-1)"></path>
         </ng-container>
     </ng-container>
 </g>

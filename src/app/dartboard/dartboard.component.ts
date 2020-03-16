@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-import { AttrAst } from '@angular/compiler';
 
 @Component({
   selector: 'app-dartboard',
@@ -163,7 +162,12 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
   x = d3.scaleLinear().range([0, 2 * Math.PI]);
   y = d3.scaleLinear().range([0, this.radius]);
   partition = d3.partition();
-  picdata: d3.HierarchyRectangularNode<unknown>[];
+  picdata: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>[];
   constructor(private element: ElementRef) { }
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
 
@@ -272,20 +276,30 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     this.dnew = d3.hierarchy(this.datas);
     iii = 0;
     this.dnew.sum(d => { iii++; return d.size; });
-    this.picdata = d3.partition()(this.dnew).descendants();
+    this.picdata = (d3.partition()(this.dnew).descendants() as d3.HierarchyRectangularNode<{
+      children: any[];
+      name: string;
+      index: number;
+      size: number;
+    }>[]);
     this.colours = d3.scaleLinear<string>()
-      .domain([0, iii])
-      .range(['green', 'white'])
+      .domain([0, iii + 100])
+      .range(['#ff5544', 'white'])
       .interpolate((d3.interpolateHcl));
   }
-  mouser(ee: MouseEvent, i: number,data:d3.HierarchyRectangularNode<unknown>, inout: true) {
+  mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>, inout: true) {
     if (inout) {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 1)
         .style('display', 'inline-block')
         .style('left', `${ee.pageX}px`)
         .style('top', `${ee.pageY}px`)
-        .html(`Node:${i}<br>Value:${data.value}`);
+        .html(`Node:${i}<br>${data.data.name}Value:${this.formatNumber(data.value)}`);
     } else {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 0)
