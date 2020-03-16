@@ -284,8 +284,9 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     }>[]);
     this.colours = d3.scaleLinear<string>()
       .domain([0, iii + 100])
+      .interpolate((d3.interpolateHcl))
       .range(['#ff5544', 'white'])
-      .interpolate((d3.interpolateHcl));
+      ;
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
     children: any[];
@@ -299,12 +300,37 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
         .style('display', 'inline-block')
         .style('left', `${ee.pageX}px`)
         .style('top', `${ee.pageY}px`)
-        .html(`Node:${i}<br>${data.data.name}Value:${this.formatNumber(data.value)}`);
+        .html(`Node:${i}<br>${data.data.name}<br>Value:${this.formatNumber(data.value)}`);
     } else {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 0)
         .style('display', 'none');
     }
+  }
+  clicker(event: MouseEvent, d: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>) {
+    const svg = d3.select(event.target as SVGPathElement);
+    svg.transition().duration(750).ease(d3.easeBack)
+      .tween('driller', () => {
+        const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
+          , yd = d3.interpolate(this.y.domain(), [d.y0, 1])
+          , yr = d3.interpolate(this.y.range(), [d.y0 ? 10 : 0, this.radius]);
+        return (t: number) => {
+          this.x.domain(xd(t));
+          this.y.domain(yd(t)).range(yr(t));
+        };
+      })
+      .selectAll('path').transition().duration(750)
+      .attrTween('d', (k: d3.HierarchyRectangularNode<{
+        children: any[];
+        name: string;
+        index: number;
+        size: number;
+      }>) => t => this.arcPath(k, t));
   }
   arcPath(d: d3.HierarchyRectangularNode<unknown>, t = 1) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
