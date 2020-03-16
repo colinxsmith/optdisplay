@@ -1,5 +1,11 @@
-<div>
-    <input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newcolour($event)">
-    <input type="range" min="0" [attr.max]="5000" [attr.value]="0.5" (input)="newgamma($event)">
+<div [style.display]="'block'">
+    <div [style.display]="'flex'">
+        <input size="10em" (input)="getTopcolour($event)" [attr.value]="topcolour">
+        <input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newcolour($event)">
+        <input size="10em" (input)="getBottomcolour($event)" [attr.value]="bottomcolour">{{colourScale(received)}}
+    </div>
+    <div [style.display]="'flex'">gamma:
+        <input id="slide" type="range" min="1e-2" [attr.max]="5000" [attr.value]="50" (input)="newgamma($event)">{{colourgamma}}
+    </div>
 </div>
 <app-dartboard [colourgamma]="colourgamma" [topcolour]="colourScale(received)"></app-dartboard>
