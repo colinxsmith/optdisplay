@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -6,8 +6,8 @@ import * as d3 from 'd3';
   templateUrl: './dartboard.component.html',
   styleUrls: ['./dartboard.component.css']
 })
-export class DartboardComponent implements OnInit {
-  rawData = `asset,name,tac,sac,tac code,sac code,accountValue,Holders
+export class DartboardComponent implements OnInit, OnChanges {
+  @Input() rawData = `asset,name,tac,sac,tac code,sac code,accountValue,Holders
 B7F9S95,UNITED KINGDOM(GOVERNMENT OF) 1% SNR NTS 07/09/2017 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,32046.08,1
 B16NNR7,UNITED KINGDOM(GOVERNMENT OF) 4.25% STK 07/12/2027 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,24217.97,1
 B1YBRM6,M&G SECURITIES LIMITED CORPORATE BOND I GBP INC,Fixed Income,Corporate Bonds,0000000001T,0000000005S,147204.29,1
@@ -145,8 +145,8 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     size: number;
   }>;
   colours: d3.ScaleLinear<d3.RGBColor, string>;
-  topcolour = 'red';
-  colourgamma = 0.75;
+  @Input() topcolour = 'red';
+  @Input() colourgamma = 0.75;
   tac = '';
   sac = '';
   ww = 960;
@@ -177,7 +177,12 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     this.init();
     this.update();
   }
+  ngOnChanges() {
+    this.init();
+    this.update();
+  }
   init() {
+    this.data = [];
     this.ww = 960;
     this.hh = 500;
     this.margin = {

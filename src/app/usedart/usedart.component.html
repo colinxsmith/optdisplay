@@ -1,0 +1,5 @@
+<div>
+    <input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newcolour($event)">
+    <input type="range" min="0" [attr.max]="5000" [attr.value]="0.5" (input)="newgamma($event)">
+</div>
+<app-dartboard [colourgamma]="colourgamma" [topcolour]="colourScale(received)"></app-dartboard>
