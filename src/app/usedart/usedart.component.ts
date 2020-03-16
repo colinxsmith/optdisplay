@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
-import { CompileShallowModuleMetadata } from '@angular/compiler';
-import { element } from 'protractor';
 
 @Component({
   selector: 'app-usedart',
