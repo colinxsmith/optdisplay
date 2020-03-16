@@ -144,7 +144,9 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     index: number;
     size: number;
   }>;
-  colours: d3.ScaleLinear<string, string>;
+  colours: d3.ScaleLinear<d3.RGBColor, string>;
+  topcolour = 'red';
+  colourgamma = 0.75;
   tac = '';
   sac = '';
   ww = 960;
@@ -275,17 +277,18 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     });
     this.dnew = d3.hierarchy(this.datas);
     iii = 0;
-    this.dnew.sum(d => { iii++; return d.size; });
+    this.dnew.sum(d => { iii++; return +d.size; });
+    console.log(this.dnew, iii);
     this.picdata = (d3.partition()(this.dnew).descendants() as d3.HierarchyRectangularNode<{
       children: any[];
       name: string;
       index: number;
       size: number;
     }>[]);
-    this.colours = d3.scaleLinear<string>()
+    this.colours = d3.scaleLinear<d3.RGBColor>()
       .domain([0, iii + 100])
-      .interpolate((d3.interpolateHcl))
-      .range(['#ff5544', 'white'])
+      .interpolate(d3.interpolateRgb.gamma(this.colourgamma))
+      .range([d3.rgb(this.topcolour), d3.rgb('white')])
       ;
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
@@ -300,7 +303,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
         .style('display', 'inline-block')
         .style('left', `${ee.pageX}px`)
         .style('top', `${ee.pageY}px`)
-        .html(`Node:${i}<br>${data.data.name}<br>Value:${this.formatNumber(data.value)}`);
+        .html(`Node:${i}<br>${data.data.name}<br>Index:${data.data.index}<br>Value:${this.formatNumber(data.value)}`);
     } else {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 0)
