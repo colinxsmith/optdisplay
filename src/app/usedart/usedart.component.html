@@ -1,11 +1,13 @@
 <div [style.display]="'block'">
-    <div [style.display]="'flex'">
-        <input size="12em" class="colours" (input)="getTopcolour($event)" [attr.value]="topcolour">
-        <input size="20em" type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newcolour($event)">
-        <input size="12em" class="colours" (input)="getBottomcolour($event)" [attr.value]="bottomcolour"> {{colourScale(received)}}
+    <div title="Colour Picker" [style.display]="'flex'">
+        <svg (click)="pick3d($event)" id="picker" width="100" height="100">
+            <g  [attr.transform]="'translate(0,'+100*(1-root3/2)/2+')'" >
+                <path  [style.fill]="setColour"   class="colours" [attr.d]="ttt(100)"></path>
+            </g>
+        </svg>
     </div>
     <div [style.display]="'flex'">gamma:
-        <input id="slide" type="range" min="1e-1" [attr.max]="5000" [attr.value]="50" (input)="newgamma($event)">{{formatC(colourgamma)}}
+        <input id="slide" type="range" min="0" value="10000" max="50000" (input)="newgamma($event)">{{formatC(colourgamma)}}
     </div>
 </div>
-<app-dartboard [attr.smallgreytitle]="'Hierarchy chart'" [colourgamma]="colourgamma" [topcolour]="colourScale(received)"></app-dartboard>
+<app-dartboard [attr.smallgreytitle]="'Hierarchy chart'" [colourgamma]="colourgamma" [topcolour]="setColour"></app-dartboard>

@@ -3,3 +3,17 @@ input.colours {
     background-color: aqua;
     color: grey;
 }
+
+text.colours {
+    fill: none;
+    stroke: coral;
+    font-size: 10px;
+    text-anchor: middle;
+    stroke-opacity: 0.5;
+}
+
+path.colours {
+    fill: orange;
+    stroke: brown;
+    stroke-width: 2px;
+}

@@ -283,7 +283,6 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     this.dnew = d3.hierarchy(this.datas);
     iii = 0;
     this.dnew.sum(d => { iii++; return +d.size; });
-    console.log(this.dnew, iii);
     this.picdata = (d3.partition()(this.dnew).descendants() as d3.HierarchyRectangularNode<{
       children: any[];
       name: string;
