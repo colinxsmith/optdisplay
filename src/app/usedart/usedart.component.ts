@@ -42,11 +42,11 @@ export class UsedartComponent implements OnInit {
       .range([d3.rgb(0, 255, 0), d3.rgb(0, 0, 255)])
       ;
     const RG = d3.scaleLinear<d3.RGBColor>()
-      .domain([0, dim])
+      .domain([0, dim / 2])
       .interpolate(d3.interpolateRgb.gamma(1.0))
       .range([d3.rgb(255, 0, 0), d3.rgb(GB(X))])
       ;
-    this.setColour = RG(Y/this.root3*2);
+    this.setColour = RG(Y / this.root3 * 2);
     this.update();
   }
 }
