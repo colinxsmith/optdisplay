@@ -11,4 +11,4 @@
         <input id="slide" type="range" min="0" value="10000" max="50000" (input)="newgamma($event)">{{formatC(colourgamma)}}
     </div>
 </div>
-<app-dartboard [attr.smallgreytitle]="'Hierarchy chart'" [colourgamma]="colourgamma" [topcolour]="setColour"></app-dartboard>
+<app-dartboard [picdata]="picdata" [attr.smallgreytitle]="'Hierarchy chart'" [colourgamma]="colourgamma" [topcolour]="setColour"></app-dartboard>
