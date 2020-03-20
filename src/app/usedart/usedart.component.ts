@@ -7,16 +7,27 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  rawData1 = `name,Holders,tac,sac
-  a,1,h1,h2
-  b,2,h1,h2
-  c,3,h1,h2
-  d,4,h1,h2
-  e,5,bbbb,ddd
-  f,6,cccc,ddd
-  g,7,dddd,eee
+  rawData = `name,Holders,tac,sac,gac
+  a,1,h1,h2,g1
+  b,2,h1,h4,g1
+  c,3,h1,h4,g1
+  d,4,h1,h2,g1
+  e,5,bbbb,ddd,g1
+  f,6,cccc,ddd,g1
+  g,7,cccc,eee,g1
+  h,8,cccc,ddd,g1
+  i,9,dddd,fff,g1
+  az,1,h1z,h2z,g2
+  bz,2,h1z,h4z,g2
+  cz,3,h1z,h4z,g2
+  dz,4,h1z,h2z,g2
+  ez,5,bbbbz,dddz,g2
+  fz,6,ccccz,dddz,g2
+  gz,7,ccccz,eeez,g2
+  hz,8,ccccz,dddz,g2
+  iz,9,ddddz,fffz,g2
   `;
-  rawData = `asset,name,tac,sac,tac code,sac code,accountValue,Holders
+  rawData1 = `asset,name,tac,sac,tac code,sac code,accountValue,Holders
 B7F9S95,UNITED KINGDOM(GOVERNMENT OF) 1% SNR NTS 07/09/2017 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,32046.08,1
 B16NNR7,UNITED KINGDOM(GOVERNMENT OF) 4.25% STK 07/12/2027 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,24217.97,1
 B1YBRM6,M&G SECURITIES LIMITED CORPORATE BOND I GBP INC,Fixed Income,Corporate Bonds,0000000001T,0000000005S,147204.29,1
@@ -138,11 +149,8 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
 946580,#N/A,#N/A,#N/A,#N/A,#N/A,16516.3,3
 408284,#N/A,#N/A,#N/A,#N/A,#N/A,12933.86,2
 `;
-  tac = '';
-  sac = '';
   lines: string[];
   data = [];
-  tacs: string[];
   datas: {
     children: any[];
     name: string;
@@ -160,7 +168,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
     name: string;
     index: number;
     size: number;
-}>[];
+  }>[];
   scale = 1000;
   scl = 0.01;
   root3 = Math.sqrt(3);
@@ -173,7 +181,9 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
   ngOnInit() {
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.data = [];
-    this.tacs = [];
+    let htop = '';
+    let tac = '';
+    let sac = '';
     this.lines = this.rawData.split('\n');
     let items: string[];
     this.lines.forEach((line, i) => {
@@ -188,19 +198,32 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
           for (let j = 0; j < items.length; ++j) {
             obj[items[j].replace(' ', '')] = here[j];
           }
-          if (this.tacs.indexOf(here[4]) === -1) {
-            this.tacs.push(here[4]);
-          }
           this.data.push(obj);
         }
       }
     });
     this.data.sort((a, b) => {
-      const as = a.saccode.replace('S', '');
-      const bs = b.saccode.replace('S', '');
-      const at = a.taccode.replace('T', '');
-      const bt = b.taccode.replace('T', '');
-      return ((+bs - +as) || (+bt - +at));
+      const as = a.sac as string;
+      const bs = b.sac as string;
+      const at = a.tac as string;
+      const bt = b.tac as string;
+      const ag = a.gac as string;
+      const bg = b.gac as string;
+      if (as === bs && at === bt && ag === bg) {
+        return 0;
+      } else if (at === bt && ag === bg) {
+        return as < bs ? 1 : -1;
+      } else if (as === bs && ag === bg) {
+        return at < bt ? 1 : -1;
+      } else if (as === bs && at === bt) {
+        return ag < bg ? 1 : -1;
+      } else if (as === bs) {
+        if (at < bt && ag < bg) { return 1; } else if (at > bt && ag > bg) { return 1; } else { return -1; }
+      } else if (at === bt) {
+        if (as < bs && ag < bg) { return 1; } else if (as > bs && ag > bg) { return 1; } else { return -1; }
+      } else if (ag === bg) {
+        if (as < bs && at < bt) { return 1; } else if (as > bs && as > bs) { return -1; } else { return -1; }
+      }
     });
     this.datas = {
       children: [],
@@ -218,18 +241,32 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       name: string;
       index: number;
       size: number;
-    }, it = 0, is = 0, iii = 1;
-    this.data.forEach((d, i) => {
-      if (this.tac !== d.tac) {
+    }, dgac: {
+      children: any[];
+      name: string;
+      index: number;
+      size: number;
+    }, ig = 0, it = 0, is = 0, iii = 1;
+    this.data.forEach(d => {
+      if (htop !== d.gac) {
         this.datas.children.push({
+          children: [],
+          name: d.gac,
+        });
+        dgac = this.datas.children[ig];
+        ig++;
+        it = 0;
+      }
+      if (tac !== d.tac) {
+        dgac.children.push({
           children: [],
           name: d.tac,
         });
-        dtac = this.datas.children[it];
+        dtac = dgac.children[it];
         it++;
         is = 0;
       }
-      if (this.sac !== d.sac) {
+      if (sac !== d.sac) {
         dtac.children.push({
           children: [],
           name: d.sac,
@@ -243,17 +280,23 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
         size: d.Holders,
         index: iii++
       });
-      this.tac = d.tac;
-      this.sac = d.sac;
+      htop = d.gac;
+      tac = d.tac;
+      sac = d.sac;
     });
     this.datas.children.forEach((d) => {
-      d.children.forEach((e) => {
+      d.children.forEach(e => {
+        e.children.forEach(f => {
+          f.index = iii++;
+        });
+      });
+    });
+    this.datas.children.forEach(d => {
+      d.children.forEach(e => {
         e.index = iii++;
       });
     });
     this.datas.children.forEach((d) => {
-      d.children.forEach((e) => {
-      });
       d.index = iii++;
     });
     this.dnew = d3.hierarchy(this.datas);
