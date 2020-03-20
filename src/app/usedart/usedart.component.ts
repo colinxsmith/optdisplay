@@ -181,7 +181,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
   ngOnInit() {
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.data = [];
-    let htop = '';
+    let gac = '';
     let tac = '';
     let sac = '';
     this.lines = this.rawData.split('\n');
@@ -218,11 +218,11 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       } else if (as === bs && at === bt) {
         return ag < bg ? 1 : -1;
       } else if (as === bs) {
-        if (at < bt && ag < bg) { return 1; } else if (at > bt && ag > bg) { return 1; } else { return -1; }
+        if (at < bt && ag < bg) { return 1; } else if (at > bt && ag > bg) { return -1; } else { return 1; }
       } else if (at === bt) {
-        if (as < bs && ag < bg) { return 1; } else if (as > bs && ag > bg) { return 1; } else { return -1; }
+        if (as < bs && ag < bg) { return 1; } else if (as > bs && ag > bg) { return -1; } else { return 1; }
       } else if (ag === bg) {
-        if (as < bs && at < bt) { return 1; } else if (as > bs && as > bs) { return -1; } else { return -1; }
+        if (as < bs && at < bt) { return 1; } else if (as > bs && at > bt) { return -1; } else { return 1; }
       }
     });
     this.datas = {
@@ -248,7 +248,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       size: number;
     }, ig = 0, it = 0, is = 0, iii = 1;
     this.data.forEach(d => {
-      if (htop !== d.gac) {
+      if (d.gac !== undefined && gac !== d.gac) {
         this.datas.children.push({
           children: [],
           name: d.gac,
@@ -257,30 +257,33 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
         ig++;
         it = 0;
       }
-      if (tac !== d.tac) {
-        dgac.children.push({
+      if (d.tac !== undefined && tac !== d.tac) {
+        const pushHere = dgac !== undefined ? dgac.children : this.datas.children;
+        pushHere.push({
           children: [],
           name: d.tac,
         });
-        dtac = dgac.children[it];
+        dtac = dgac !== undefined ? dgac.children[it] : this.datas.children[it];
         it++;
         is = 0;
       }
-      if (sac !== d.sac) {
-        dtac.children.push({
+      if (d.sac !== undefined && sac !== d.sac) {
+        const pushHere = dtac !== undefined ? dtac.children : dgac !== undefined ? dgac.children : this.datas.children;
+        pushHere.push({
           children: [],
           name: d.sac,
         });
-        dsac = dtac.children[is];
+        dsac = dtac !== undefined ? dtac.children[is] : dgac !== undefined ? dgac.children[is] : this.datas.children[is];
         is++;
       }
-      dsac.children.push({
+      const lastPush = dsac !== undefined ? dsac : dtac !== undefined ? dtac : dgac;
+      lastPush.children.push({
         children: [],
         name: d.name,
         size: d.Holders,
         index: iii++
       });
-      htop = d.gac;
+      gac = d.gac;
       tac = d.tac;
       sac = d.sac;
     });

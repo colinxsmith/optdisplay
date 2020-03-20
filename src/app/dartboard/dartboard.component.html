@@ -9,6 +9,7 @@
             (click)="clicker($event,d)"
             id="face"
             [attr.d]="arcPath(d)" [style.fill]="colours(d.data.index?d.data.index:colours.domain()[1])"></path>
+            <text [attr.transform]="translatehack(arcCentroid(d)[0],arcCentroid(d)[1])">{{formatNumber(d.value)}}</text>
         </ng-container>
     </ng-container>
 </g>

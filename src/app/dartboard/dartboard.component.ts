@@ -6,7 +6,7 @@ import * as d3 from 'd3';
   templateUrl: './dartboard.component.html',
   styleUrls: ['./dartboard.component.css']
 })
-export class DartboardComponent implements  OnChanges {
+export class DartboardComponent implements OnChanges {
   colours: d3.ScaleLinear<d3.RGBColor, string>;
   @Input() topcolour = 'red';
   @Input() colourgamma = 0.75;
@@ -103,6 +103,16 @@ export class DartboardComponent implements  OnChanges {
         index: number;
         size: number;
       }>) => t => this.arcPath(k, t));
+  }
+  arcCentroid(d: d3.HierarchyRectangularNode<unknown>) {
+    const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
+    return ARC.centroid({
+      innerRadius: Math.max(0, this.y(d.y0) + 1),
+      outerRadius: Math.max(0, this.y(d.y1)),
+      startAngle: Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))),
+      endAngle: Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))),
+      padAngle: 2e-2 / (2 * Math.PI)
+    });
   }
   arcPath(d: d3.HierarchyRectangularNode<unknown>, t = 1) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
