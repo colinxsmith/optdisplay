@@ -7,6 +7,15 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
+  rawData1 = `name,Holders,tac,sac
+  a,1,h1,h2
+  b,2,h1,h2
+  c,3,h1,h2
+  d,4,h1,h2
+  e,5,bbbb,ddd
+  f,6,cccc,ddd
+  g,7,dddd,eee
+  `;
   rawData = `asset,name,tac,sac,tac code,sac code,accountValue,Holders
 B7F9S95,UNITED KINGDOM(GOVERNMENT OF) 1% SNR NTS 07/09/2017 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,32046.08,1
 B16NNR7,UNITED KINGDOM(GOVERNMENT OF) 4.25% STK 07/12/2027 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,24217.97,1
@@ -231,7 +240,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       dsac.children.push({
         children: [],
         name: d.name,
-        size: d.accountValue,
+        size: d.Holders,
         index: iii++
       });
       this.tac = d.tac;
