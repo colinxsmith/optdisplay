@@ -7,7 +7,7 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  rawData = `name,Holders,tac,sac,ggac
+  rawData = `name,Holders,tac,sac,gac
   a,1,h1,h2,g1
   b,2,h1,h4,g1
   c,3,h1,h4,g1
@@ -224,9 +224,10 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
            } else if (ag === bg) {
              if (as < bs && at < bt) { return 1; } else if (as > bs && at > bt) { return -1; } else { return 1; }
            }*/
-      return (as.localeCompare(bs) === 0 ? 0 : as.localeCompare(bs) > 0 ? 1 : -1) +
-        2 * (at.localeCompare(bt) === 0 ? 0 : at.localeCompare(bt) > 0 ? 1 : -1) +
-        4 * (ag.localeCompare(bg) === 0 ? 0 : ag.localeCompare(bg) > 0 ? 1 : -1);
+      /*     return (as.localeCompare(bs) === 0 ? 0 : as.localeCompare(bs) > 0 ? 1 : -1) ||
+              (at.localeCompare(bt) === 0 ? 0 : at.localeCompare(bt) > 0 ? 1 : -1) ||
+             (ag.localeCompare(bg) === 0 ? 0 : ag.localeCompare(bg) > 0 ? 1 : -1);*/
+      return (as.localeCompare(bs) + 2*at.localeCompare(bt) + 4*ag.localeCompare(bg));
     });
     this.datas = {
       children: [],
