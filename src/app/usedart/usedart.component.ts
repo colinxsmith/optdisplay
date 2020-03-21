@@ -7,7 +7,7 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  rawData = `name,Holders,tac,sac,gac
+  rawData = `name,Holders,tac,sac,ggac
   a,1,h1,h2,g1
   b,2,h1,h4,g1
   c,3,h1,h4,g1
@@ -203,27 +203,30 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       }
     });
     this.data.sort((a, b) => {
-      const as = a.sac as string;
-      const bs = b.sac as string;
-      const at = a.tac as string;
-      const bt = b.tac as string;
-      const ag = a.gac as string;
-      const bg = b.gac as string;
-      if (as === bs && at === bt && ag === bg) {
-        return 0;
-      } else if (at === bt && ag === bg) {
-        return as < bs ? 1 : -1;
-      } else if (as === bs && ag === bg) {
-        return at < bt ? 1 : -1;
-      } else if (as === bs && at === bt) {
-        return ag < bg ? 1 : -1;
-      } else if (as === bs) {
-        if (at < bt && ag < bg) { return 1; } else if (at > bt && ag > bg) { return -1; } else { return 1; }
-      } else if (at === bt) {
-        if (as < bs && ag < bg) { return 1; } else if (as > bs && ag > bg) { return -1; } else { return 1; }
-      } else if (ag === bg) {
-        if (as < bs && at < bt) { return 1; } else if (as > bs && at > bt) { return -1; } else { return 1; }
-      }
+      const as = '' + a.sac as string;
+      const bs = '' + b.sac as string;
+      const at = '' + a.tac as string;
+      const bt = '' + b.tac as string;
+      const ag = '' + a.gac as string;
+      const bg = '' + b.gac as string;
+      /*     if (as === bs && at === bt && ag === bg) {
+             return 0;
+           } else if (at === bt && ag === bg) {
+             return as < bs ? 1 : -1;
+           } else if (as === bs && ag === bg) {
+             return at < bt ? 1 : -1;
+           } else if (as === bs && at === bt) {
+             return ag < bg ? 1 : -1;
+           } else if (as === bs) {
+             if (at < bt && ag < bg) { return 1; } else if (at > bt && ag > bg) { return -1; } else { return 1; }
+           } else if (at === bt) {
+             if (as < bs && ag < bg) { return 1; } else if (as > bs && ag > bg) { return -1; } else { return 1; }
+           } else if (ag === bg) {
+             if (as < bs && at < bt) { return 1; } else if (as > bs && at > bt) { return -1; } else { return 1; }
+           }*/
+      return (as.localeCompare(bs) === 0 ? 0 : as.localeCompare(bs) > 0 ? 1 : -1) +
+        2 * (at.localeCompare(bt) === 0 ? 0 : at.localeCompare(bt) > 0 ? 1 : -1) +
+        4 * (ag.localeCompare(bg) === 0 ? 0 : ag.localeCompare(bg) > 0 ? 1 : -1);
     });
     this.datas = {
       children: [],
