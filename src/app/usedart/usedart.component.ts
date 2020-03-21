@@ -227,8 +227,9 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       /*     return (as.localeCompare(bs) === 0 ? 0 : as.localeCompare(bs) > 0 ? 1 : -1) ||
               (at.localeCompare(bt) === 0 ? 0 : at.localeCompare(bt) > 0 ? 1 : -1) ||
              (ag.localeCompare(bg) === 0 ? 0 : ag.localeCompare(bg) > 0 ? 1 : -1);*/
-      return (as.localeCompare(bs) + 2*at.localeCompare(bt) + 4*ag.localeCompare(bg));
-    });
+   //   return (as.localeCompare(bs) + 2*at.localeCompare(bt) + 4*ag.localeCompare(bg));
+   return (as+at+ag).localeCompare(bs+bt+bg);
+ });
     this.datas = {
       children: [],
       name: 'Total',
