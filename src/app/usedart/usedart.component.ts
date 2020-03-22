@@ -211,7 +211,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       const bg = '' + b.gac as string;
       //     return (as + at + ag) === (bs + bt + bg) ? 0 : (as + at + ag) > (bs + bt + bg) ? 1 : -1;
       //  return (as + at + ag).localeCompare(bs + bt + bg);
-       return (at + ag).localeCompare(at + bg);
+       return (at + ag).localeCompare(bt + bg);
     });
     console.log('sorted');
     this.datas = {
