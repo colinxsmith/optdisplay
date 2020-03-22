@@ -7,25 +7,25 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  rawData = `name,Holders,tac,sac,gac
-  a,1,h1,h2,g1
-  b,2,h1,h4,g1
-  c,3,h1,h4,g1
-  d,4,h1,h2,g1
-  e,5,bbbb,ddd,g1
-  f,6,cccc,ddd,g1
-  g,7,cccc,eee,g1
-  h,8,cccc,ddd,g1
-  i,9,dddd,fff,g1
-  az,1,h1z,h2z,g2
-  bz,2,h1z,h4z,g2
-  cz,3,h1z,h4z,g2
-  dz,4,h1z,h2z,g2
-  ez,5,bbbbz,dddz,g2
-  fz,6,ccccz,dddz,g2
-  gz,7,ccccz,eeez,g2
-  hz,8,ccccz,dddz,g2
-  iz,9,ddddz,fffz,g2
+  rawData = `name,Holders,sac,ttac,gac
+  a,1,h1,h12,g1
+  b,2,h2,h12,g1
+  c,3,h2,h12,g1
+  f,6,h2,h12,g1
+  d,4,h3,h35,g1
+  e,5,h5,h35,g1
+  g,7,h3,h35,g1
+  h,8,h4,h4,g1
+  i,9,h4,h4,g1
+  a,1,h1,h12,g2
+  b,2,h2,h12,g2
+  c,3,h2,h12,g2
+  f,6,h2,h12,g2
+  d,4,h3,h35,g2
+  e,5,h5,h35,g2
+  g,7,h3,h35,g2
+  h,8,h4,h4,g2
+  i,9,h4,h4,g2
   `;
   rawData1 = `asset,name,tac,sac,tac code,sac code,accountValue,Holders
 B7F9S95,UNITED KINGDOM(GOVERNMENT OF) 1% SNR NTS 07/09/2017 GBP100,Fixed Income,Conventional Gilts,0000000001T,0000000001S,32046.08,1
@@ -209,27 +209,11 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       const bt = '' + b.tac as string;
       const ag = '' + a.gac as string;
       const bg = '' + b.gac as string;
-      /*     if (as === bs && at === bt && ag === bg) {
-             return 0;
-           } else if (at === bt && ag === bg) {
-             return as < bs ? 1 : -1;
-           } else if (as === bs && ag === bg) {
-             return at < bt ? 1 : -1;
-           } else if (as === bs && at === bt) {
-             return ag < bg ? 1 : -1;
-           } else if (as === bs) {
-             if (at < bt && ag < bg) { return 1; } else if (at > bt && ag > bg) { return -1; } else { return 1; }
-           } else if (at === bt) {
-             if (as < bs && ag < bg) { return 1; } else if (as > bs && ag > bg) { return -1; } else { return 1; }
-           } else if (ag === bg) {
-             if (as < bs && at < bt) { return 1; } else if (as > bs && at > bt) { return -1; } else { return 1; }
-           }*/
-      /*     return (as.localeCompare(bs) === 0 ? 0 : as.localeCompare(bs) > 0 ? 1 : -1) ||
-              (at.localeCompare(bt) === 0 ? 0 : at.localeCompare(bt) > 0 ? 1 : -1) ||
-             (ag.localeCompare(bg) === 0 ? 0 : ag.localeCompare(bg) > 0 ? 1 : -1);*/
-   //   return (as.localeCompare(bs) + 2*at.localeCompare(bt) + 4*ag.localeCompare(bg));
-   return (as+at+ag).localeCompare(bs+bt+bg);
- });
+      //     return (as + at + ag) === (bs + bt + bg) ? 0 : (as + at + ag) > (bs + bt + bg) ? 1 : -1;
+      //  return (as + at + ag).localeCompare(bs + bt + bg);
+       return (at + ag).localeCompare(at + bg);
+    });
+    console.log('sorted');
     this.datas = {
       children: [],
       name: 'Total',
@@ -261,6 +245,7 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
         dgac = this.datas.children[ig];
         ig++;
         it = 0;
+        is = 0;
       }
       if (d.tac !== undefined && tac !== d.tac) {
         const pushHere = dgac !== undefined ? dgac.children : this.datas.children;
@@ -292,21 +277,38 @@ BDR05C0,#N/A,#N/A,#N/A,#N/A,#N/A,81501.67,6
       tac = d.tac;
       sac = d.sac;
     });
-    this.datas.children.forEach((d) => {
-      d.children.forEach(e => {
-        e.children.forEach(f => {
-          f.index = iii++;
+    let dSTGdef = 0;
+    if (dgac !== undefined) {
+      dSTGdef++;
+    }
+    if (dsac !== undefined) {
+      dSTGdef++;
+    }
+    if (dtac !== undefined) {
+      dSTGdef++;
+    }
+    if (dSTGdef === 3) {
+      this.datas.children.forEach((d) => {
+        d.children.forEach(e => {
+          e.children.forEach(f => {
+            f.index = iii++;
+          });
         });
       });
-    });
-    this.datas.children.forEach(d => {
-      d.children.forEach(e => {
-        e.index = iii++;
+    }
+    if (dSTGdef >= 2) {
+      this.datas.children.forEach(d => {
+        d.children.forEach(e => {
+          e.index = iii++;
+        });
       });
-    });
-    this.datas.children.forEach((d) => {
-      d.index = iii++;
-    });
+    }
+    if (dSTGdef >= 1) {
+      this.datas.children.forEach((d) => {
+        d.index = iii++;
+      });
+    }
+    console.log(this.datas);
     this.dnew = d3.hierarchy(this.datas);
     iii = 0;
     this.dnew.sum(d => { iii++; return +d.size; });
