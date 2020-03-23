@@ -254,11 +254,8 @@ export class UsedartComponent implements OnInit {
       const bt = '' + b.tac as string;
       const ag = '' + a.gac as string;
       const bg = '' + b.gac as string;
-      //     return (as + at + ag) === (bs + bt + bg) ? 0 : (as + at + ag) > (bs + bt + bg) ? 1 : -1;
-      //  return (as + at + ag).localeCompare(bs + bt + bg);
-      return (ag).localeCompare(bg);
+      return -(ag + at).localeCompare(bg + bt);
     });
-    console.log('sorted');
     this.datas = {
       children: [],
       name: 'Total',

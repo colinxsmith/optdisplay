@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
+import { rgb } from 'd3';
 
 @Component({
   selector: 'app-dartboard',
@@ -7,11 +8,25 @@ import * as d3 from 'd3';
   styleUrls: ['./dartboard.component.css']
 })
 export class DartboardComponent implements OnChanges {
+  esgColour = {
+    0: d3.rgb(255, 59, 48),
+    1: d3.rgb(255, 149, 0),
+    2: d3.rgb(255, 230, 32),
+    3: d3.rgb(0, 245, 234),
+    4: d3.rgb(4, 222, 113),
+    5: d3.rgb(90, 200, 2),
+    8: d3.rgb(119, 119, 119),
+    E: rgb(120, 122, 255),
+    S: rgb(32, 148, 250),
+    G: rgb(90, 200, 250)
+  };
+
   colours: d3.ScaleLinear<d3.RGBColor, string>;
+  eps = Math.abs((4 / 3 - 1) * 3 - 1);
   @Input() topcolour = 'red';
   @Input() colourgamma = 0.75;
   ww = 960;
-  hh = 500;
+  hh = 700;
   piover180 = Math.PI / 180;
   margin = {
     top: 20,
@@ -33,7 +48,7 @@ export class DartboardComponent implements OnChanges {
   }>[];
   constructor(private element: ElementRef) { }
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
-
+  abshack = (q: number) => Math.abs(q);
 
   ngOnChanges() {
     console.log('changes');
@@ -85,7 +100,7 @@ export class DartboardComponent implements OnChanges {
     name: string;
     index: number;
     size: number;
-  }>, i: number) {
+  }>) {
     const svg = d3.select(event.target as SVGGElement);
     svg.transition().duration(760).ease(d3.easeBack)
       .tween('driller', () => {
@@ -99,8 +114,15 @@ export class DartboardComponent implements OnChanges {
       })
       .select('path').transition().duration(760)
       .attrTween('d', () => t => this.arcPath(d, t));
+    console.log(d.data.name, d.x0, d.x1, d.y0, d.y1);
+    console.log(d.x1 - d.x0, this.arcCentroid(d));
   }
-  arcCentroid(d: d3.HierarchyRectangularNode<unknown>) {
+  arcCentroid(d: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
     return ARC.centroid({
       innerRadius: Math.max(0, this.y(d.y0) + 1),
@@ -110,7 +132,12 @@ export class DartboardComponent implements OnChanges {
       padAngle: 2e-2 / (2 * Math.PI)
     });
   }
-  arcPath(d: d3.HierarchyRectangularNode<unknown>, t = 1) {
+  arcPath(d: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>, t = 1) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
     return ARC({
       innerRadius: Math.max(0, this.y(d.y0) + 1),
@@ -129,7 +156,7 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text')
         .transition().duration(1000)
         .text((d, i, j) => {
-          const boxLength = this.radius / 4 - 2;
+          const boxLength = this.radius / 4 - 4;
           const here = j[i] as SVGTextElement;
           const tLength = here.getComputedTextLength();
           if (tLength > boxLength) {
