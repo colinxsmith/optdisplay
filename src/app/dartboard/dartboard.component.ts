@@ -27,6 +27,7 @@ export class DartboardComponent implements OnChanges {
   @Input() colourgamma = 0.75;
   ww = 960;
   hh = this.ww;
+  maxdepth = 0;
   piover180 = Math.PI / 180;
   margin = {
     top: 20,
@@ -75,6 +76,9 @@ export class DartboardComponent implements OnChanges {
       .interpolate(d3.interpolateRgb.gamma(this.colourgamma))
       .range([d3.rgb(this.topcolour), d3.rgb('white')])
       ;
+    this.picdata.forEach(d => {
+      this.maxdepth = Math.max(d.depth, this.maxdepth);
+    });
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
     children: any[];
@@ -156,7 +160,7 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text')
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.radius / 4 - 4;
+          const boxLength = this.radius / (this.maxdepth+1) - 4;
           const here = j[i] as SVGTextElement;
           const tLength = here.getComputedTextLength();
           if (tLength > boxLength) {
