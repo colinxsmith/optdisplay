@@ -86,7 +86,7 @@ export class DartboardComponent implements OnChanges {
     index: number;
     size: number;
   }>, i: number) {
-    const svg = d3.select(event.target as SVGPathElement);
+    const svg = d3.select(event.target as SVGGElement);
     svg.transition().duration(760).ease(d3.easeBack)
       .tween('driller', () => {
         const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
@@ -99,7 +99,6 @@ export class DartboardComponent implements OnChanges {
       })
       .select('path').transition().duration(760)
       .attrTween('d', () => t => this.arcPath(d, t));
-      console.log(d.depth);
   }
   arcCentroid(d: d3.HierarchyRectangularNode<unknown>) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
@@ -128,9 +127,9 @@ export class DartboardComponent implements OnChanges {
         .transition().duration(1000)
         .attrTween('d', d => t => this.arcPath(d, t));
       d3.select(this.element.nativeElement).selectAll('text')
-      .transition().duration(1000)
+        .transition().duration(1000)
         .text((d, i, j) => {
-          const boxLength = this.radius / 4;
+          const boxLength = this.radius / 4 - 2;
           const here = j[i] as SVGTextElement;
           const tLength = here.getComputedTextLength();
           if (tLength > boxLength) {

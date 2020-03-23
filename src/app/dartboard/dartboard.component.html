@@ -10,7 +10,7 @@
                 <path id="face" [attr.d]="arcPath(d)"
                     [style.fill]="colours(d.data.index?d.data.index:colours.domain()[1])"></path>
                 <text id="face"
-                    [attr.transform]="translatehack(arcCentroid(d)[0],arcCentroid(d)[1],270+x((d.x0+d.x1)/2)/piover180)">{{d.data.name}}</text>
+                    [attr.transform]="translatehack(arcCentroid(d)[0],arcCentroid(d)[1],d.depth===3?270+x((d.x0+d.x1)/2)/piover180:0)">{{d.data.name}}</text>
             </g>
             </ng-container>
         </ng-container>
