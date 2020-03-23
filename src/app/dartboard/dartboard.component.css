@@ -1,7 +1,11 @@
 text {
-    fill: none;
-    stroke: black;
+    fill: black;
+    stroke: none;
     font-size: 6px;
     stroke-width: 0.25;
     text-anchor: middle;
+}
+
+text.dd {
+    font-size: 11px;
 }

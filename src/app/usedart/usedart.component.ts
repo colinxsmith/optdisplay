@@ -232,6 +232,8 @@ export class UsedartComponent implements OnInit {
     this.lines.forEach((line, i) => {
       line = line.replace(/^,*/, '');
       line = line.replace(/,*$/, '');
+      line = line.replace(/^ */, '');
+      line = line.replace(/ *$/, '');
       if (i === 0) {
         items = line.split(',');
       } else {
@@ -254,7 +256,7 @@ export class UsedartComponent implements OnInit {
       const bg = '' + b.gac as string;
       //     return (as + at + ag) === (bs + bt + bg) ? 0 : (as + at + ag) > (bs + bt + bg) ? 1 : -1;
       //  return (as + at + ag).localeCompare(bs + bt + bg);
-      return (at + ag).localeCompare(bt + bg);
+      return (ag).localeCompare(bg);
     });
     console.log('sorted');
     this.datas = {
