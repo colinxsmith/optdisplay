@@ -22,7 +22,7 @@ export class DartboardComponent implements OnChanges {
   width = this.ww - this.margin.left - this.margin.right;
   height = this.hh - this.margin.top - this.margin.bottom;
   radius = (Math.min(this.width, this.height) / 2) - 10;
-  formatNumber = d3.format(',d');
+  formatNumber = d3.format('0.2f');
   x = d3.scaleLinear().range([0, 2 * Math.PI]);
   y = d3.scaleLinear().range([0, this.radius]);
   @Input() picdata: d3.HierarchyRectangularNode<{
