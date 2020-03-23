@@ -26,7 +26,7 @@ export class DartboardComponent implements OnChanges {
   @Input() topcolour = 'red';
   @Input() colourgamma = 0.75;
   ww = 960;
-  hh = 700;
+  hh = this.ww;
   piover180 = Math.PI / 180;
   margin = {
     top: 20,
@@ -151,10 +151,10 @@ export class DartboardComponent implements OnChanges {
   update() {
     setTimeout(() => {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
-        .transition().duration(1000)
+        .transition().duration(2000)
         .attrTween('d', d => t => this.arcPath(d, t));
       d3.select(this.element.nativeElement).selectAll('text')
-        .transition().duration(1000)
+        .transition().duration(2000)
         .text((d, i, j) => {
           const boxLength = this.radius / 4 - 4;
           const here = j[i] as SVGTextElement;
