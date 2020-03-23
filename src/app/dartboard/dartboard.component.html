@@ -1,16 +1,18 @@
 <div class="tipper"></div>
 <svg [attr.width]="ww" [attr.height]="hh">
-<g [attr.transform]="translatehack(ww/2,hh/2)">
-    <ng-container *ngIf="picdata.length">
-        <ng-container *ngFor="let d of picdata;let i=index">
-            <path 
-            (mouseenter)="mouser($event,i,d,true)"
-            (mouseleave)="mouser($event,i,d,false)"
-            (click)="clicker($event,d)"
-            id="face"
-            [attr.d]="arcPath(d)" [style.fill]="colours(d.data.index?d.data.index:colours.domain()[1])"></path>
-            <text [attr.transform]="translatehack(arcCentroid(d)[0],arcCentroid(d)[1])">{{formatNumber(d.value)}}</text>
+    <g [attr.transform]="translatehack(ww/2,hh/2)">
+        <ng-container *ngIf="picdata.length">
+            <ng-container *ngFor="let d of picdata;let i=index">
+                <g 
+                (mouseenter)="mouser($event,i,d,true)"
+                (mouseleave)="mouser($event,i,d,false)" 
+                (click)="clicker($event,d,i)">
+                <path id="face" [attr.d]="arcPath(d)"
+                    [style.fill]="colours(d.data.index?d.data.index:colours.domain()[1])"></path>
+                <text id="face"
+                    [attr.transform]="translatehack(arcCentroid(d)[0],arcCentroid(d)[1],270+x((d.x0+d.x1)/2)/piover180)">{{d.data.name}}</text>
+            </g>
+            </ng-container>
         </ng-container>
-    </ng-container>
-</g>
+    </g>
 </svg>

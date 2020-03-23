@@ -12,6 +12,7 @@ export class DartboardComponent implements OnChanges {
   @Input() colourgamma = 0.75;
   ww = 960;
   hh = 500;
+  piover180 = Math.PI / 180;
   margin = {
     top: 20,
     right: 90,
@@ -72,7 +73,7 @@ export class DartboardComponent implements OnChanges {
         .style('display', 'inline-block')
         .style('left', `${ee.pageX}px`)
         .style('top', `${ee.pageY}px`)
-        .html(`Node:${i}<br>${data.data.name}<br>Index:${data.data.index}<br>Value:${this.formatNumber(data.value)}`);
+        .html(`Depth:${data.depth}<br>${data.data.name}<br>Value:${this.formatNumber(data.value)}`);
     } else {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 0)
@@ -84,9 +85,9 @@ export class DartboardComponent implements OnChanges {
     name: string;
     index: number;
     size: number;
-  }>) {
+  }>, i: number) {
     const svg = d3.select(event.target as SVGPathElement);
-    svg.transition().duration(750).ease(d3.easeBack)
+    svg.transition().duration(760).ease(d3.easeBack)
       .tween('driller', () => {
         const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
           , yd = d3.interpolate(this.y.domain(), [d.y0, 1])
@@ -96,13 +97,9 @@ export class DartboardComponent implements OnChanges {
           this.y.domain(yd(t)).range(yr(t));
         };
       })
-      .selectAll('path').transition().duration(750)
-      .attrTween('d', (k: d3.HierarchyRectangularNode<{
-        children: any[];
-        name: string;
-        index: number;
-        size: number;
-      }>) => t => this.arcPath(k, t));
+      .select('path').transition().duration(760)
+      .attrTween('d', () => t => this.arcPath(d, t));
+      console.log(d.depth);
   }
   arcCentroid(d: d3.HierarchyRectangularNode<unknown>) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
@@ -124,11 +121,25 @@ export class DartboardComponent implements OnChanges {
       padAngle: 2e-2 / (2 * Math.PI)
     });
   }
+  boxDiag = (x: number, y: number) => Math.sqrt((x * x + y * y) / 2);
   update() {
     setTimeout(() => {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
-        .transition().duration(2000)
+        .transition().duration(1000)
         .attrTween('d', d => t => this.arcPath(d, t));
+      d3.select(this.element.nativeElement).selectAll('text')
+      .transition().duration(1000)
+        .text((d, i, j) => {
+          const boxLength = this.radius / 4;
+          const here = j[i] as SVGTextElement;
+          const tLength = here.getComputedTextLength();
+          if (tLength > boxLength) {
+            const newLen = Math.floor(here.textContent.replace(/ *$/, '').length * (boxLength / tLength));
+            const text = here.textContent.substring(0, newLen);
+            here.textContent = text;
+          }
+          return here.textContent;
+        });
     });
   }
 }
