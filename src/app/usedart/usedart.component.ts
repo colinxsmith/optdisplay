@@ -536,7 +536,7 @@ S,Work,5,3M CO,0.08
 S,Work,8,GILEAD SCIENCES INC,0.1
 `;
   esgColour3 = {
-    CO2: 'grey'
+    CO2: d3.rgb(187, 172, 172)
   }
   title3 = 'WEIGHTED CARBON EMISSSIONS CURRENT';
   rawData3 = `gac,name,weight
@@ -602,6 +602,15 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   CO2,BOOKING HOLDINGS INC,-0.03
   CO2,VIACOMCBS INC,-0.12
   `;
+  esgColour2 = {
+    1: '#6af36a',
+    2: 'palegreen',
+    3: 'lightgrey',
+    5: 'grey',
+    4: 'darkgrey',
+    0: '#716868',
+    '-3': 'white'
+  };
   title2 = 'CARBON EMISSIONS CURRENT';
   rawData2 = `gac,name,weight
   5,CROWN CASTLE INTL CORP,0.06
@@ -662,9 +671,9 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   1,Xylem Inc/NY,0.02
   1,GAP INC/THE,0.02
   0,MICROSOFT CORP,0.01
-  8,LINDE PLC COMMON STOCK EUR.001,0.01
-  8,BOOKING HOLDINGS INC,0.01
-  8,VIACOMCBS INC,0.04
+  -3,LINDE PLC COMMON STOCK EUR.001,0.01
+  -3,BOOKING HOLDINGS INC,0.01
+  -3,VIACOMCBS INC,0.04
   `;
   title1 = 'CURRENT';
   rawData1 = `gac,tac,name,weight
