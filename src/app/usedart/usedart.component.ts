@@ -7,8 +7,50 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  title = 'ESG | GOODNESS | FACTORS | COMPANIES';
-  rawData = `gac,tac,sac,name,weight
+  picdata1: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>[];
+  picdata2: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>[];
+  picdata3: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>[];
+  picdata4: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>[];
+  picdata5: d3.HierarchyRectangularNode<{
+    children: any[];
+    name: string;
+    index: number;
+    size: number;
+  }>[];
+  esgColour = {
+    0: d3.rgb(255, 59, 48),
+    1: d3.rgb(255, 149, 0),
+    2: d3.rgb(255, 230, 32),
+    3: d3.rgb(0, 245, 234),
+    4: d3.rgb(4, 222, 113),
+    5: d3.rgb(90, 200, 2),
+    8: d3.rgb(119, 119, 119),
+    E: d3.rgb(120, 122, 255),
+    S: d3.rgb(32, 148, 250),
+    G: d3.rgb(90, 200, 250)
+  };
+  title5 = 'ESG | GOODNESS | FACTORS | COMPANIES';
+  rawData5 = `gac,tac,sac,name,weight
   E,0,Environment,CROWN CASTLE INTL CORP,0.04
   E,0,Environment,CINCINNATI FINANCIAL CORP,0.05
   E,0,Pollution,VERTEX PHARMACEUTICALS INC,0.02
@@ -250,6 +292,7 @@ export class UsedartComponent implements OnInit {
   S,8,H Rights,GILEAD SCIENCES INC,0.1
   S,8,Work,GILEAD SCIENCES INC,0.1
   `;
+  title4 = 'ESG | FACTORS | GOODNESS | COMPANIES';
   rawData4 = `gac,tac,sac,name,weight
 E,Environment,0,CROWN CASTLE INTL CORP,0.04
 E,Environment,0,CINCINNATI FINANCIAL CORP,0.05
@@ -492,6 +535,10 @@ S,Work,5,NETFLIX INC,0.06
 S,Work,5,3M CO,0.08
 S,Work,8,GILEAD SCIENCES INC,0.1
 `;
+  esgColour3 = {
+    CO2: 'grey'
+  }
+  title3 = 'WEIGHTED CARBON EMISSSIONS CURRENT';
   rawData3 = `gac,name,weight
   CO2,CROWN CASTLE INTL CORP,0.3
   CO2,VERTEX PHARMACEUTICALS INC,0.1
@@ -555,6 +602,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   CO2,BOOKING HOLDINGS INC,-0.03
   CO2,VIACOMCBS INC,-0.12
   `;
+  title2 = 'CARBON EMISSIONS CURRENT';
   rawData2 = `gac,name,weight
   5,CROWN CASTLE INTL CORP,0.06
   5,VERTEX PHARMACEUTICALS INC,0.02
@@ -618,6 +666,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   8,BOOKING HOLDINGS INC,0.01
   8,VIACOMCBS INC,0.04
   `;
+  title1 = 'CURRENT';
   rawData1 = `gac,tac,name,weight
   E,0,CROWN CASTLE INTL CORP,0.06
   E,0,VERTEX PHARMACEUTICALS INC,0.02
@@ -802,27 +851,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   S,8,TAPESTRY INC COMMON STOCK USD.01,0.02
   S,8,PVH CORP,0.02
   S,8,GAP INC/THE,0.02
-  `
-  lines: string[];
-  data = [];
-  datas: {
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  };
-  dnew: d3.HierarchyNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>;
-  picdata: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
+  `;
   scale = 1000;
   scl = 0.01;
   root3 = Math.sqrt(3);
@@ -834,13 +863,23 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   ttt = (i: number) => `M${i / 2} 0L${i} ${i / 2 * this.root3}L0 ${i / 2 * this.root3}Z`;
   ngOnInit() {
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
-    this.data = [];
+    this.picdata1 = this.processData(this.rawData1);
+    this.picdata2 = this.processData(this.rawData2);
+    this.picdata3 = this.processData(this.rawData3);
+    this.picdata4 = this.processData(this.rawData4);
+    this.picdata5 = this.processData(this.rawData5);
+    setTimeout(() => {
+      this.update();
+    });
+  }
+  processData(rawData: string) {
+    const data = [];
     let gac = '';
     let tac = '';
     let sac = '';
-    this.lines = this.rawData.split('\n');
+    const lines = rawData.split('\n');
     let items: string[];
-    this.lines.forEach((line, i) => {
+    lines.forEach((line, i) => {
       line = line.replace(/^,*/, '');
       line = line.replace(/,*$/, '');
       line = line.replace(/^ */, '');
@@ -854,7 +893,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
           for (let j = 0; j < items.length; ++j) {
             obj[items[j].replace(' ', '')] = here[j];
           }
-          this.data.push(obj);
+          data.push(obj);
         }
       }
     });
@@ -867,7 +906,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
           const bg = '' + b.gac as string;
           return -(ag + at).localeCompare(bg + bt);
         });*/
-    this.datas = {
+    const datas = {
       children: [],
       name: '',
       index: 0,
@@ -889,34 +928,34 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       index: number;
       size: number;
     }, ig = 0, it = 0, is = 0, iii = 1;
-    this.data.forEach(d => {
+    data.forEach(d => {
       if (d.gac !== undefined && gac !== d.gac) {
-        this.datas.children.push({
+        datas.children.push({
           children: [],
           name: d.gac,
         });
-        dgac = this.datas.children[ig];
+        dgac = datas.children[ig];
         ig++;
         it = 0;
         is = 0;
       }
       if (d.tac !== undefined && tac !== d.tac) {
-        const pushHere = dgac !== undefined ? dgac.children : this.datas.children;
+        const pushHere = dgac !== undefined ? dgac.children : datas.children;
         pushHere.push({
           children: [],
           name: d.tac,
         });
-        dtac = dgac !== undefined ? dgac.children[it] : this.datas.children[it];
+        dtac = dgac !== undefined ? dgac.children[it] : datas.children[it];
         it++;
         is = 0;
       }
       if (d.sac !== undefined && sac !== d.sac) {
-        const pushHere = dtac !== undefined ? dtac.children : dgac !== undefined ? dgac.children : this.datas.children;
+        const pushHere = dtac !== undefined ? dtac.children : dgac !== undefined ? dgac.children : datas.children;
         pushHere.push({
           children: [],
           name: d.sac,
         });
-        dsac = dtac !== undefined ? dtac.children[is] : dgac !== undefined ? dgac.children[is] : this.datas.children[is];
+        dsac = dtac !== undefined ? dtac.children[is] : dgac !== undefined ? dgac.children[is] : datas.children[is];
         is++;
       }
       const lastPush = dsac !== undefined ? dsac : dtac !== undefined ? dtac : dgac;
@@ -941,7 +980,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       dSTGdef++;
     }
     if (dSTGdef === 3) {
-      this.datas.children.forEach((d) => {
+      datas.children.forEach((d) => {
         d.children.forEach(e => {
           e.children.forEach(f => {
             f.index = iii++;
@@ -950,38 +989,35 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       });
     }
     if (dSTGdef >= 2) {
-      this.datas.children.forEach(d => {
+      datas.children.forEach(d => {
         d.children.forEach(e => {
           e.index = iii++;
         });
       });
     }
     if (dSTGdef >= 1) {
-      this.datas.children.forEach((d) => {
+      datas.children.forEach((d) => {
         d.index = iii++;
       });
     }
-    console.log(this.datas);
-    this.dnew = d3.hierarchy(this.datas);
+    console.log(datas);
+    const dnew = d3.hierarchy(datas);
     iii = 0;
-    this.dnew.sum(d => { iii++; return +d.size; });
-    this.picdata = (d3.partition()(this.dnew).descendants() as d3.HierarchyRectangularNode<{
+    dnew.sum(d => { iii++; return +d.size; });
+    return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<{
       children: any[];
       name: string;
       index: number;
       size: number;
     }>[]);
-    setTimeout(() => {
-      this.update();
-    });
   }
   newgamma(ev: MouseEvent) {
     this.colourgamma = +(ev.target as HTMLInputElement).value / 10000;
     this.update();
   }
   update() {
-  //  d3.select('app-dartboard').style('--back', this.setColour);
-  //  d3.select('app-dartboard').attr('smallgreytitle', this.setColour);
+    //  d3.select('app-dartboard').style('--back', this.setColour);
+    //  d3.select('app-dartboard').attr('smallgreytitle', this.setColour);
   }
   pick3d(ev: MouseEvent) {
     const dim = +d3.select('#picker').attr('width');

@@ -7,7 +7,7 @@
                 <g (mouseenter)="mouser($event,i,d,true)" (mouseleave)="mouser($event,i,d,false)"
                     (click)="clicker($event,d)">
                     <path id="face" [attr.d]="arcPath(d)"
-                        [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:(d.depth===4?d.parent.parent:d.parent)?esgColour[d.depth===4?d.parent.parent.data.name:d.parent.data.name]:('white')"></path>
+                        [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')"></path>
                     <text id="face" [attr.class]="d.depth<maxdepth?'dd':''"
                     y="0.4em"
                         [style.opacity]="(arcCentroid(d)[1]<0&&abshack(arcCentroid(d)[0])<256*eps)?0:1"

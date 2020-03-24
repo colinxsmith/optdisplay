@@ -8,18 +8,18 @@ import { rgb } from 'd3';
   styleUrls: ['./dartboard.component.css']
 })
 export class DartboardComponent implements OnChanges {
-  @Input() esgColour = {
-    0: d3.rgb(255, 59, 48),
-    1: d3.rgb(255, 149, 0),
-    2: d3.rgb(255, 230, 32),
-    3: d3.rgb(0, 245, 234),
-    4: d3.rgb(4, 222, 113),
-    5: d3.rgb(90, 200, 2),
-    8: d3.rgb(119, 119, 119),
-    E: rgb(120, 122, 255),
-    S: rgb(32, 148, 250),
-    G: rgb(90, 200, 250)
-  };
+  @Input() esgColour: {
+    0: d3.RGBColor;
+    1: d3.RGBColor;
+    2: d3.RGBColor;
+    3: d3.RGBColor;
+    4: d3.RGBColor;
+    5: d3.RGBColor;
+    8: d3.RGBColor;
+    E: d3.RGBColor;
+    S: d3.RGBColor;
+    G: d3.RGBColor;
+};
 
   colours: d3.ScaleLinear<d3.RGBColor, string>;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
@@ -92,8 +92,8 @@ export class DartboardComponent implements OnChanges {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 1)
         .style('display', 'inline-block')
-        .style('left', `${ee.pageX}px`)
-        .style('top', `${ee.pageY}px`)
+        .style('left', `${ee.pageX + 10}px`)
+        .style('top', `${ee.pageY + 10}px`)
         .html(() => (data.parent) ?
           `${data.parent.data.name === '' ? '' : data.parent.data.name + '<br>'}${data.data.name}<br>Value: ${this.formatNumber(data.value)}` :
           `${data.data.name === '' ? 'Total' : data.data.name}<br>Value:${this.formatNumber(data.value)}`);
