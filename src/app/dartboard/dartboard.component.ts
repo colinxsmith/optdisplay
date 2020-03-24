@@ -8,18 +8,7 @@ import { rgb } from 'd3';
   styleUrls: ['./dartboard.component.css']
 })
 export class DartboardComponent implements OnChanges {
-  @Input() esgColour: {
-    0: d3.RGBColor;
-    1: d3.RGBColor;
-    2: d3.RGBColor;
-    3: d3.RGBColor;
-    4: d3.RGBColor;
-    5: d3.RGBColor;
-    8: d3.RGBColor;
-    E: d3.RGBColor;
-    S: d3.RGBColor;
-    G: d3.RGBColor;
-};
+  @Input() esgColour: {};
 
   colours: d3.ScaleLinear<d3.RGBColor, string>;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
@@ -27,7 +16,7 @@ export class DartboardComponent implements OnChanges {
   @Input() colourgamma = 0.75;
   @Input() title = 'DARTBOARD';
   @Input() smallgreytitle: string;
-  ww = 960;
+  ww = 500;
   hh = this.ww;
   maxdepth = 0;
   piover180 = Math.PI / 180;
@@ -59,7 +48,7 @@ export class DartboardComponent implements OnChanges {
     this.update();
   }
   init() {
-    this.ww = 960;
+    this.ww = 700;
     this.hh = 500;
     this.margin = {
       top: 20,
