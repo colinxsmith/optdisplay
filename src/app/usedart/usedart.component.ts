@@ -7,6 +7,7 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
+  title = 'ESG | GOODNESS | FACTORS | COMPANIES';
   rawData = `gac,tac,sac,name,weight
   E,0,Environment,CROWN CASTLE INTL CORP,0.04
   E,0,Environment,CINCINNATI FINANCIAL CORP,0.05
@@ -822,7 +823,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     index: number;
     size: number;
   }>[];
-  title = 'CURRENT';
   scale = 1000;
   scl = 0.01;
   root3 = Math.sqrt(3);
