@@ -869,7 +869,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         });*/
     this.datas = {
       children: [],
-      name: 'Total',
+      name: '',
       index: 0,
       size: 0
     };
