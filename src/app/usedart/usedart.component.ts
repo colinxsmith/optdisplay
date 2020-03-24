@@ -7,7 +7,7 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  rawData=`gac,tac,sac,name,weight
+  rawData = `gac,tac,sac,name,weight
   E,0,Environment,CROWN CASTLE INTL CORP,0.04
   E,0,Environment,CINCINNATI FINANCIAL CORP,0.05
   E,0,Pollution,VERTEX PHARMACEUTICALS INC,0.02
@@ -249,7 +249,7 @@ export class UsedartComponent implements OnInit {
   S,8,H Rights,GILEAD SCIENCES INC,0.1
   S,8,Work,GILEAD SCIENCES INC,0.1
   `;
-rawData4=`gac,tac,sac,name,weight
+  rawData4 = `gac,tac,sac,name,weight
 E,Environment,0,CROWN CASTLE INTL CORP,0.04
 E,Environment,0,CINCINNATI FINANCIAL CORP,0.05
 E,Environment,1,VERTEX PHARMACEUTICALS INC,0.02
@@ -491,7 +491,7 @@ S,Work,5,NETFLIX INC,0.06
 S,Work,5,3M CO,0.08
 S,Work,8,GILEAD SCIENCES INC,0.1
 `;
-  rawData3=`gac,name,weight
+  rawData3 = `gac,name,weight
   CO2,CROWN CASTLE INTL CORP,0.3
   CO2,VERTEX PHARMACEUTICALS INC,0.1
   CO2,EXXON MOBIL CORP,0.15
@@ -822,6 +822,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     index: number;
     size: number;
   }>[];
+  title = 'CURRENT';
   scale = 1000;
   scl = 0.01;
   root3 = Math.sqrt(3);
@@ -857,15 +858,15 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         }
       }
     });
-    this.data.sort((a, b) => {
-      const as = '' + a.sac as string;
-      const bs = '' + b.sac as string;
-      const at = '' + a.tac as string;
-      const bt = '' + b.tac as string;
-      const ag = '' + a.gac as string;
-      const bg = '' + b.gac as string;
-      return -(ag + at).localeCompare(bg + bt);
-    });
+    /*    this.data.sort((a, b) => {
+          const as = '' + a.sac as string;
+          const bs = '' + b.sac as string;
+          const at = '' + a.tac as string;
+          const bt = '' + b.tac as string;
+          const ag = '' + a.gac as string;
+          const bg = '' + b.gac as string;
+          return -(ag + at).localeCompare(bg + bt);
+        });*/
     this.datas = {
       children: [],
       name: 'Total',
@@ -979,8 +980,8 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     this.update();
   }
   update() {
-    d3.select('app-dartboard').style('--back', this.setColour);
-    d3.select('app-dartboard').attr('smallgreytitle', this.setColour);
+  //  d3.select('app-dartboard').style('--back', this.setColour);
+  //  d3.select('app-dartboard').attr('smallgreytitle', this.setColour);
   }
   pick3d(ev: MouseEvent) {
     const dim = +d3.select('#picker').attr('width');

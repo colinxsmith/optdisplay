@@ -6,6 +6,10 @@ text {
     text-anchor: middle;
 }
 
+text.heading {
+    font-size: 20px;
+}
+
 text.dd {
     font-size: 11px;
 }

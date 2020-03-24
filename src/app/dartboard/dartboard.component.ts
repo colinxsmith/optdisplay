@@ -8,7 +8,7 @@ import { rgb } from 'd3';
   styleUrls: ['./dartboard.component.css']
 })
 export class DartboardComponent implements OnChanges {
-  esgColour = {
+  @Input() esgColour = {
     0: d3.rgb(255, 59, 48),
     1: d3.rgb(255, 149, 0),
     2: d3.rgb(255, 230, 32),
@@ -25,6 +25,8 @@ export class DartboardComponent implements OnChanges {
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
   @Input() topcolour = 'red';
   @Input() colourgamma = 0.75;
+  @Input() title = 'DARTBOARD';
+  @Input() smallgreytitle: string;
   ww = 960;
   hh = this.ww;
   maxdepth = 0;
@@ -92,7 +94,9 @@ export class DartboardComponent implements OnChanges {
         .style('display', 'inline-block')
         .style('left', `${ee.pageX}px`)
         .style('top', `${ee.pageY}px`)
-        .html(`Depth:${data.depth}<br>${data.data.name}<br>Value:${this.formatNumber(data.value)}`);
+        .html(() => (data.parent) ?
+          `${data.parent.data.name}<br>${data.data.name}<br>Value: ${this.formatNumber(data.value)}` :
+          `${data.data.name}<br>Value:${this.formatNumber(data.value)}`);
     } else {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 0)
@@ -157,10 +161,10 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
         .transition().duration(2000)
         .attrTween('d', d => t => this.arcPath(d, t));
-      d3.select(this.element.nativeElement).selectAll('text')
+      d3.select(this.element.nativeElement).selectAll('text#face')
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.radius / (this.maxdepth+1) - 4;
+          const boxLength = this.radius / (this.maxdepth + 1) - 4;
           const here = j[i] as SVGTextElement;
           const tLength = here.getComputedTextLength();
           if (tLength > boxLength) {
