@@ -157,6 +157,7 @@ export class DartboardComponent implements OnChanges {
           const here = j[i] as SVGTextElement;
           const oldfont = parseFloat(d3.select(here).style('font-size'));
           thick = Math.min(thick, oldfont);
+          d3.select(here).attr('keep', d.children && d.children.length);
           d3.select(here).style('font-size', `${thick}px`);
           const tLength = here.getComputedTextLength();
           if (tLength > boxLength) {
