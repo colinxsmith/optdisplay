@@ -7,7 +7,6 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  sortData = false;
   picdata1: d3.HierarchyRectangularNode<{
     children: any[];
     name: string;
@@ -882,7 +881,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       this.update();
     });
   }
-  processData(rawData: string) {
+  processData(rawData: string,    sortData = true) {
     const data = [];
     let gac = '';
     let tac = '';
@@ -907,8 +906,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         }
       }
     });
-    if (this.sortData) {
-      data.sort((a, b) => {
+/*      data.sort((a, b) => {
         const as = '' + a.sac as string;
         const bs = '' + b.sac as string;
         const at = '' + a.tac as string;
@@ -916,8 +914,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         const ag = '' + a.gac as string;
         const bg = '' + b.gac as string;
         return (ag + at).localeCompare(bg + bt);
-      });
-    }
+      });*/
     const datas = {
       children: [],
       name: '',
@@ -1016,6 +1013,9 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     const dnew = d3.hierarchy(datas);
     iii = 0;
     dnew.sum(d => { iii++; return +d.size; });
+    if (sortData){
+      dnew.sort((a, b) => (a.value - b.value));
+    }
     return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<{
       children: any[];
       name: string;
