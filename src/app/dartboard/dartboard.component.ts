@@ -97,7 +97,7 @@ export class DartboardComponent implements OnChanges {
     index: number;
     size: number;
   }>) {
-    const svg = d3.select(event.target as SVGGElement);
+    const svg = d3.select(event.target as SVGPathElement);
     svg.transition().duration(760).ease(d3.easeBack)
       .tween('driller', () => {
         const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
@@ -108,10 +108,18 @@ export class DartboardComponent implements OnChanges {
           this.y.domain(yd(t)).range(yr(t));
         };
       })
-      .select('path').transition().duration(760)
-      .attrTween('d', () => t => this.arcPath(d, t));
-    console.log(d.data.name, d.x0, d.x1, d.y0, d.y1);
-    console.log(d.x1 - d.x0, this.arcCentroid(d));
+      .select('path#face').transition().duration(760);
+    const svg1 = d3.select((event.target as SVGPathElement).parentElement);
+    if (svg1.select('text#face') !== null) {
+      const svg2 = d3.select((event.target as SVGPathElement).parentElement).select('text#face');
+      let angle = +svg2.attr('transform')
+        .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
+      angle = Math.floor(angle) % 360;
+      console.log(this.title, d.data.name, angle, this.arcCentroid(d));
+      if (angle === 270) {
+        svg2.attr('transform', svg2.attr('transform').replace(/rotate.*$/, 'rotate(360)'));
+      }
+    }
   }
   arcCentroid(d: d3.HierarchyRectangularNode<{
     children: any[];

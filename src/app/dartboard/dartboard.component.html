@@ -10,7 +10,7 @@
                         [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')"></path>
                     <text id="face" [attr.class]="d.depth<maxdepth?'dd':''"
                     y="0.4em"
-                        [style.opacity]="(arcCentroid(d)[1]<0&&abshack(arcCentroid(d)[0])<256*eps)?0:1"
+                        [style.visibility]="(arcCentroid(d)[1]<0&&abshack(arcCentroid(d)[0])<1024*eps)?'hidden':'visible'"
                         [attr.transform]="translatehack(arcCentroid(d)[0],arcCentroid(d)[1],(abshack(arcCentroid(d)[0])<1e-8&&arcCentroid(d)[1]>5?((d.children && d.children.length)?180:90):arcCentroid(d)[0]<0?90:-90)+x((d.x0+d.x1)/2)/piover180)">{{d.data.name}}</text>
                 </g>
             </ng-container>
