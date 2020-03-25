@@ -16,7 +16,7 @@ export class DartboardComponent implements OnChanges {
   @Input() colourgamma = 0.75;
   @Input() title = 'DARTBOARD';
   @Input() smallgreytitle: string;
-  ww = 500;
+  @Input() ww = 600;
   hh = this.ww;
   maxdepth = 0;
   piover180 = Math.PI / 180;
@@ -48,7 +48,6 @@ export class DartboardComponent implements OnChanges {
     this.update();
   }
   init() {
-    this.ww = 700;
     this.hh = 500;
     this.margin = {
       top: 20,
