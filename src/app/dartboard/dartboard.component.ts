@@ -149,11 +149,15 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
         .transition().duration(2000)
         .attrTween('d', d => t => this.arcPath(d, t));
-      d3.select(this.element.nativeElement).selectAll('text#face')
+      d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
           const boxLength = this.radius / (this.maxdepth + 1) - 4;
+          let thick = (this.x(d.x1) - this.x(d.x0)) * this.y(d.y0) / 2;
           const here = j[i] as SVGTextElement;
+          const oldfont = parseFloat(d3.select(here).style('font-size'));
+          thick = Math.min(thick, oldfont);
+          d3.select(here).style('font-size', `${thick}px`);
           const tLength = here.getComputedTextLength();
           if (tLength > boxLength) {
             const newLen = Math.floor(here.textContent.replace(/ *$/, '').length * (boxLength / tLength));
