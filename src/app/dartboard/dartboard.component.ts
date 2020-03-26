@@ -98,11 +98,10 @@ export class DartboardComponent implements OnChanges {
     index: number;
     size: number;
   }>) {
-    const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
-      , yd = d3.interpolate(this.y.domain(), [d.y0, 1])
-      , yr = d3.interpolate(this.y.range(), [d.y0 ? 10 : 0, this.radius]);
-    this.x.domain(xd(1));
-    this.y.domain(yd(1)).range(yr(1));
+    this.x.domain([d.x0, d.x1]);
+    this.y
+      .domain([d.y0, 1])
+      .range([d.y0 ? 10 : 0, this.radius]);
     this.update();
   }
   arcCentroid(d: d3.HierarchyRectangularNode<{
