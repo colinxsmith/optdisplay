@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, ɵangular_packages_core_core_y } from '@angular/core';
 import * as d3 from 'd3';
 import { rgb } from 'd3';
 
@@ -12,6 +12,7 @@ export class DartboardComponent implements OnChanges {
 
   colours: d3.ScaleLinear<d3.RGBColor, string>;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
+  @Input() rotateok = true;
   @Input() topcolour = 'red';
   @Input() colourgamma = 0.75;
   @Input() title = 'DARTBOARD';
@@ -143,25 +144,31 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.radius / (this.maxdepth + 1) - 4;
-          let thick = (this.x(d.x1) - this.x(d.x0)) * this.y(d.y0);
+          const boxLength = this.radius / (this.maxdepth + 1);
+          const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
+          d3.select(here).text(d.data.name);
           const oldfont = parseFloat(d3.select(here).style('font-size'));
-          thick = Math.min(thick, oldfont);
+          const thick = Math.min(side, oldfont);
           d3.select(here).style('font-size', `${thick}px`);
-          const tLength = here.getComputedTextLength();
-          if (tLength > boxLength) {
-            const newLen = Math.floor(here.textContent.replace(/ *$/, '').length * (boxLength / tLength));
-            const text = here.textContent.substring(0, newLen);
-            here.textContent = text;
+          const tLength = here.getComputedTextLength() + 4;
+          if (tLength > Math.min(side, boxLength)) {
+            const newLen = Math.floor(here.textContent.length * (Math.min(side, boxLength) / tLength));
+            const text = '' + here.textContent.substring(0, newLen).replace(/ *$/, '');
+            here.textContent = '' + text;
+            const ang = +d3.select(here).attr('transform')
+              .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
+            if (this.rotateok && side > boxLength) {
+              d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/,
+                `rotate(${ang + ((ang + 360) % 360 > 270 ? 90 : -90)})`));
+            }
           }
           let angle = +d3.select(here).attr('transform')
             .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
           angle = (Math.floor(angle + 0.5) + 360) % 360;
-          if (Math.abs(angle - 270) < 1e-8 && this.x.domain()[1] !== 1&&this.y(d.y0)<100) {
-            console.log(angle, d.depth, this.x.domain(), here.textContent,this.y(d.y0));
+          if (Math.abs(angle - 270) < 1e-8 && this.x.domain()[1] !== 1 && this.y(d.y0) < 100) {
             if (d.depth === this.maxdepth) {
-              d3.select(here).style('font-size', `${oldfont * 2}px`);
+              //              d3.select(here).style('font-size', `${oldfont * 2}px`);
             }
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(360)'));
           }
