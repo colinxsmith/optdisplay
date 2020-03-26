@@ -97,29 +97,12 @@ export class DartboardComponent implements OnChanges {
     index: number;
     size: number;
   }>) {
-    const svg = d3.select(event.target as SVGPathElement);
-    svg.transition().duration(760).ease(d3.easeBack)
-      .tween('driller', () => {
-        const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
-          , yd = d3.interpolate(this.y.domain(), [d.y0, 1])
-          , yr = d3.interpolate(this.y.range(), [d.y0 ? 10 : 0, this.radius]);
-        return (t: number) => {
-          this.x.domain(xd(t));
-          this.y.domain(yd(t)).range(yr(t));
-        };
-      })
-      .select('path#face').transition().duration(760);
-    const svg1 = d3.select((event.target as SVGPathElement).parentElement);
-    if (svg1.select('text#face') !== null) {
-      const svg2 = d3.select((event.target as SVGPathElement).parentElement).select('text#face');
-      let angle = +svg2.attr('transform')
-        .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
-      angle = Math.floor(angle) % 360;
-      console.log(this.title, d.data.name, angle, this.arcCentroid(d));
-      if (angle === 270) {
-        svg2.attr('transform', svg2.attr('transform').replace(/rotate.*$/, 'rotate(360)'));
-      }
-    }
+    const xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
+      , yd = d3.interpolate(this.y.domain(), [d.y0, 1])
+      , yr = d3.interpolate(this.y.range(), [d.y0 ? 10 : 0, this.radius]);
+    this.x.domain(xd(1));
+    this.y.domain(yd(1)).range(yr(1));
+    this.update();
   }
   arcCentroid(d: d3.HierarchyRectangularNode<{
     children: any[];
@@ -161,7 +144,7 @@ export class DartboardComponent implements OnChanges {
         .transition().duration(2000)
         .text((d, i, j) => {
           const boxLength = this.radius / (this.maxdepth + 1) - 4;
-          let thick = (this.x(d.x1) - this.x(d.x0)) * this.y(d.y0) / 2;
+          let thick = (this.x(d.x1) - this.x(d.x0)) * this.y(d.y0);
           const here = j[i] as SVGTextElement;
           const oldfont = parseFloat(d3.select(here).style('font-size'));
           thick = Math.min(thick, oldfont);
@@ -171,6 +154,16 @@ export class DartboardComponent implements OnChanges {
             const newLen = Math.floor(here.textContent.replace(/ *$/, '').length * (boxLength / tLength));
             const text = here.textContent.substring(0, newLen);
             here.textContent = text;
+          }
+          let angle = +d3.select(here).attr('transform')
+            .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
+          angle = (Math.floor(angle + 0.5) + 360) % 360;
+          if (Math.abs(angle - 270) < 1e-8 && this.x.domain()[1] !== 1&&this.y(d.y0)<100) {
+            console.log(angle, d.depth, this.x.domain(), here.textContent,this.y(d.y0));
+            if (d.depth === this.maxdepth) {
+              d3.select(here).style('font-size', `${oldfont * 2}px`);
+            }
+            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(360)'));
           }
           return here.textContent;
         });
