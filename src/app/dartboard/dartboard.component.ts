@@ -151,8 +151,8 @@ export class DartboardComponent implements OnChanges {
           const thick = Math.min(side, oldfont);
           d3.select(here).style('font-size', `${thick}px`);
           const tLength = here.getComputedTextLength() + 4;
-          if (tLength > Math.min(side, boxLength)) {
-            const newLen = Math.floor(here.textContent.length * (Math.min(side, boxLength) / tLength));
+          if (tLength > Math.max(side, boxLength)) {
+            const newLen = Math.floor(here.textContent.length * (Math.max(side, boxLength) / tLength));
             const text = '' + here.textContent.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
             const ang = +d3.select(here).attr('transform')
@@ -165,11 +165,12 @@ export class DartboardComponent implements OnChanges {
           let angle = +d3.select(here).attr('transform')
             .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
           angle = (Math.floor(angle + 0.5) + 360) % 360;
-          if (Math.abs(angle - 270) < 1e-8 && this.x.domain()[1] !== 1 && this.y(d.y0) < 100) {
+          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d)[0]) < 1e-8 && this.arcCentroid(d)[1] > 50) {
             if (d.depth === this.maxdepth) {
               //              d3.select(here).style('font-size', `${oldfont * 2}px`);
             }
-            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(360)'));
+            d3.select(here).attr('temp', `${this.arcCentroid(d)}`);
+            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
           }
           return here.textContent;
         });
