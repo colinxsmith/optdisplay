@@ -151,7 +151,7 @@ export class DartboardComponent implements OnChanges {
           const thick = Math.min(side, oldfont);
           d3.select(here).style('font-size', `${thick}px`);
           let tLength = here.getComputedTextLength() + 4;
-          //        d3.select(here).style('font-size', `${thick * Math.min(1, boxLength / tLength)}px`);
+                  d3.select(here).style('font-size', `${thick * Math.min(1, boxLength / tLength)}px`);
           tLength = here.getComputedTextLength() + 4;
           let fixLength = Math.max(side, boxLength);
           if (!this.rotateok) {
