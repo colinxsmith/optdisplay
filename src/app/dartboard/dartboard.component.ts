@@ -143,33 +143,33 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.radius / (this.maxdepth + 1);
+          const boxLength = this.y(d.y1) - this.y(d.y0) - 5;
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
           d3.select(here).text(d.data.name);
-          const oldfont = parseFloat(d3.select(here).style('font-size'));
+          const oldfont = 15; // parseFloat(d3.select(here).style('font-size'));
           const thick = Math.min(side, oldfont);
           d3.select(here).style('font-size', `${thick}px`);
-          const tLength = here.getComputedTextLength() + 4;
-          if (tLength > Math.max(side, boxLength)) {
-            const newLen = Math.floor(here.textContent.length * (Math.max(side, boxLength) / tLength));
-            const text = '' + here.textContent.substring(0, newLen).replace(/ *$/, '');
-            here.textContent = '' + text;
-            const ang = +d3.select(here).attr('transform')
-              .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
-            if (this.rotateok && side > boxLength) {
-              d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/,
-                `rotate(${ang + ((ang + 360) % 360 > 270 ? 90 : -90)})`));
-            }
+          let tLength = here.getComputedTextLength() + 4;
+          //        d3.select(here).style('font-size', `${thick * Math.min(1, boxLength / tLength)}px`);
+          tLength = here.getComputedTextLength() + 4;
+          let fixLength = Math.max(side, boxLength);
+          if (!this.rotateok) {
+            fixLength = boxLength;
           }
-          let angle = +d3.select(here).attr('transform')
+          if (tLength >= fixLength) {
+            const newLen = Math.floor(here.textContent.length * fixLength / tLength);
+            const text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
+            here.textContent = '' + text;
+          }
+          const ang = +d3.select(here).attr('transform')
             .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
-          angle = (Math.floor(angle + 0.5) + 360) % 360;
-          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d)[0]) < 1e-8 && this.arcCentroid(d)[1] > 50) {
-            if (d.depth === this.maxdepth) {
-              //              d3.select(here).style('font-size', `${oldfont * 2}px`);
-            }
-            d3.select(here).attr('temp', `${this.arcCentroid(d)}`);
+          if (this.rotateok && ((side - 10) > boxLength)) {
+            d3.select(here).attr('info', `${side} ${boxLength} ${ang} ${ang + (((ang + 360) % 360) > 270 ? 90 : -90)}`);
+            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/,
+              `rotate(${ang + (((ang + 360) % 360) > 270 ? 90 : -90)})`));
+          }
+          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d)[0]) < 1e-8 && this.arcCentroid(d)[1] > 40) {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
           }
           return here.textContent;
