@@ -1,6 +1,5 @@
-import { Component, ElementRef, Input, OnChanges, ɵangular_packages_core_core_y } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
-import { rgb } from 'd3';
 
 @Component({
   selector: 'app-dartboard',
