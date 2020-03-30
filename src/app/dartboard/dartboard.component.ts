@@ -146,11 +146,11 @@ export class DartboardComponent implements OnChanges {
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
           d3.select(here).text(d.data.name);
-          const oldfont = 16; // parseFloat(d3.select(here).style('font-size'));
-          const thick = Math.min(side, oldfont);
+          const oldfont = 12; // parseFloat(d3.select(here).style('font-size'));
+          const thick = (Math.min(side, oldfont));
           d3.select(here).style('font-size', `${thick}px`);
           let tLength = here.getComputedTextLength() + 4;
-          d3.select(here).style('font-size', `${thick * Math.min(1, boxLength / tLength)}px`);
+          d3.select(here).style('font-size', `${Math.max(5, thick)}px`);
           tLength = here.getComputedTextLength() + 4;
           let fixLength = Math.max(side, boxLength);
           if (!this.rotateok) {
@@ -171,9 +171,6 @@ export class DartboardComponent implements OnChanges {
           if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d)[0]) < 1e-8 && this.arcCentroid(d)[1] > 40) {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
             d3.select(here).style('font-size', `${oldfont}px`);
-          }
-          if (Math.abs(this.arcCentroid(d)[1]) < 1e-8) {
-            d3.select(here).style('visibility', 'hidden');
           }
           return here.textContent;
         });
