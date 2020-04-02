@@ -13,3 +13,7 @@ text.heading {
 text.dd {
     font-size: 15px;
 }
+
+/deep/ .dotcircle {
+    color: red;
+}
