@@ -83,8 +83,8 @@ export class DartboardComponent implements OnChanges {
         .style('left', `${ee.pageX + 10}px`)
         .style('top', `${ee.pageY + 10}px`)
         .html(() => (data.parent) ?
-          `${data.parent.data.name === '' ? '' : data.parent.data.name + '<br>'}${data.data.name}<br>Value: ${this.formatNumber(data.value)}` :
-          `${data.data.name === '' ? 'Total' : data.data.name}<br>Value:${this.formatNumber(data.value)}`);
+          `<i class="fa fa-dot-circle-o leafy"></i> ${data.parent.data.name === '' ? '' : data.parent.data.name + '<br>'}${data.data.name}<br>Value: ${this.formatNumber(data.value)}` :
+          `<i class="fa fa-dot-circle-o leafy"></i> ${data.data.name === '' ? 'Total' : data.data.name}<br>Value:${this.formatNumber(data.value)}`);
     } else {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 0)
