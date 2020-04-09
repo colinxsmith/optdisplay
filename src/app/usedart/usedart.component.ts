@@ -609,7 +609,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     5: 'grey',
     4: 'darkgrey',
     0: '#716868',
-    '-3': 'white'
+    '-3': '#f3ebeb'
   };
   title2 = 'CARBON EMISSIONS CURRENT';
   rawData2 = `gac,name,weight
