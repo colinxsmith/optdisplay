@@ -142,7 +142,7 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.y(d.y1) - this.y(d.y0) - 8;
+          const boxLength = this.y(d.y1) - this.y(d.y0)-1;
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
           d3.select(here).text(d.data.name);
