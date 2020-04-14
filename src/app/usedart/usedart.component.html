@@ -22,3 +22,12 @@
 <div [style.display]="'flex'">
     <app-dartboard [ww]="900" [esgColour]="esgColour" [title]="title5" [picdata]="picdata5" [attr.smallgreytitle]="title5"></app-dartboard>
 </div>
+<div [style.display]="'flex'">
+<svg [attr.width]="XX4" [attr.height]="YY4">
+<ng-container *ngFor="let line of L4DATA;let base=index">
+<path (click)="clickShape(base)" [style.fill]="L4CL(base)" [attr.d]="linePath(line,base)"></path>
+</ng-container>
+<path class="LL4" [attr.d]="'M'+xl(0)+' '+yl(0)+'L'+xl(1)+' '+yl(0)"></path>
+<path class="LL4" [attr.d]="'M'+xl(0)+' '+yl(0)+'L'+xl(0)+' '+yl(1)"></path>
+</svg>
+</div>

@@ -7,6 +7,16 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
+  XX4 = 900;
+  YY4 = 150;
+  xl = d3.scaleLinear().range([0, this.XX4]);
+  yl = d3.scaleLinear().range([this.YY4, 0]);
+  L4DATA = [[0.755, 0.99, 0.7, 0.73], [0.555, 0.4, 0.6, 0.53], [0.255, 0.2, 0.1, 0.23]];
+  L4CL = d3.scaleLinear<d3.RGBColor>()
+    .domain([0, this.L4DATA.length - 1])
+    .interpolate(d3.interpolateRgb.gamma(1.0))
+    .range([d3.rgb(255, 255, 0), d3.rgb(24, 243, 186)])
+    ;
   picdata1: d3.HierarchyRectangularNode<{
     children: any[];
     name: string;
@@ -870,6 +880,15 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   constructor(private element: ElementRef) { }
   formatC = (i: number) => d3.format('0.2f')(i);
   ttt = (i: number) => `M${i / 2} 0L${i} ${i / 2 * this.root3}L0 ${i / 2 * this.root3}Z`;
+  linePath(data: number[], b = 0) {
+    const base = 0;
+    let back = `M${this.xl(0)} ${this.yl(base)}L`;
+    for (let i = 0; i < data.length; ++i) {
+      back += `${this.xl(i / (data.length - 1))} ${this.yl(data[i])}`;
+      back += i === data.length - 1 ? `L${this.xl(1)} ${this.yl(base)}Z` : 'L';
+    }
+    return back;
+  }
   ngOnInit() {
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.picdata1 = this.processData(this.rawData1);
@@ -1051,5 +1070,10 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       ;
     this.setColour = RG(Y / this.root3 * 2);
     this.update();
+  }
+  clickShape(j: number) {
+    const bot = this.L4DATA.length ;
+    const i = bot-j;
+    this.yl.domain([(i - 1) / bot, i / bot]);
   }
 }
