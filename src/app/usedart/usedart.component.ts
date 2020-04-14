@@ -11,7 +11,7 @@ export class UsedartComponent implements OnInit {
   YY4 = 150;
   xl = d3.scaleLinear().range([0, this.XX4]);
   yl = d3.scaleLinear().range([this.YY4, 0]);
-  L4DATA = [[0.755, 0.99, 0.7, 0.73], [0.555, 0.4, 0.6, 0.53], [0.255, 0.2, 0.1, 0.23]];
+  L4DATA = [[0.68, 0.99, 0.7, 0.73], [0.34, 0.65, 0.6, 0.53], [0.05, 0.32, 0.1, 0.23]];
   L4CL = d3.scaleLinear<d3.RGBColor>()
     .domain([0, this.L4DATA.length - 1])
     .interpolate(d3.interpolateRgb.gamma(1.0))
