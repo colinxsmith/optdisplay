@@ -16,7 +16,7 @@ export class UsedartComponent implements OnInit {
   L4CL = d3.scaleLinear<d3.RGBColor>()
     .domain([0, this.L4DATA.length - 1])
     .interpolate(d3.interpolateRgb.gamma(0.75))
-    .range([d3.rgb('orange'), d3.rgb(10, 144, 255)])
+    .range([d3.rgb('orange'), d3.rgb(50, 144, 255)])
     ;
   picdata1: d3.HierarchyRectangularNode<{
     children: any[];
