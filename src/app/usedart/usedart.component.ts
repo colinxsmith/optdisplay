@@ -9,13 +9,14 @@ import * as d3 from 'd3';
 export class UsedartComponent implements OnInit {
   XX4 = 900;
   YY4 = 150;
-  xl = d3.scaleLinear().range([0, this.XX4]);
-  yl = d3.scaleLinear().range([this.YY4, 0]);
-  L4DATA = [[0.68, 0.99, 0.7, 0.73], [0.34, 0.65, 0.6, 0.53], [0.05, 0.32, 0.1, 0.23]].reverse();
+  GAP4 = 30;
+  xl = d3.scaleLinear().range([this.GAP4, this.XX4 - this.GAP4]);
+  yl = d3.scaleLinear().range([this.YY4 - this.GAP4, this.GAP4]);
+  L4DATA = [[0.68, 0.99, 0.7, 0.73], [0.34, 0.65, 0.6, 0.53], [0.05, 0.32, 0.1, 0.23]];
   L4CL = d3.scaleLinear<d3.RGBColor>()
     .domain([0, this.L4DATA.length - 1])
-    .interpolate(d3.interpolateRgb.gamma(1.0))
-    .range([d3.rgb(255, 255, 0), d3.rgb(24, 243, 186)])
+    .interpolate(d3.interpolateRgb.gamma(0.75))
+    .range([d3.rgb('orange'), d3.rgb(10, 144, 255)])
     ;
   picdata1: d3.HierarchyRectangularNode<{
     children: any[];
@@ -879,13 +880,16 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   setColour = 'orange';
   constructor(private element: ElementRef) { }
   formatC = (i: number) => d3.format('0.2f')(i);
+  translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   ttt = (i: number) => `M${i / 2} 0L${i} ${i / 2 * this.root3}L0 ${i / 2 * this.root3}Z`;
-  linePath(data: number[], b = 0) {
-    const base = 0;
-    let back = `M${this.xl(0)} ${this.yl(base)}L`;
+  linePath(data: number[], t = 1) {
+    const base = this.yl.domain()[0];
+    let back = `M${this.xl(0) * t} ${this.yl(base)}L`;
     for (let i = 0; i < data.length; ++i) {
-      back += `${this.xl(i / (data.length - 1))} ${this.yl(data[i])}`;
-      back += i === data.length - 1 ? `L${this.xl(1)} ${this.yl(base)}Z` : 'L';
+      if (this.yl(data[i]) > this.yl.range()[1] && this.yl(data[i]) < this.yl.range()[0]) {
+        back += `${this.xl(i / (data.length - 1)) * t} ${this.yl(data[i]) * t}L`;
+      }
+      back += i === data.length - 1 ? `${this.xl(1) * t} ${this.yl(base)}Z` : '';
     }
     return back;
   }
@@ -1051,6 +1055,10 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   update() {
     //  d3.select('app-dartboard').style('--back', this.setColour);
     //  d3.select('app-dartboard').attr('smallgreytitle', this.setColour);
+    d3.select(this.element.nativeElement).selectAll('path.linePath').data(this.L4DATA)
+      .transition().duration(2000)
+      .attrTween('d', d => t => this.linePath(d, t))
+      .attrTween('transform', () => t => `rotate(${t * 360})`);
   }
   pick3d(ev: MouseEvent) {
     const dim = +d3.select('#picker').attr('width');
@@ -1071,9 +1079,14 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     this.setColour = RG(Y / this.root3 * 2);
     this.update();
   }
-  clickShape(j: number) {
-    const bot = this.L4DATA.length ;
-    const i =  j+1;
-    this.yl.domain([(i - 1) / bot, i / bot]);
+  clickShape(i: number) {
+    if (i === -1) {
+      this.yl.domain([0, 1]);
+    } else {
+      const bot = this.L4DATA.length;
+      this.yl.domain([(i - 1) / bot, i / bot]);
+      console.log(this.yl.domain());
+    }
+    this.update();
   }
 }

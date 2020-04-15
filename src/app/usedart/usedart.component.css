@@ -21,4 +21,14 @@ path.colours {
 path.LL4 {
     fill: none;
     stroke: green;
+    stroke-dasharray: 8px, 15px;
+}
+
+path.LL4.V {
+    stroke-dasharray: 0px;
+}
+
+text.LL4 {
+    text-anchor: middle;
+    font-size: 12px;
 }
