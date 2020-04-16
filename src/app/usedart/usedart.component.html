@@ -21,12 +21,12 @@
 </div>
 <div [style.display]="'flex'">
     <app-dartboard [ww]="900" [esgColour]="esgColour" [title]="title5" [picdata]="picdata5" [attr.smallgreytitle]="title5"></app-dartboard>
-    <div  smallgreytitle="Line Chart">
+    <div  smallgreytitle="Line Chart: Click on numbers to reset!">
     <svg [attr.width]="XX4" [attr.height]="YY4">
     <g [attr.transform]="translatehack(0,0,1)" >
     <ng-container *ngFor="let line of L4DATA;let base=index">
     <text (click)="clickShape(-1)"class="LL4" [attr.x]="GAP4/2" [attr.y]="yl(base/L4DATA.length)">{{formatC(base/L4DATA.length)}}</text>
-    <path class="linePath" (click)="clickShape(L4DATA.length-base)" [style.fill]="L4CL(base)" [attr.d]="linePath(line)"></path>
+    <path class="linePath" (click)="clickShape(L4DATA.length-base)" [style.fill]="L4COLOUR(base)" [attr.d]="linePath(line)"></path>
     <path class="LL4" [attr.d]="'M'+xl(0)+' '+yl(base/L4DATA.length)+'L'+xl(1)+' '+yl(base/L4DATA.length)"></path>
     </ng-container>
     <text (click)="clickShape(-1)"class="LL4" [attr.x]="GAP4/2" [attr.y]="yl(1)">{{formatC(1)}}</text>

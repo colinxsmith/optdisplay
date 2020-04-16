@@ -20,7 +20,7 @@ path.colours {
 
 path.LL4 {
     fill: none;
-    stroke: green;
+    stroke: gray;
     stroke-dasharray: 8px, 15px;
 }
 
@@ -29,6 +29,7 @@ path.LL4.V {
 }
 
 text.LL4 {
+    stroke: black;
     text-anchor: middle;
     font-size: 12px;
 }
