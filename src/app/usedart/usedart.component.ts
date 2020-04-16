@@ -7,8 +7,8 @@ import * as d3 from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-  XX4 = 900;
-  YY4 = 150;
+  XX4 = 800;
+  YY4 = 200;
   GAP4 = 30;
   xl = d3.scaleLinear().range([this.GAP4, this.XX4 - this.GAP4]);
   yl = d3.scaleLinear().range([this.YY4 - this.GAP4, this.GAP4]);
@@ -904,6 +904,8 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       this.update();
       d3.select(this.element.nativeElement).selectAll('app-dartboard')
         .style('--back', 'rgb(183, 119, 23)');
+      d3.select(this.element.nativeElement).selectAll('div')
+        .style('--back', 'rgb(183, 119, 23)');
     });
   }
   processData(rawData: string, sortData = true) {
@@ -1058,7 +1060,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     d3.select(this.element.nativeElement).selectAll('path.linePath').data(this.L4DATA)
       .transition().duration(2000)
       .attrTween('d', d => t => this.linePath(d, t))
-      .attrTween('transform', () => t => `rotate(${t * 360})`);
+      .attrTween('transform', () => t => `rotate(${(1 - t) * 30})`);
   }
   pick3d(ev: MouseEvent) {
     const dim = +d3.select('#picker').attr('width');
