@@ -879,7 +879,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   colourgamma = 1;
   setColour = 'orange';
   constructor(private element: ElementRef) { }
-  L4COLOUR = (t: number) => d3.interpolateReds(0.5 * (1 + t / (this.L4DATA.length - 1)));
+  L4COLOUR = (t: number) => d3.interpolateReds((1 + t) / this.L4DATA.length);
   formatC = (i: number) => d3.format('0.2f')(i);
   translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   ttt = (i: number) => `M${i / 2} 0L${i} ${i / 2 * this.root3}L0 ${i / 2 * this.root3}Z`;
