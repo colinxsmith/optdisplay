@@ -619,11 +619,13 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     3: 'lightgrey',
     5: 'grey',
     4: 'darkgrey',
-    0: '#716868',
-    '-3': '#f3ebeb'
+    0: '#716868'
   };
   title2 = 'CARBON EMISSIONS CURRENT';
   rawData2 = `gac,name,weight
+  5,LINDE PLC COMMON STOCK EUR.001,0.01
+  5,BOOKING HOLDINGS INC,0.01
+  5,VIACOMCBS INC,0.04
   5,CROWN CASTLE INTL CORP,0.06
   5,VERTEX PHARMACEUTICALS INC,0.02
   5,EXXON MOBIL CORP,0.03
@@ -682,9 +684,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   1,Xylem Inc/NY,0.02
   1,GAP INC/THE,0.02
   0,MICROSOFT CORP,0.01
-  -3,LINDE PLC COMMON STOCK EUR.001,0.01
-  -3,BOOKING HOLDINGS INC,0.01
-  -3,VIACOMCBS INC,0.04
   `;
   title1 = 'CURRENT';
   rawData1 = `gac,tac,name,weight
@@ -897,7 +896,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   ngOnInit() {
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.picdata1 = this.processData(this.rawData1);
-    this.picdata2 = this.processData(this.rawData2);
+    this.picdata2 = this.processData(this.rawData2, true);
     this.picdata3 = this.processData(this.rawData3);
     this.picdata4 = this.processData(this.rawData4);
     this.picdata5 = this.processData(this.rawData5);
@@ -909,7 +908,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         .style('--back', 'rgb(183, 119, 23)');
     });
   }
-  processData(rawData: string, sortData = true) {
+  processData(rawData: string, reverse = false) {
     const data = [];
     let gac = '';
     let tac = '';
@@ -934,6 +933,9 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         }
       }
     });
+    if (reverse) {
+      data.reverse();
+    }
     /*      data.sort((a, b) => {
             const as = '' + a.sac as string;
             const bs = '' + b.sac as string;
@@ -1041,9 +1043,9 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     const dnew = d3.hierarchy(datas);
     iii = 0;
     dnew.sum(d => { iii++; return +d.size; });
-    if (sortData) {
-      dnew.sort((a, b) => (a.value - b.value));
-    }
+    /*    if (sortData) {
+          dnew.sort((a, b) => (a.value - b.value));
+        }*/
     return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<{
       children: any[];
       name: string;
