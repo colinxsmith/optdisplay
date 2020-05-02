@@ -548,7 +548,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
 `;
   esgColour3 = {
     CO2: d3.rgb(187, 172, 172)
-  }
+  };
   title3 = 'WEIGHTED CARBON EMISSSIONS CURRENT';
   rawData3 = `gac,name,weight
   CO2,CROWN CASTLE INTL CORP,0.3
@@ -896,7 +896,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   ngOnInit() {
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.picdata1 = this.processData(this.rawData1);
-    this.picdata2 = this.processData(this.rawData2, true);
+    this.picdata2 = this.processData(this.rawData2, false);
     this.picdata3 = this.processData(this.rawData3);
     this.picdata4 = this.processData(this.rawData4);
     this.picdata5 = this.processData(this.rawData5);
@@ -936,15 +936,15 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     if (reverse) {
       data.reverse();
     }
-    /*      data.sort((a, b) => {
-            const as = '' + a.sac as string;
-            const bs = '' + b.sac as string;
-            const at = '' + a.tac as string;
-            const bt = '' + b.tac as string;
-            const ag = '' + a.gac as string;
-            const bg = '' + b.gac as string;
-            return (ag + at).localeCompare(bg + bt);
-          });*/
+    data.sort((a, b) => {
+      const as = '' + a.sac as string;
+      const bs = '' + b.sac as string;
+      const at = '' + a.tac as string;
+      const bt = '' + b.tac as string;
+      const ag = '' + a.gac as string;
+      const bg = '' + b.gac as string;
+      return (ag + at).localeCompare(bg + bt);
+    });
     const datas = {
       children: [],
       name: '',
