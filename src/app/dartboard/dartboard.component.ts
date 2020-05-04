@@ -142,7 +142,7 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.y(d.y1) - this.y(d.y0)-1;
+          const boxLength = this.y(d.y1) - this.y(d.y0) - 1;
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
           d3.select(here).text(d.data.name);
@@ -156,14 +156,18 @@ export class DartboardComponent implements OnChanges {
           if (!this.rotateok) {
             fixLength = boxLength;
           }
-          if (tLength >= fixLength) {
-            const newLen = Math.floor(here.textContent.length * fixLength / (tLength));
+          if (true || tLength >= fixLength) {
+            let newLen = Math.floor(here.textContent.length * fixLength / (tLength));
+            if (this.maxdepth === d.depth) {
+              newLen = 2;
+            }
             let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
-            if (here.getComputedTextLength() >= fixLength) {
+            text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
+            if (false && here.getComputedTextLength() >= fixLength) {
               text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
               here.textContent = '' + text;
-     //         console.log(text, here.getComputedTextLength(), fixLength);
+              //         console.log(text, here.getComputedTextLength(), fixLength);
             }
           }
           const ang = +d3.select(here).attr('transform')
