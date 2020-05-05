@@ -19,6 +19,7 @@ export class DartboardComponent implements OnChanges {
   @Input() ww = 600;
   hh = this.ww;
   maxdepth = 0;
+  driller = -1;
   piover180 = Math.PI / 180;
   margin = {
     top: 20,
@@ -68,6 +69,7 @@ export class DartboardComponent implements OnChanges {
       ;
     this.picdata.forEach(d => {
       this.maxdepth = Math.max(d.depth, this.maxdepth);
+      this.driller = this.maxdepth
     });
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
@@ -97,6 +99,8 @@ export class DartboardComponent implements OnChanges {
     index: number;
     size: number;
   }>) {
+    this.driller = d.height;
+    console.log(this.driller);
     this.x.domain([d.x0, d.x1]);
     this.y
       .domain([d.y0, 1])
@@ -156,9 +160,10 @@ export class DartboardComponent implements OnChanges {
           if (!this.rotateok) {
             fixLength = boxLength;
           }
-          if (true || tLength >= fixLength) {
+          if ((this.maxdepth === d.depth) || tLength >= fixLength) {
             let newLen = Math.floor(here.textContent.length * fixLength / (tLength));
-            if (this.maxdepth === d.depth) {
+            if (this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
+              console.log(d.depth, d.height, this.maxdepth, this.driller);
               newLen = 2;
             }
             let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
