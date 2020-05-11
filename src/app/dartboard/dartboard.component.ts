@@ -19,6 +19,7 @@ export class DartboardComponent implements OnChanges {
   @Input() ww = 600;
   hh = this.ww;
   maxdepth = 0;
+  driller = -1;
   piover180 = Math.PI / 180;
   margin = {
     top: 20,
@@ -68,6 +69,7 @@ export class DartboardComponent implements OnChanges {
       ;
     this.picdata.forEach(d => {
       this.maxdepth = Math.max(d.depth, this.maxdepth);
+      this.driller = this.maxdepth
     });
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
@@ -97,6 +99,8 @@ export class DartboardComponent implements OnChanges {
     index: number;
     size: number;
   }>) {
+    this.driller = d.height;
+    console.log(this.driller);
     this.x.domain([d.x0, d.x1]);
     this.y
       .domain([d.y0, 1])
@@ -142,7 +146,7 @@ export class DartboardComponent implements OnChanges {
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
-          const boxLength = this.y(d.y1) - this.y(d.y0)-1;
+          const boxLength = this.y(d.y1) - this.y(d.y0) - 1;
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
           d3.select(here).text(d.data.name);
@@ -156,14 +160,19 @@ export class DartboardComponent implements OnChanges {
           if (!this.rotateok) {
             fixLength = boxLength;
           }
-          if (tLength >= fixLength) {
-            const newLen = Math.floor(here.textContent.length * fixLength / (tLength));
+          if ((this.maxdepth === d.depth) || tLength >= fixLength) {
+            let newLen = Math.floor(here.textContent.length * fixLength / (tLength));
+            if (this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
+              console.log(d.depth, d.height, this.maxdepth, this.driller);
+              newLen = 2;
+            }
             let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
-            if (here.getComputedTextLength() >= fixLength) {
+            text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
+            if (false && here.getComputedTextLength() >= fixLength) {
               text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
               here.textContent = '' + text;
-     //         console.log(text, here.getComputedTextLength(), fixLength);
+              //         console.log(text, here.getComputedTextLength(), fixLength);
             }
           }
           const ang = +d3.select(here).attr('transform')
