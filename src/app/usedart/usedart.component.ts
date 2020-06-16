@@ -18,6 +18,7 @@ export class UsedartComponent implements OnInit {
   flower2 = this.flowernames.map((x, i) => {
     return { axis: x, value: this.flowerinitial[i] };
   });
+  neworder = [];
   Cos = Math.cos;
   Sin = Math.sin;
   rScale = d3.scaleLinear().domain([0,
@@ -25,7 +26,7 @@ export class UsedartComponent implements OnInit {
       d3.max(this.flower2.map(x => x.value)))]).range([0, this.flowerradius]);
   angleScale = d3.scaleLinear().domain([0, this.flowernames.length]).range([0, Math.PI * 2]);
   radarLine = d3.lineRadial<{ axis: string, value: number }>()
-    .curve(d3.curveLinearClosed)
+    .curve(d3.curveCardinalClosed)
     .radius((d) => this.rScale(d.value))
     .angle((d, i) => (this.angleScale(i)));
   XX4 = 800;
@@ -915,6 +916,33 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     return back;
   }
   ngOnInit() {
+    this.flower1.forEach((x, i) => {
+      this.neworder.push(i);
+    });
+    this.neworder.sort((i, j) => {
+      if (this.flower1[i].value > this.flower1[j].value) {
+        return -1;
+      } else if (this.flower1[i].value === this.flower1[j].value) {
+        return 0;
+      } else {
+        return 1;
+      }
+    });
+    const interim = Array(this.neworder.length);
+    this.neworder.forEach((x, i) => {
+      interim[i] = this.flower1[this.neworder[i]];
+    });
+    this.neworder.forEach((x, i) => {
+      this.flower1[i] = interim[i];
+    });
+    console.log(this.flower1);
+    this.neworder.forEach((x, i) => {
+      interim[i] = this.flower2[this.neworder[i]];
+    });
+    this.angleScale.domain([0, 10]);
+    this.neworder.forEach((x, i) => {
+      this.flower2[i] = interim[i];
+    });
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.picdata1 = this.processData(this.rawData1);
     this.picdata2 = this.processData(this.rawData2, false);
@@ -1114,5 +1142,19 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       console.log(this.yl.domain());
     }
     this.update();
+  }
+  circlab(ee: MouseEvent, circ: { axis: string, value: number }, inout: boolean, label = '') {
+    if (inout) {
+      d3.select('app-root').select('div.mainTip')
+        .style('opacity', 1)
+        .style('display', 'inline-block')
+        .style('left', `${ee.pageX + 10}px`)
+        .style('top', `${ee.pageY + 10}px`)
+        .html(() => `<i class='fa fa-dot-circle-o dotcircle'></i> ${label}<br>${circ.axis}<br>${this.formatC(circ.value)}`);
+    } else {
+      d3.select('app-root').select('div.mainTip')
+        .style('opacity', 0)
+        .style('display', 'none');
+    }
   }
 }

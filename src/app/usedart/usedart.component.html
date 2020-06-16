@@ -38,14 +38,21 @@
 </div>
 <div [style.display]="'flex'">
     <div smallgreytitle="Portfolio Flower">
-        <svg [attr.width]="flowerradius*2" [attr.height]="flowerradius*2">
-                <g [attr.transform]="translatehack(flowerradius,flowerradius)" >
-                    <ng-container *ngFor="let circ of flower1;let i=index">
-                        <circle [attr.r]="10" [attr.cx]="Cos(angleScale(i))*rScale(circ.value)" [attr.cy]="Sin(angleScale(i))*rScale(circ.value)"></circle>
-                    </ng-container>
-                    <path [style.stroke]="'blue'" [attr.d]="radarLine(flower1)"></path>
-                    <path [style.stroke]="'red'" [attr.d]="radarLine(flower2)"></path>
-                </g>
+        <svg [attr.width]="flowerradius*2.05" [attr.height]="flowerradius*2.05">
+            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)" >
+                <ng-container *ngFor="let circ of flower1;let i=index">
+                    <text [style.stroke]="'blue'" [style.font-size]="'13px'" [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'" [attr.x]="Sin(angleScale(i))*rScale(circ.value)" [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
+                    <circle (mouseenter)="circlab($event,circ,true,'Proposed')" (mouseleave)="circlab($event,circ,false)" [style.stroke]="'blue'" [attr.r]="5" [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)" [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
+                </ng-container>
+                <ng-container *ngFor="let circ of flower2;let i=index">
+                    <text [style.stroke]="'red'" [style.font-size]="'13px'" [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'" [attr.x]="Sin(angleScale(i))*rScale(circ.value)" [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
+                    <circle (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)" [style.stroke]="'red'" [attr.r]="5" [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)" [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
+                </ng-container>
+            </g>
+            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)" >
+                <path [style.fill]="'none'" [style.stroke]="'blue'" [attr.d]="radarLine(flower1)"></path>
+                <path [style.fill]="'none'" [style.stroke]="'red'" [attr.d]="radarLine(flower2)"></path>
+            </g>
         </svg>
     </div>
 </div>
