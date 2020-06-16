@@ -23,33 +23,48 @@
     <app-dartboard [ww]="900" [esgColour]="esgColour" [title]="title5" [picdata]="picdata5" [attr.smallgreytitle]="title5"></app-dartboard>
     <div smallgreytitle="Line Chart: Click on numbers to reset!">
         <svg [attr.width]="XX4" [attr.height]="YY4">
-    <g [attr.transform]="translatehack(0,0,1)" >
-    <ng-container *ngFor="let line of L4DATA;let base=index">
-    <text (click)="clickShape(-1)"class="LL4" [attr.x]="GAP4/2" [attr.y]="yl(base/L4DATA.length)">{{formatC(base/L4DATA.length)}}</text>
-    <path class="linePath" (click)="clickShape(L4DATA.length-base)" [style.fill]="L4COLOUR(base)" [attr.d]="linePath(line)"></path>
-    <path class="LL4" [attr.d]="'M'+xl(0)+' '+yl(base/L4DATA.length)+'L'+xl(1)+' '+yl(base/L4DATA.length)"></path>
-    </ng-container>
-    <text (click)="clickShape(-1)"class="LL4" [attr.x]="GAP4/2" [attr.y]="yl(1)">{{formatC(1)}}</text>
-    <path class="LL4" [attr.d]="'M'+xl(0)+' '+yl(1)+'L'+xl(1)+' '+yl(1)"></path>
-    <path class="LL4 V" [attr.d]="'M'+xl(0)+' '+yl.range()[0]+'L'+xl(0)+' '+yl.range()[1]"></path>
-    </g>
-    </svg>
+            <g [attr.transform]="translatehack(0,0,1)">
+                <ng-container *ngFor="let line of L4DATA;let base=index">
+                    <text (click)="clickShape(-1)" class="LL4" [attr.x]="GAP4/2"
+                        [attr.y]="yl(base/L4DATA.length)">{{formatC(base/L4DATA.length)}}</text>
+                    <path class="linePath" (click)="clickShape(L4DATA.length-base)" [style.fill]="L4COLOUR(base)"
+                        [attr.d]="linePath(line)"></path>
+                    <path class="LL4"
+                        [attr.d]="'M'+xl(0)+' '+yl(base/L4DATA.length)+'L'+xl(1)+' '+yl(base/L4DATA.length)"></path>
+                </ng-container>
+                <text (click)="clickShape(-1)" class="LL4" [attr.x]="GAP4/2" [attr.y]="yl(1)">{{formatC(1)}}</text>
+                <path class="LL4" [attr.d]="'M'+xl(0)+' '+yl(1)+'L'+xl(1)+' '+yl(1)"></path>
+                <path class="LL4 V" [attr.d]="'M'+xl(0)+' '+yl.range()[0]+'L'+xl(0)+' '+yl.range()[1]"></path>
+            </g>
+        </svg>
     </div>
 </div>
 <div [style.display]="'flex'">
     <div smallgreytitle="Portfolio Flower">
         <svg [attr.width]="flowerradius*2.05" [attr.height]="flowerradius*2.05">
-            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)" >
+            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)">
                 <ng-container *ngFor="let circ of flower1;let i=index">
-                    <text [style.stroke]="'blue'" [style.font-size]="'13px'" [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'" [attr.x]="Sin(angleScale(i))*rScale(circ.value)" [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
-                    <circle (mouseenter)="circlab($event,circ,true,'Proposed')" (mouseleave)="circlab($event,circ,false)" [style.stroke]="'blue'" [attr.r]="5" [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)" [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
+                    <text [style.stroke]="'blue'" [style.font-size]="'13px'"
+                        [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'"
+                        [attr.x]="Sin(angleScale(i))*rScale(circ.value)"
+                        [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
+                    <circle (mouseenter)="circlab($event,circ,true,'Proposed')"
+                        (mouseleave)="circlab($event,circ,false)" [style.stroke]="'blue'" [attr.r]="5"
+                        [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"
+                        [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
                 </ng-container>
                 <ng-container *ngFor="let circ of flower2;let i=index">
-                    <text [style.stroke]="'red'" [style.font-size]="'13px'" [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'" [attr.x]="Sin(angleScale(i))*rScale(circ.value)" [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
-                    <circle (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)" [style.stroke]="'red'" [attr.r]="5" [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)" [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
+                    <text [style.stroke]="'red'" [style.font-size]="'13px'"
+                        [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'"
+                        [attr.x]="Sin(angleScale(i))*rScale(circ.value)"
+                        [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
+                    <circle (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)"
+                        [style.stroke]="'red'" [attr.r]="5"
+                        [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"
+                        [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
                 </ng-container>
             </g>
-            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)" >
+            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)">
                 <path [style.fill]="'none'" [style.stroke]="'blue'" [attr.d]="radarLine(flower1)"></path>
                 <path [style.fill]="'none'" [style.stroke]="'red'" [attr.d]="radarLine(flower2)"></path>
             </g>
