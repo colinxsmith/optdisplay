@@ -42,7 +42,7 @@
 <div [style.display]="'flex'">
     <div smallgreytitle="Portfolio Flower">
         <svg [attr.width]="2*flowerradius+flowerRim" [attr.height]="2*flowerradius+flowerRim">
-            <text [style.font-size]="'40px'" [style.text-anchor]="'middle'" [attr.x]="flowerradius+flowerRim/2" [attr.y]="flowerRim">Optimsed Changes to Portfolio</text>
+            <text [style.font-size]="'40px'" [style.text-anchor]="'middle'" [attr.x]="flowerradius+flowerRim/2" [attr.y]="flowerRim">Optimised Changes to Portfolio</text>
             <g [attr.transform]="translatehack(flowerradius+flowerRim/2,flowerradius+flowerRim/2)">
                 <ng-container *ngFor="let circ of flower1;let i=index">
                     <text (mouseenter)="circlab($event,circ,true,'Proposed')"
