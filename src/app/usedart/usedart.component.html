@@ -41,32 +41,38 @@
 </div>
 <div [style.display]="'flex'">
     <div smallgreytitle="Portfolio Flower">
-        <svg [attr.width]="flowerradius*2.05" [attr.height]="flowerradius*2.05">
-            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)">
+        <svg [attr.width]="2*flowerradius+flowerRim" [attr.height]="2*flowerradius+flowerRim">
+            <text [style.font-size]="'40px'" [style.text-anchor]="'middle'" [attr.x]="flowerradius+flowerRim/2" [attr.y]="flowerRim">Optimsed Changes to Portfolio</text>
+            <g [attr.transform]="translatehack(flowerradius+flowerRim/2,flowerradius+flowerRim/2)">
                 <ng-container *ngFor="let circ of flower1;let i=index">
-                    <text [style.stroke]="'blue'" [style.font-size]="'13px'"
-                        [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'"
-                        [attr.x]="Sin(angleScale(i))*rScale(circ.value)"
-                        [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
+                    <text (mouseenter)="circlab($event,circ,true,'Proposed')"
+                    (mouseleave)="circlab($event,circ,false)" [style.stroke]="'rgb(18, 234, 18)'" [style.font-size]="'13px'"
+                    [style.stroke-opacity]="0.5" [style.text-anchor]="Sin(angleScale(i%angleTop))<0?'end':'start'"
+                        [attr.x]="Sin(angleScale(i%angleTop))*rScale(circ.value)-(Sin(angleScale(i%angleTop))<0?7:-7)"
+                        [attr.y]="-Cos(angleScale(i%angleTop))*rScale(circ.value)+3">{{circ.value>cutOff?circ.axis:""}}</text>
                     <circle (mouseenter)="circlab($event,circ,true,'Proposed')"
-                        (mouseleave)="circlab($event,circ,false)" [style.stroke]="'blue'" [attr.r]="5"
-                        [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"
-                        [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
+                        (mouseleave)="circlab($event,circ,false)" [style.fill]="'rgb(18, 234, 18)'" [attr.r]="circ.value>cutOff?5:0"
+                        [style.fill-opacity]="0.5" [attr.cx]="Sin(angleScale(i%angleTop))*rScale(circ.value)"
+                        [attr.cy]="-Cos(angleScale(i%angleTop))*rScale(circ.value)"></circle>
                 </ng-container>
                 <ng-container *ngFor="let circ of flower2;let i=index">
-                    <text [style.stroke]="'red'" [style.font-size]="'13px'"
-                        [style.text-anchor]="Sin(angleScale(i))<0?'end':'start'"
-                        [attr.x]="Sin(angleScale(i))*rScale(circ.value)"
-                        [attr.y]="-Cos(angleScale(i))*rScale(circ.value)">{{circ.value>0.04?circ.axis:0}}</text>
+                    <text (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)" [style.stroke]="'gray'" [style.font-size]="'13px'"
+                    [style.stroke-opacity]="0.5" [style.text-anchor]="Sin(angleScale(i%angleTop))<0?'end':'start'"
+                        [attr.x]="Sin(angleScale(i%angleTop))*rScale(circ.value)-(Sin(angleScale(i%angleTop))<0?7:-7)"
+                        [attr.y]="-Cos(angleScale(i%angleTop))*rScale(circ.value)+3">{{circ.value>cutOff?circ.axis:""}}</text>
                     <circle (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)"
-                        [style.stroke]="'red'" [attr.r]="5"
-                        [attr.cx]="Sin(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"
-                        [attr.cy]="-Cos(angleScale(i))*rScale(circ.value>0.01?circ.value:0)"></circle>
+                        [style.fill-opacity]="0.5" [style.fill]="'gray'" [attr.r]="circ.value>cutOff?5:0"
+                        [attr.cx]="Sin(angleScale(i%angleTop))*rScale(circ.value)"
+                        [attr.cy]="-Cos(angleScale(i%angleTop))*rScale(circ.value)"></circle>
                 </ng-container>
             </g>
-            <g [attr.transform]="translatehack(flowerradius*1.025,flowerradius*1.025)">
-                <path [style.fill]="'none'" [style.stroke]="'blue'" [attr.d]="radarLine(flower1)"></path>
-                <path [style.fill]="'none'" [style.stroke]="'red'" [attr.d]="radarLine(flower2)"></path>
+            <g [attr.transform]="translatehack(flowerradius+flowerRim/2,flowerradius+flowerRim/2)">
+                <path [style.fill-opacity]="0.5" [style.fill]="'rgb(18, 234, 18)'" [attr.d]="flowerLabel(0)"></path>
+                <text [style.stroke-opacity]="0.5" [style.stroke]="'rgb(18, 234, 18)'" [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim">Proposed</text>
+                <text [style.stroke-opacity]="0.5" [style.stroke]="'gray'" [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim+20">Current</text>
+                <path [style.fill-opacity]="0.5" [style.fill]="'gray'" [attr.d]="flowerLabel(20)"></path>
+                <path [style.stroke-opacity]="0.5" [style.fill]="'none'" [style.stroke]="'rgb(18, 234, 18)'" [attr.d]="radarLine(flower1)+radarLineZ(flower1)"></path>
+                <path [style.stroke-opacity]="0.5" [style.fill]="'none'" [style.stroke]="'gray'" [attr.d]="radarLine(flower2)+radarLineZ(flower2)"></path>
             </g>
         </svg>
     </div>
