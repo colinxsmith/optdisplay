@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
+import { easeBounce } from 'd3';
 
 @Component({
   selector: 'app-usedart',
@@ -12,17 +13,18 @@ export class UsedartComponent implements OnInit {
   flowerfinal = '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0460256163223352 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.00384217030369614 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0413906768766308 0 0 0 0 0 0 0 0 0 0 0 0 0.0273771827300087 0 0 0.0153557811529848 0.00815248615527334 0 0 0 0 0 0 0 0 0.159226034086175 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0042847505477323 0 0 0 0 0 0.0763151632457335 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.00684860063380595 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.065 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0158044943378899 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0877411736739746 0 0 0 0 0 0 0 0 0 0 0 0.000647903240787873 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0298042764604221 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0519469697897639 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.00803985067254948 0 0 0 0 0 0 0 0 0.065 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0357741659138252 0 0 0 0 0 0 0 0 0 0.0789043943280346 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0690334803590228 0 0 0 0 0 0 0 0 0 0 0.0399999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0175184095283764 0 0.0459665196409772 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'.split(' ').map(x => parseFloat(x));
   flowerinitial = '0.135088678362167 0.785465237328304 0.0439182496768488 0.0355278346326801 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'.split(' ').map(x => parseFloat(x));
   flowerradius = 400;
+  sticks = false;
   flower1 = this.flowernames.map((x, i) => {
     return { axis: x, value: this.flowerfinal[i] };
   });
   flower2 = this.flowernames.map((x, i) => {
     return { axis: x, value: this.flowerinitial[i] };
   });
-  neworder = [];
+  neworder: number[] = [];
   Cos = Math.cos;
   Sin = Math.sin;
-  cutOff = 0.000001;
-  angleTop = this.flower1.length/50;
+  cutOff = 1e-8;
+  angleTop: number;
   flowerRim = this.flowerradius / 4;
   rScale = d3.scaleSqrt().domain([
     Math.max(d3.min(this.flower1.map(x => x.value)),
@@ -30,9 +32,9 @@ export class UsedartComponent implements OnInit {
     Math.max(d3.max(this.flower1.map(x => x.value)),
       d3.max(this.flower2.map(x => x.value)))
   ]).range([0, this.flowerradius]);
-  angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
+  angleScaleBase: d3.ScaleLinear<number, number>;
   radarLine = d3.lineRadial<{ axis: string, value: number }>()
-    .curve(d3.curveLinearClosed)
+    .curve(d3.curveCardinalClosed)
     .radius((d) => this.rScale(d.value))
     .angle((d, i) => (this.angleScale(i)));
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>()
@@ -932,18 +934,23 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       this.neworder.push(i);
     });
     this.neworder.sort((i, j) => {
-      if (this.flower1[i].value > this.flower1[j].value) {
-        return -1;
+      if (this.flower1[i].value < this.flower1[j].value) {
+        return 1;
       } else if (this.flower1[i].value === this.flower1[j].value) {
         return 0;
       } else {
-        return 1;
+        return -1;
       }
     });
-    let interim = [];
+    let interim = [], findZero = 0;
     this.neworder.forEach((x, i) => {
+      if (!findZero && (this.flower1[this.neworder[i]].value < 1e-12)) {
+        findZero = i;
+      }
       interim.push(this.flower1[this.neworder[i]]);
-      interim.push({ axis: '', value: 0 });
+      if (this.sticks) {
+        interim.push({ axis: '', value: 0 });
+      }
     });
     interim.forEach((x, i) => {
       this.flower1[i] = interim[i];
@@ -951,11 +958,18 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     interim = [];
     this.neworder.forEach((x, i) => {
       interim.push(this.flower2[this.neworder[i]]);
-      interim.push({ axis: '', value: 0 });
+      if (this.sticks) {
+        interim.push({ axis: '', value: 0 });
+      }
     });
     interim.forEach((x, i) => {
       this.flower2[i] = interim[i];
     });
+    if (this.sticks) {
+      findZero *= 2;
+    }
+    this.angleTop = findZero;
+    this.angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.picdata1 = this.processData(this.rawData1);
     this.picdata2 = this.processData(this.rawData2, false);
@@ -1127,6 +1141,12 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       .transition().duration(2000)
       .attrTween('d', d => t => this.linePath(d, t))
       .attrTween('transform', () => t => `rotate(${(1 - t) * 30})`);
+    d3.select(this.element.nativeElement).selectAll('#PetalC')
+      .transition().duration(3000).ease(d3.easeBounce)
+      .attrTween('transform', () => t => `rotate(${-t * 360})`);
+    d3.select(this.element.nativeElement).selectAll('#PetalP')
+      .transition().duration(3000).ease(d3.easeBounce)
+      .attrTween('transform', () => t => `rotate(${t * 360})`);
   }
   pick3d(ev: MouseEvent) {
     const dim = +d3.select('#picker').attr('width');
@@ -1156,6 +1176,10 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       console.log(this.yl.domain());
     }
     this.update();
+  }
+  petal(ee: MouseEvent, inout: boolean) {
+    const here = d3.select(ee.target as SVGPathElement);
+    here.style('opacity', inout ? 0.75 : 0.5);
   }
   circlab(ee: MouseEvent, circ: { axis: string, value: number }, inout: boolean, label = '') {
     if (inout) {
