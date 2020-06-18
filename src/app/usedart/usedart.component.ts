@@ -22,20 +22,23 @@ export class UsedartComponent implements OnInit {
   Cos = Math.cos;
   Sin = Math.sin;
   cutOff = 0.000001;
-  angleTop = 51;
+  angleTop = this.flower1.length/50;
   flowerRim = this.flowerradius / 4;
-  rScale = d3.scaleSqrt().domain([0,
+  rScale = d3.scaleSqrt().domain([
+    Math.max(d3.min(this.flower1.map(x => x.value)),
+      d3.min(this.flower2.map(x => x.value))),
     Math.max(d3.max(this.flower1.map(x => x.value)),
-      d3.max(this.flower2.map(x => x.value)))]).range([0, this.flowerradius]);
-  angleScale = d3.scaleLinear().domain([0, this.flowernames.length % this.angleTop]).range([0, Math.PI * 2]);
+      d3.max(this.flower2.map(x => x.value)))
+  ]).range([0, this.flowerradius]);
+  angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
   radarLine = d3.lineRadial<{ axis: string, value: number }>()
-    .curve(d3.curveCardinalClosed)
+    .curve(d3.curveLinearClosed)
     .radius((d) => this.rScale(d.value))
-    .angle((d, i) => (this.angleScale(i % this.angleTop)));
+    .angle((d, i) => (this.angleScale(i)));
   radarLineZ = d3.lineRadial<{ axis: string, value: number }>()
-    .curve(d3.curveCardinalClosed)
-    .radius((d) => 0)
-    .angle((d, i) => -(this.angleScale(i % this.angleTop)));
+    .curve(d3.curveLinearClosed)
+    .radius((d) => this.rScale(0))
+    .angle((d, i) => (this.angleScale(-(i))));
   XX4 = 800;
   YY4 = 200;
   GAP4 = 30;
@@ -909,6 +912,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   constructor(private element: ElementRef) { }
   L4COLOUR = (t: number) => d3.interpolateReds(0.95 * (1 + t) / this.L4DATA.length);
   formatF = (i: number) => d3.format('0.2%')(i);
+  angleScale = (a: number) => this.angleScaleBase(a % this.angleTop);
   formatC = (i: number) => d3.format('0.2f')(i);
   translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   ttt = (i: number) => `M${i / 2} 0L${i} ${i / 2 * this.root3}L0 ${i / 2 * this.root3}Z`;
@@ -936,18 +940,20 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         return 1;
       }
     });
-    const interim = Array(this.neworder.length);
+    let interim = [];
     this.neworder.forEach((x, i) => {
-      interim[i] = this.flower1[this.neworder[i]];
+      interim.push(this.flower1[this.neworder[i]]);
+      interim.push({ axis: '', value: 0 });
     });
-    this.neworder.forEach((x, i) => {
+    interim.forEach((x, i) => {
       this.flower1[i] = interim[i];
     });
-    console.log(this.flower1);
+    interim = [];
     this.neworder.forEach((x, i) => {
-      interim[i] = this.flower2[this.neworder[i]];
+      interim.push(this.flower2[this.neworder[i]]);
+      interim.push({ axis: '', value: 0 });
     });
-    this.neworder.forEach((x, i) => {
+    interim.forEach((x, i) => {
       this.flower2[i] = interim[i];
     });
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
