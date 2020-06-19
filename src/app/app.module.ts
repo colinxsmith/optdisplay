@@ -21,6 +21,7 @@ import { UseRadarComponent } from './use-radar/use-radar.component';
 import { VertBarChartComponent } from './vert-bar-chart/vert-bar-chart.component';
 import { DartboardComponent } from './dartboard/dartboard.component';
 import { UsedartComponent } from './usedart/usedart.component';
+import { FlowerComponent } from './flower/flower.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -55,7 +56,8 @@ const appRoutes: Routes = [
     UseRadarComponent,
     VertBarChartComponent,
     DartboardComponent,
-    UsedartComponent
+    UsedartComponent,
+    FlowerComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(

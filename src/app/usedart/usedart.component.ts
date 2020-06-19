@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-import { easeBounce } from 'd3';
 
 @Component({
   selector: 'app-usedart',
@@ -8,41 +7,6 @@ import { easeBounce } from 'd3';
   styleUrls: ['./usedart.component.css']
 })
 export class UsedartComponent implements OnInit {
-
-  flowernames = 'BKFB1C6 0709954 BDFGHW4 1002566 0006655 0007272 0019772 0038551 0048583 0053673 0056650 0076700 0129756 0132077 0133508 0163992 0182704 0199049 0207458 0208075 0237400 0242114 0245867 0246086 0287580 0295958 0305233 0308544 0329200 0332855 0338530 0340609 0346340 0346607 0358572 0370866 0408284 0414850 0419929 0422002 0422853 0422864 0433123 0491206 0491563 0504245 0525042 0536806 0537241 0540528 0575809 0577485 0580007 0601458 0601492 0603959 0605922 0605933 0606185 0606196 0611112 0611190 0667438 0679842 0682754 0694801 0694845 0718875 0745163 0747642 0765172 0765600 0766807 0766937 0781606 0782609 0783130 0783613 0787369 0796644 0798059 0846710 0848471 0870612 0882532 0882929 0884709 0889061 0891055 0906409 0906692 0925288 0946580 1000173 1009998 1258477 1925083 1993217 2000019 2046251 2046552 2270726 2588173 3018408 3018743 3019036 3047468 3051726 3061769 3123249 3129430 3134865 3138339 3142921 3144206 3159987 3174300 3208986 3322756 3386257 3387454 3387476 3387528 3408009 4012250 7103065 9000335 9000829 9000948 9010033 9126543 9238619 9238620 9238631 9238642 9238653 9238664 9238675 9248760 9268274 9283556 9296457 9991611 B00FV01 B00FV12 B00J0F1 B0119B5 B012T52 B0169N2 B018CS4 B019KW7 B01RDH7 B02J639 B02KXH5 B02L3W3 B031HY2 B03KR61 B03MM40 B09M9D2 B0CRWN5 B0D43V0 B0D4439 B0LCW08 B0LCW20 B0LD3X1 B0LD3Y2 B0P6J83 B0V9T08 B0V9T19 B10RZP7 B1294G5 B14X4N2 B1806G6 B188SR5 B19NLV4 B1CDG49 B1DQ670 B1G52V0 B1G52Y3 B1GXH75 B1LZS51 B1N4G29 B1NZSH1 B1TXLS1 B1WG994 B1WJZ39 B1WK0B5 B1XFJS9 B1XG959 B23Z8S9 B23Z975 B23ZBZ7 B23ZC10 B241FG3 B24DQM2 B24HJL4 B24HK55 B285Z72 B2N9GS7 B2PDKP2 B2PLJH1 B2PLJJ3 B39R2Q2 B39R2R3 B3BXXT8 B3F4751 B3L1035 B3L7S95 B3L7SB7 B3MWZ87 B3NS4D2 B3PHCS8 B3R25W6 B3RPBL6 B3S9LG2 B3SXM83 B3SXSL8 B3V1C06 B3VFBK1 B3W62X3 B3WD397 B3Y0CQ6 B3Y7MQ7 B3Y8X56 B3ZBM24 B41NHD7 B41YBW7 B42TW06 B42W4J8 B44CT79 B44JC48 B45MWP7 B460GC5 B4KDSY6 B4KLC26 B4L0PD4 B4L5Y98 B4L5YX2 B4L60H1 B4L60Z9 B4L61L2 B4M24M1 B4MR8G8 B4ND360 B4PYCL9 B4R1D93 B4T6SD5 B4TZHH9 B4WFW71 B4WHQ64 B4WKYF8 B4WP7L0 B4WXJK7 B4Z7BS8 B50M4X1 B50YWZ5 B518375 B51BJD2 B521C87 B53HXJ2 B542V81 B544HM3 B54KP61 B55QSH0 B56FW07 B57H4F1 B57S0V2 B595XQ7 B5BFJG7 B5KQNG9 B5L65R3 B5M5KY1 B5N1BC3 B5N9956 B5T0SW3 B5VX756 B5WM6Y4 B5ZNJ89 B5ZNJ90 B5ZX1M7 B5ZZY91 B602HS4 B615SX4 B61M943 B62QF46 B62Z3C7 B63H849 B64PTF0 B64XDT6 B65TLW2 B6832P1 B686VM0 B690381 B6Q84T6 B6TRWB8 B6WFCR5 B6WFCS6 B6WFCT7 B6WFCV9 B6XV001 B6Y7NF4 B703ZS0 B739W06 B74DQ49 B74FK65 B75LZK1 B76V931 B78PGS5 B78PH60 B7FD4C2 B7HJBM7 B7J60R4 B7LDL92 B7LDLC5 B7LDLV4 B7M4CS0 B7NLLS3 B7S9KM9 B7SGDT8 B7STLV5 B7VS0V2 B7W6PR6 B7XCNP7 B7XPTP8 B8169Q1 B81BLN7 B82VC22 B833391 B83QP49 B8449Z1 B8460Z4 B848DD9 B84PM55 B84PMM2 B84WGD2 B888FR3 B88MP08 B88NK73 B8B3NZ9 B8BC5H2 B8BH0R2 B8BQG48 B8BRMK9 B8CL073 B8DDY87 B8DWQ22 B8DY1Q7 B8DYMW0 B8FD429 B8GGF46 B8GQ0T6 B8HMC86 B8KDCR5 B8KPW26 B8KQFS6 B8KT3V4 B8MJY19 B8N44Q8 B8N44R9 B8P59C0 B8X69C5 B8YQRT7 B90J5Z9 B921DR1 B977824 B98VV15 B98WQ46 B99MVQ2 B9M3QX4 B9MRHZ5 B9SMK77 BBHXNM1 BBP6LK6 BBX4630 BBX4641 BCGD4P9 BCGD4Q0 BCZRNM2 BCZRNN3 BD5J0X5 BDD2973 BDD2984 BDD29F1 BDD2DQ0 BF5S8F4 BFH3NB8 BFH3NC9 BFPM9Y2 BFRSYJ8 BH4HKS3 BH65MY5 BH65MZ6 BH65QS7 BHZK887 BHZK8B0 BHZK8G5 BJ4G0G2 BJFLDL2 BJFLDM3 BJS8SF9 BJS8SH1 BJS8SJ3 BK1PKQ9 BK35DT1 BK35DV3 BK35F39 BK35F40 BKKMKR2 BKRC2Z7 BKXH1T3 BKZGVH6 BLBP8M8 BLDYK61 BLP58G8 BMJ6DW5 BMMV510 BMMV576 BMP3SC5 BMP3SD6 BMSKRZ9 BP46GF5 BP46GG6 BP8RY61 BP8RY83 BP8RYB6 BP8RYD8 BP8RYP0 BP8RYR2 BP8RYT4 BPN5NV8 BPN5NZ2 BPN5P01 BPN5P12 BPN5P23 BPN5P89 BPN5P90 BPT2BP3 BPT2BQ4 BPT2BR5 BPT2BS6 BPT2BT7 BPT2BV9 BPT2BW0 BPT2BX1 BPT2BY2 BPT2BZ3 BR30MJ8 BRJ9D74 BSMTGF7 BSMTGG8 BV54HY6 BVG1CF2 BVVB7J6 BVVB7K7 BWBXRR7 BWBXSH4 BWBXSQ3 BWD1NH1 BWWZ2D3 BWXC7Y9 BWY58M2 BYNFR31 BYNFR42 BYWP8Y0 BYZF1W6 BDD2J73 BZ2K2M8 BHBX8L3 B0117D3 B7L9RK3 BYZF1V5 B0117C2 BFRTDB6 BYNWC59 BFPM9Z3 BZ04LP8 BJFLM15 BYP82C2 BYP82D3 7249293 BZ01WR8 BZ01WS9 B84DSW8 BD2WZ32 BD2WZ76 BD2WZ87 BD2WZ43 BDD2J84 B7F1PQ7 B4QSG29 BYQ5GS6 B82WY52 BPN5P45 9000089 BHZK8D2 BYQ5GV9 BD3V464 B993PD0 BYMFLL8 BZ01WT0 BZ01WV2 BZ4CRC7 BZ4CRF0 B58L4H4 BD1RHR6 B5WN001 B29R7B5 BHBX8M4 BG0QPP9 BDD2DR1 BJFLM26 BD09VL5 BD09VM6 BD09VN7 BDCJC65 BSJCJ50 5861677 B55FJ29 B3P2RZ5 BPBG5D9 BJ04JS5 B1C4233 BYQNSD9 BF03YC3 BYQ9L72 BYQ9L83 BDR05C0 BDFYRW8 B602773 BDCJCF4 BF13KJ1 BF13KK2 BDCVTW6 BD6K457 BD6P6G7 BDD29D9 BDCVTL5 BYYK2S5 BDCVTN7 BQ1JYT4 BYZBS34 BYZBS12 BNY7RY0 BMH4M80 B4R9F68 BF1ZBJ4 BF3ZD63 BYMFLR4 BF1ZBG1 B1MYR49 BD0B7F7 BD0B7G8 BF1ZBH2 BF1ZBK5 B98YKX9 BDCVTQ0 BDCVTK4 BD09VK4 B24J556 BZ0YDT6 B7XHCW2 BD9PXH4 BDT79M7 BQ1JYV6 BZ6CQ17 BYX8H07 BZ6CQ39 BYX8GY4 BYX8HB8 BDCVTP9 BF0W2Q0 BFWH3N7 BFWH3Q0 BFNKM50 BYQKQN6 BF09MZ0 BYWVF92 BYWVFC5 BYWVFF8 BD5J0Y6 9208548 BV8VN68 BDFYRV7 B9QN5S8 BFNKSK7 BF0W2P9 B45ZVW6 BF5FX16 B886RY8 BFF5BH8 BFF5BJ0 BDCJCR6 BF4X3S8 0376325 BYQBDJ4 BF4JDH5 BF5H9Z8 BG0J161 9207705 9207642 B71BTN6 BG225J9 3129623 BZ3T7V8 B53SZB1 BYWVF81 BTJRMP3 BYWVFB4 BYWVFD6 BYYK2R4 B96SVJ6 B7F8GW1 BFLV578 BFLV589 BD0CV92 BGJWTR8 BFZ7L85 B2R5TL5 BG21HL2 BDF5FQ1 BG0J268 B43FT80 BFM46V7 BFWV3D9 BDD0SS1 BG342F9 BZ0YDS5 BYVQ3J4 BHSRZC8 BD8KRH8 B7M65Z4 BG342D7 BDZVH85 BJ4KW46 BYSYZX9 BF1QNR9 BFMXJ59 BD5J0T1 BD9MNV9 BFWK8H5 BJ4KW57 BHJVQ59 BF1QNN5 BJLP1Y7 9205903 BV8VN46 BJT1GR5 BF09MK5 BJ0LT19 BJTRSD3 BFM45Y3 BFWV3J5 BJ00Z30 BK58W80 BK58W91 BD20DC1 BFM46D9 BH3JG59 BH3JGB5 BG0QPQ0 B4PRCS5 BK8LP32 BF4Z373 BF4Z362 BFK3LR7 BFX1V90 BJ0CJK1 BJKVVF7 BK6NVB0 BK8LPC1'.split(' ');
-  flowerfinal = '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0460256163223352 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.00384217030369614 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0413906768766308 0 0 0 0 0 0 0 0 0 0 0 0 0.0273771827300087 0 0 0.0153557811529848 0.00815248615527334 0 0 0 0 0 0 0 0 0.159226034086175 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0042847505477323 0 0 0 0 0 0.0763151632457335 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.00684860063380595 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.065 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0158044943378899 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0877411736739746 0 0 0 0 0 0 0 0 0 0 0 0.000647903240787873 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0298042764604221 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0519469697897639 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.00803985067254948 0 0 0 0 0 0 0 0 0.065 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0357741659138252 0 0 0 0 0 0 0 0 0 0.0789043943280346 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0690334803590228 0 0 0 0 0 0 0 0 0 0 0.0399999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0175184095283764 0 0.0459665196409772 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'.split(' ').map(x => parseFloat(x));
-  flowerinitial = '0.135088678362167 0.785465237328304 0.0439182496768488 0.0355278346326801 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'.split(' ').map(x => parseFloat(x));
-  flowerradius = 400;
-  sticks = true;
-  flower1 = this.flowernames.map((x, i) => {
-    return { axis: x, value: this.flowerfinal[i] };
-  });
-  flower2 = this.flowernames.map((x, i) => {
-    return { axis: x, value: this.flowerinitial[i] };
-  });
-  neworder: number[] = [];
-  Cos = Math.cos;
-  Sin = Math.sin;
-  cutOff = 1e-8;
-  angleTop: number;
-  flowerRim = this.flowerradius / 4;
-  rScale = d3.scalePow()
-  .exponent(0.1)
-  .domain([
-    Math.max(d3.min(this.flower1.map(x => x.value)),
-      d3.min(this.flower2.map(x => x.value))),
-    Math.max(d3.max(this.flower1.map(x => x.value)),
-      d3.max(this.flower2.map(x => x.value)))
-  ]).range([0, this.flowerradius]);
-  angleScaleBase: d3.ScaleLinear<number, number>;
-  radarLine = d3.lineRadial<{ axis: string, value: number }>()
-    .curve(d3.curveCardinalClosed)
-    .radius((d) => this.rScale(d.value))
-    .angle((d, i) => (this.angleScale(i)));
-  radarLineZ = d3.lineRadial<{ axis: string, value: number }>()
-    .curve(d3.curveLinearClosed)
-    .radius((d) => this.rScale(0))
-    .angle((d, i) => (this.angleScale(-(i))));
   XX4 = 800;
   YY4 = 200;
   GAP4 = 30;
@@ -915,8 +879,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
   setColour = 'orange';
   constructor(private element: ElementRef) { }
   L4COLOUR = (t: number) => d3.interpolateReds(0.95 * (1 + t) / this.L4DATA.length);
-  formatF = (i: number) => d3.format('0.2%')(i);
-  angleScale = (a: number) => this.angleScaleBase(a % this.angleTop);
   formatC = (i: number) => d3.format('0.2f')(i);
   translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   ttt = (i: number) => `M${i / 2} 0L${i} ${i / 2 * this.root3}L0 ${i / 2 * this.root3}Z`;
@@ -932,46 +894,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     return back;
   }
   ngOnInit() {
-    this.flower1.forEach((x, i) => {
-      this.neworder.push(i);
-    });
-    this.neworder.sort((i, j) => {
-      if (this.flower1[i].value < this.flower1[j].value) {
-        return 1;
-      } else if (this.flower1[i].value === this.flower1[j].value) {
-        return 0;
-      } else {
-        return -1;
-      }
-    });
-    let interim = [], findZero = 0;
-    this.neworder.forEach((x, i) => {
-      if (!findZero && (this.flower1[this.neworder[i]].value < 1e-12)) {
-        findZero = i;
-      }
-      interim.push(this.flower1[this.neworder[i]]);
-      if (this.sticks) {
-        interim.push({ axis: '', value: 0 });
-      }
-    });
-    interim.forEach((x, i) => {
-      this.flower1[i] = interim[i];
-    });
-    interim = [];
-    this.neworder.forEach((x, i) => {
-      interim.push(this.flower2[this.neworder[i]]);
-      if (this.sticks) {
-        interim.push({ axis: '', value: 0 });
-      }
-    });
-    interim.forEach((x, i) => {
-      this.flower2[i] = interim[i];
-    });
-    if (this.sticks) {
-      findZero *= 2;
-    }
-    this.angleTop = findZero;
-    this.angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
     this.colourgamma = +(d3.select('#slide').node() as HTMLInputElement).value / 10000;
     this.picdata1 = this.processData(this.rawData1);
     this.picdata2 = this.processData(this.rawData2, false);
@@ -986,7 +908,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         .style('--back', 'rgb(183, 119, 23)');
     });
   }
-  flowerLabel = (y1: number, x1 = -this.flowerradius, s1 = 20) => `M${x1},${y1 - this.flowerradius + this.flowerRim - s1 * 0.75}l0,${s1}l${s1},0l0,-${s1}z`;
   processData(rawData: string, reverse = false) {
     const data = [];
     let gac = '';
@@ -1143,12 +1064,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       .transition().duration(2000)
       .attrTween('d', d => t => this.linePath(d, t))
       .attrTween('transform', () => t => `rotate(${(1 - t) * 30})`);
-    d3.select(this.element.nativeElement).selectAll('#PetalC')
-      .transition().duration(3000).ease(d3.easeBounce)
-      .attrTween('transform', () => t => `rotate(${-t * 360})`);
-    d3.select(this.element.nativeElement).selectAll('#PetalP')
-      .transition().duration(3000).ease(d3.easeBounce)
-      .attrTween('transform', () => t => `rotate(${t * 360})`);
   }
   pick3d(ev: MouseEvent) {
     const dim = +d3.select('#picker').attr('width');
@@ -1178,23 +1093,5 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       console.log(this.yl.domain());
     }
     this.update();
-  }
-  petal(ee: MouseEvent, inout: boolean) {
-    const here = d3.select(ee.target as SVGPathElement);
-    here.style('opacity', inout ? 0.75 : 0.5);
-  }
-  circlab(ee: MouseEvent, circ: { axis: string, value: number }, inout: boolean, label = '') {
-    if (inout) {
-      d3.select('app-root').select('div.mainTip')
-        .style('opacity', 1)
-        .style('display', 'inline-block')
-        .style('left', `${ee.pageX + 10}px`)
-        .style('top', `${ee.pageY + 10}px`)
-        .html(() => `<i class='fa fa-dot-circle-o dotcircle'></i> ${label}<br>${circ.axis}<br>${this.formatF(circ.value)}`);
-    } else {
-      d3.select('app-root').select('div.mainTip')
-        .style('opacity', 0)
-        .style('display', 'none');
-    }
   }
 }
