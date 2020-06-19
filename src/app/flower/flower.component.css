@@ -1,0 +1,35 @@
+text.title {
+    text-anchor: middle;
+    font-size: 40px;
+    fill: black;
+}
+
+#PetalP {
+    opacity: 0.5;
+    fill: rgb(18, 234, 18);
+    stroke: none;
+    font-size: 13px;
+}
+
+#PetalP circle {
+    opacity: 1;
+}
+
+#PetalP text {
+    opacity: 1;
+}
+
+#PetalC {
+    opacity: 0.5;
+    fill: gray;
+    stroke: none;
+    font-size: 13px;
+}
+
+#PetalC circle {
+    opacity: 1;
+}
+
+#PetalC text {
+    opacity: 1;
+}
