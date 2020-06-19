@@ -10,17 +10,11 @@ export class FlowerComponent implements OnInit {
   @Input() flowernames: string[];
   @Input() flowerfinal: number[];
   @Input() flowerinitial: number[];
-  @Input() flowerradius = 400;
+  @Input() flowerradius = 300;
   @Input() scaleExp = 0.1;
   @Input() sticks = true;
-  flower1: {
-    axis: string;
-    value: number;
-  }[];
-  flower2: {
-    axis: string;
-    value: number;
-  }[];
+  flower1: Array<AXISDATA>;
+  flower2: Array<AXISDATA>;
   neworder: number[] = [];
   Cos = Math.cos;
   Sin = Math.sin;
@@ -110,7 +104,7 @@ export class FlowerComponent implements OnInit {
       .attrTween('transform', () => t => `rotate(${t * 360})`);
   }
   petal(ee: MouseEvent, inout: boolean) {
-    const here = d3.select(ee.target as SVGPathElement);
+    const here = d3.select(ee.target as SVGGElement);
     here.style('opacity', inout ? 0.75 : 0.5);
   }
   circlab(ee: MouseEvent, circ: AXISDATA, inout: boolean, label = '') {
