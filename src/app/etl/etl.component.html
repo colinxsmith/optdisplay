@@ -8,8 +8,10 @@
 <p style="width:1000px;text-align:center" id="message"></p>
 <p style="width:1000px;height:150px;text-align:justify;overflow-x: hidden;overflow-y: scroll" id="valuesback"></p>
 <div style="width:1000px;overflow-x:scroll">
-<div style="width:1500px">
-<p id="chart"></p>
-</div>
+    <div style="width:1500px">
+        <p id="chart">
+            <app-flower [flowerradius]="300" [scaleExp]="0.2" [sticks]="useSticks" [flowerfinal]="stockWeights" [flowerinitial]="stockInitial" [flowernames]="stockNames"></app-flower>
+        </p>
+    </div>
 </div>
 <p id="stockdata"></p>

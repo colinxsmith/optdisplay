@@ -588,18 +588,19 @@ export class EtlComponent implements OnInit {
       .text(this.MESSAGE);
     d3.select(this.mainScreen.nativeElement).select('#valuesback')
       .call(d => { const here = (d.node() as HTMLParagraphElement); here.scrollTop = here.scrollHeight; });
-    const plotData: { axis: string, value: number }[][] = [];
-    const p1: { axis: string, value: number }[] = [];
-    this.stockNames.forEach((d, i) => {
-      p1.push({ axis: d, value: this.stockWeights[i] });
-    });
-    const p2: { axis: string, value: number }[] = [];
-    this.stockNames.forEach((d, i) => {
-      p2.push({ axis: d, value: this.stockInitial[i] });
-    });
-    plotData.push(p1);
-    plotData.push(p2);
-    this.flowers(plotData);
+    /*    const plotData: { axis: string, value: number }[][] = [];
+        const p1: { axis: string, value: number }[] = [];
+        this.stockNames.forEach((d, i) => {
+          p1.push({ axis: d, value: this.stockWeights[i] });
+        });
+        const p2: { axis: string, value: number }[] = [];
+        this.stockNames.forEach((d, i) => {
+          p2.push({ axis: d, value: this.stockInitial[i] });
+        });
+        plotData.push(p1);
+        plotData.push(p2);
+        this.flowers(plotData);*/
+
     d3.select(this.mainScreen.nativeElement).select('#chart')
       .call(d => {
         const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);

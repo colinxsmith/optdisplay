@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
 interface AXISDATA { axis: string; value: number; }
 @Component({
@@ -6,13 +6,14 @@ interface AXISDATA { axis: string; value: number; }
   templateUrl: './flower.component.html',
   styleUrls: ['./flower.component.css']
 })
-export class FlowerComponent implements OnInit {
+export class FlowerComponent implements OnChanges {
   @Input() flowernames: string[];
   @Input() flowerfinal: number[];
   @Input() flowerinitial: number[];
   @Input() flowerradius = 300;
   @Input() scaleExp = 0.1;
   @Input() sticks = true;
+  @Input() flowerId = 'flowerchart';
   flower1: Array<AXISDATA>;
   flower2: Array<AXISDATA>;
   neworder: number[] = [];
@@ -32,7 +33,12 @@ export class FlowerComponent implements OnInit {
     .radius((d) => this.rScale(0))
     .angle((d, i) => this.angleScale(-i));
   constructor(private element: ElementRef) { }
-  ngOnInit() {
+  ngOnChanges() {
+    this.Init();
+  }
+  Init() {
+    console.log(this.flowernames);
+    this.neworder = [];
     this.flower1 = this.flowernames.map((x, i) => {
       return { axis: x, value: this.flowerfinal[i] };
     });
@@ -59,9 +65,9 @@ export class FlowerComponent implements OnInit {
         return -1;
       }
     });
-    let interim = [], findZero = 0;
+    let interim = [], findZero = -1;
     this.neworder.forEach((x, i) => {
-      if (!findZero && (this.flower1[this.neworder[i]].value < 1e-12)) {
+      if (findZero === -1 && (this.flower1[this.neworder[i]].value < 1e-12)) {
         findZero = i;
       }
       interim.push(this.flower1[this.neworder[i]]);
@@ -72,6 +78,10 @@ export class FlowerComponent implements OnInit {
     interim.forEach((x, i) => {
       this.flower1[i] = interim[i];
     });
+    if (findZero === -1) {
+      findZero = this.neworder.length - 1;
+    }
+    findZero = Math.max(findZero, 20);
     interim = [];
     this.neworder.forEach((x, i) => {
       interim.push(this.flower2[this.neworder[i]]);
