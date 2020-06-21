@@ -14,6 +14,7 @@ export class FlowerComponent implements OnChanges {
   @Input() scaleExp = 0.1;
   @Input() sticks = true;
   @Input() flowerId = 'flowerchart';
+@Input() smallgreytitle: string;
   flower1: Array<AXISDATA>;
   flower2: Array<AXISDATA>;
   neworder: number[] = [];
