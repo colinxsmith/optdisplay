@@ -1,37 +1,37 @@
 <svg [attr.id]="flowerId" [attr.width]="2*flowerradius+flowerRim" [attr.height]="2*flowerradius+flowerRim">
     <g *ngIf="flower1&&flower1.length&&flower2&&flower2.length">
         <text class="title" [attr.x]="flowerradius+flowerRim/2" [style.font-size]="flowerradius/10+'px'"
-            [attr.y]="flowerRim/3.4">Optimised Changes to Portfolio</text>
+            [attr.y]="flowerRim/3.4">{{flowerTitle}}</text>
         <g [attr.transform]="translatehack(flowerradius+flowerRim/2,flowerradius+flowerRim/2)">
-            <g id="PetalP" [style.font-size]="flowerradius/400*15+'px'" (mouseenter)="petal($event,true)"
-                (mouseleave)="petal($event,false)">
-                <text [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim">Proposed</text>
-                <path [attr.d]="radarLine(flower1)+radarLineZ(flower1)+flowerLabel(0)"></path>
-            </g>
-            <g id="PetalC" [style.font-size]="flowerradius/400*15+'px'" (mouseenter)="petal($event,true)"
+            <g id="PetalC" [style.font-size]="flowerradius/400*20+'px'" (mouseenter)="petal($event,true)"
                 (mouseleave)="petal($event,false)">
                 <text [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim+20">Current</text>
                 <path (mouseenter)="petal($event,true)" (mouseleave)="petal($event,false)"
                     [attr.d]="radarLine(flower2)+radarLineZ(flower2)+flowerLabel(20)"></path>
             </g>
+            <g id="PetalP" [style.font-size]="flowerradius/400*20+'px'" (mouseenter)="petal($event,true)"
+                (mouseleave)="petal($event,false)">
+                <text [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim">Proposed</text>
+                <path [attr.d]="radarLine(flower1)+radarLineZ(flower1)+flowerLabel(0)"></path>
+            </g>
         </g>
         <g [attr.transform]="translatehack(flowerradius+flowerRim/2,flowerradius+flowerRim/2)">
-            <g id="PetalP" [style.font-size]="flowerradius/400*15+'px'" *ngFor="let circ of flower1;let i=index">
-                <text (mouseenter)="circlab($event,circ,true,'Proposed')" (mouseleave)="circlab($event,circ,false)"
-                    [style.text-anchor]="Sin(angleScale(i))<0.1?'end':'start'"
-                    [attr.x]="Sin(angleScale(i))*rScale(circ.value)-(Sin(angleScale(i))<0.1?7:-7)"
-                    [attr.y]="-Cos(angleScale(i))*rScale(circ.value)+3">{{circ.value>cutOff?circ.axis:""}}</text>
-                <circle (mouseenter)="circlab($event,circ,true,'Proposed')" (mouseleave)="circlab($event,circ,false)"
-                    [attr.r]="circ.value>cutOff?5:0" [attr.cx]="Sin(angleScale(i))*rScale(circ.value)"
-                    [attr.cy]="-Cos(angleScale(i))*rScale(circ.value)">
-                </circle>
-            </g>
-            <g id="PetalC" [style.font-size]="flowerradius/400*15+'px'" *ngFor="let circ of flower2;let i=index">
+            <g id="PetalC" [style.font-size]="flowerradius/400*20+'px'" *ngFor="let circ of flower2;let i=index">
                 <text (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)"
                     [style.text-anchor]="Sin(angleScale(i))<0.1?'end':'start'"
                     [attr.x]="Sin(angleScale(i))*rScale(circ.value)-(Sin(angleScale(i))<0.1?7:-7)"
                     [attr.y]="-Cos(angleScale(i))*rScale(circ.value)+3">{{circ.value>cutOff?circ.axis:""}}</text>
                 <circle (mouseenter)="circlab($event,circ,true,'Current')" (mouseleave)="circlab($event,circ,false)"
+                    [attr.r]="circ.value>cutOff?5:0" [attr.cx]="Sin(angleScale(i))*rScale(circ.value)"
+                    [attr.cy]="-Cos(angleScale(i))*rScale(circ.value)">
+                </circle>
+            </g>
+            <g id="PetalP" [style.font-size]="flowerradius/400*20+'px'" *ngFor="let circ of flower1;let i=index">
+                <text (mouseenter)="circlab($event,circ,true,'Proposed')" (mouseleave)="circlab($event,circ,false)"
+                    [style.text-anchor]="Sin(angleScale(i))<0.1?'end':'start'"
+                    [attr.x]="Sin(angleScale(i))*rScale(circ.value)-(Sin(angleScale(i))<0.1?7:-7)"
+                    [attr.y]="-Cos(angleScale(i))*rScale(circ.value)+3">{{circ.value>cutOff?circ.axis:""}}</text>
+                <circle (mouseenter)="circlab($event,circ,true,'Proposed')" (mouseleave)="circlab($event,circ,false)"
                     [attr.r]="circ.value>cutOff?5:0" [attr.cx]="Sin(angleScale(i))*rScale(circ.value)"
                     [attr.cy]="-Cos(angleScale(i))*rScale(circ.value)">
                 </circle>

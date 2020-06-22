@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import { DataService } from '../data.service';
 import * as d3 from 'd3';
 import { isString } from 'util';
@@ -6,8 +6,7 @@ import { isString } from 'util';
 @Component({
   selector: 'app-etl',
   templateUrl: './etl.component.html',
-  styleUrls: ['./etl.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./etl.component.css']
 })
 export class EtlComponent implements OnInit {
   tTip = d3.select(this.mainScreen.nativeElement).append('g').attr('class', 'tooltip');
@@ -21,16 +20,17 @@ export class EtlComponent implements OnInit {
   stockSell: number[] = [];
   tableOrder: number[] = [];
   tableOrderInverse: number[] = [];
+  flowerTitle = 'Current Portfolio';
   CVar_averse = 1;
-  Return_gamma = 0;
+  Return_gamma = 0.5;
   ETL: number;
-  RISK: number;
+  back: number;
   RETURN: number;
   MESSAGE: string;
   cols = -1;
   sendLabel = 'SEND';
   noRiskModel = true;
-  revise = 0;
+  revise = 1;
   delta = -1;
   costs = 1;
   relEtl = false;
@@ -42,6 +42,9 @@ export class EtlComponent implements OnInit {
   stockTrades = -1;
   stockMinHold = -1;
   stockMinTrade = -1;
+  colourT = d3.interpolate(d3.rgb('orange'), d3.rgb('blue'));
+  propLabels: string[];
+  propData = [];
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
@@ -249,7 +252,7 @@ export class EtlComponent implements OnInit {
       names: string, lower: number, upper: number, weights: number, alpha: number, initial: number,
       buy: number, sell: number
     }[],
-    ETL: number, RISK: number, RETURN: number, message: string, gamma: number, relEtl: boolean
+    back: number, ETL: number, RETURN: number, message: string, gamma: number, relEtl: boolean
   }) {
     console.log(DAT);
     if (DAT.port.length) {
@@ -261,12 +264,14 @@ export class EtlComponent implements OnInit {
       this.stockInitial = this.reOrderArray(DAT.port.map(d => d.initial));
       this.stockBuy = this.reOrderArray(DAT.port.map(d => d.buy));
       this.stockSell = this.reOrderArray(DAT.port.map(d => d.sell));
+      this.back = DAT.back;
       this.ETL = DAT.ETL;
-      this.RISK = DAT.RISK;
       this.RETURN = DAT.RETURN;
       this.MESSAGE = DAT.message;
       this.Return_gamma = DAT.gamma;
       this.relEtl = DAT.relEtl;
+      this.flowerTitle = !DAT.message.length ? this.flowerTitle :
+        (DAT.back !== 6 ? 'Optimal Changes to Portfolio' : 'Changes to Portfolio');
     }
     /*
     if (this.stockNames === undefined || this.stockNames.length === 0) {
@@ -314,8 +319,7 @@ export class EtlComponent implements OnInit {
     }
     this.cols = inputHeadings.length;
     const fixedTableWidth = 1000, ftCols = 3, ww = Math.max(fixedTableWidth, fixedTableWidth / 7 * (this.cols + 1)),
-      xPos = d3.scaleLinear().domain([0, this.cols + 1]).range([0, ww]),
-      colourT = d3.interpolate(d3.rgb('orange'), d3.rgb('blue'));
+      xPos = d3.scaleLinear().domain([0, this.cols + 1]).range([0, ww]);
     const hh = 31 * this.stockNames.length, yPos = d3.scaleLinear().domain([0, this.stockNames.length]).range([0, hh]);
     const tab = d3.select(this.mainScreen.nativeElement).select('#stockdata').append('div')
       .style('overflow-x', 'scroll')
@@ -327,7 +331,7 @@ export class EtlComponent implements OnInit {
       .append('text')
       .call(d => d.each((dd, i, j) => {
         d3.select(j[i]).append('tspan').attr('class', 'spacer').attr('x', xPos(i + 1)).attr('y', yPos(0.75))
-          .style('fill', `${colourT((i + 1) / this.cols)}`).text(dd);
+          .style('fill', `${this.colourT((i + 1) / this.cols)}`).text(dd);
       }));
     const fixedTableHeight = yPos(1) * 1.02 * 10;
     tab.append('div').attr('class', 'inputData')
@@ -368,7 +372,7 @@ export class EtlComponent implements OnInit {
             .attr('x', xPos(kk + 1))
             .attr('y', yPos(i + 1))
             .attr('class', 'spacer')
-            .style('fill', `${colourT(t)}`)
+            .style('fill', `${this.colourT(t)}`)
             .text(this.tableFormat(out));
         }
       }));
@@ -378,7 +382,7 @@ export class EtlComponent implements OnInit {
       .style('width', `${fixedTableWidth}px`)
       .style('height', `${yPos(1) * scalarParams.length / 2}px`)
       .attr('class', 'spacer')
-      .style('color', colourT(0))
+      .style('color', this.colourT(0))
       .selectAll('iFields').data(scalarParams).enter().append('div')
       .style('text-align', 'end')
       .style('background-color', 'black')
@@ -389,11 +393,11 @@ export class EtlComponent implements OnInit {
       .styleTween('float', () => (t) => t < 0.95 ? 'right' : 'left')
       .style('width', `${fixedTableWidth / ftCols}px`);
     inputFields.append('text') // actually uses width:auto;float:right in the css
-      .style('color', colourT(1))
+      .style('color', this.colourT(1))
       .text(d => d)
       .append('input')
       .attr('type', (d, i) => i < 3 ? 'checkbox' : '')
-      .style('color', (d, i) => i < 3 ? 'auto' : colourT(0.5))
+      .style('color', (d, i) => i < 3 ? 'auto' : this.colourT(0.5))
       .style('width', (d, i) => i < 3 ? 'auto' : `inherit`)
       .style('background-color', (d, i) => i < 3 ? 'auto' : 'chartreuse')
       .on('change', (d, i, j) => {
@@ -466,13 +470,13 @@ export class EtlComponent implements OnInit {
     const minTrade = t1.holding;
     const basketHolding = `${h1.number}`;
     const basketTrade = `${t1.number}`;
-    const propLabels = ['ETL', 'RISK', 'RETURN', 'Non-zero weights', 'Min. holding'];
-    const propData = [this.ETL, this.RISK, this.RETURN, basketHolding, minHolding];
+    this.propLabels = ['ETL', 'RETURN', 'Non-zero weights', 'Min. holding'];
+    this.propData = [this.ETL, this.RETURN, basketHolding, minHolding];
     if (this.stockInitial.length) {
-      propLabels.push('Non-zero trades');
-      propData.push(basketTrade);
-      propLabels.push('Min. trade');
-      propData.push(minTrade);
+      this.propLabels.push('Non-zero trades');
+      this.propData.push(basketTrade);
+      this.propLabels.push('Min. trade');
+      this.propData.push(minTrade);
     }
     let turnoverAchieved = 0, transactionCost = 0;
     if (this.revise) {
@@ -480,23 +484,23 @@ export class EtlComponent implements OnInit {
         turnoverAchieved += Math.abs(d - this.stockInitial[i]);
       });
       turnoverAchieved *= 0.5;
-      propLabels.push('TURNOVER');
-      propData.push(turnoverAchieved);
+      this.propLabels.push('TURNOVER');
+      this.propData.push(turnoverAchieved);
     }
     if (this.stockInitial.length && this.stockBuy.length && this.stockSell.length) {
       this.stockWeights.forEach((d, i) => {
         transactionCost += (d - this.stockInitial[i]) > 0 ? (d - this.stockInitial[i]) * this.stockBuy[i] :
           -(d - this.stockInitial[i]) * this.stockSell[i];
       });
-      propLabels.push('COST');
-      propData.push(transactionCost);
+      this.propLabels.push('COST');
+      this.propData.push(transactionCost);
     }
-    d3.select(this.mainScreen.nativeElement).select('#valuesback').append('div').attr('class', 'spacer')
-      .selectAll('.properties').data(propData).enter()
-      .append('text')
-      .style('color', (d, i) => `${colourT(i / (propLabels.length - 1))}`)
-      .text((d, i) => `${propLabels[i]}: ${this.etlFormat(d)}  `)
-      ;
+    /*   d3.select(this.mainScreen.nativeElement).select('#valuesback').append('div').attr('class', 'spacer')
+         .selectAll('.properties').data(propData).enter()
+         .append('text')
+         .style('color', (d, i) => `${this.colourT(i / (this.propLabels.length - 1))}`)
+         .text((d, i) => `${this.propLabels[i]}: ${this.etlFormat(d)}  `)
+         ;*/
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
       .on('click', (d, i, j) => {
         const id = i % this.cols;
@@ -542,7 +546,7 @@ export class EtlComponent implements OnInit {
             });
           }
           d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
-          d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
+          //        d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
           for (let ii = 0; ii < this.tableOrder.length; ++ii) {
             this.tableOrderInverse[this.tableOrder[ii]] = ii;
           }
@@ -583,9 +587,9 @@ export class EtlComponent implements OnInit {
           field.remove();
         });
       });
-    d3.select(this.mainScreen.nativeElement).select('#message').append('text')
+    /*d3.select(this.mainScreen.nativeElement).select('#message').append('text')
       .style('color', 'darkgreen')
-      .text(this.MESSAGE);
+      .text(this.MESSAGE);*/
     d3.select(this.mainScreen.nativeElement).select('#valuesback')
       .call(d => { const here = (d.node() as HTMLParagraphElement); here.scrollTop = here.scrollHeight; });
     /*    const plotData: { axis: string, value: number }[][] = [];
@@ -627,7 +631,7 @@ export class EtlComponent implements OnInit {
   }
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
-    d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
+    //  d3.select(this.mainScreen.nativeElement).select('#message').selectAll('text').remove();
     this.dataService.sendData('etl', {
       names: this.stockNames, lower: this.stockLower, upper: this.stockUpper, alpha: this.stockAlpha, initial: this.stockInitial,
       buy: this.stockBuy, sell: this.stockSell,
@@ -641,7 +645,7 @@ export class EtlComponent implements OnInit {
             names: string, lower: number, upper: number, weights: number, alpha: number, initial: number,
             buy: number, sell: number
           }[],
-          ETL: number, RISK: number, RETURN: number, message: string, gamma: number, relEtl: boolean
+          back: number, ETL: number, RETURN: number, message: string, gamma: number, relEtl: boolean
         }) => {
           this.tableOrder = Array(DAT.port.length);
           this.tableOrderInverse = Array(DAT.port.length);
