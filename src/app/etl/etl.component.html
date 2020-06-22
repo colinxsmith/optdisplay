@@ -5,11 +5,11 @@
 <div id="sticks" style="color:blue">STICKS<input type="checkbox" (click)="stickFlowers()"></div>
 <div id="message" style="width:1000px;text-align:start;color: darkgreen">Status: {{MESSAGE}}</div>
 <div style="display:flex">
-    <div smallgreytitle="Portfolio Properties" style="--back:lightblue">
+    <div smallgreytitle="Portfolio Properties" style="--back:blue">
         <div class="spacer" style="font-size:30px">Properties</div>
         <div class="spacer" *ngFor="let prop of propData;let i=index" [style.color]="colourT(i/(propLabels.length-1))">{{propLabels[i]}}<br>{{etlFormat(prop)}}
         </div>
     </div>
-    <app-flower style="--back:lightblue" [flowerTitle]="flowerTitle" smallgreytitle="Portfolio Comparison" [flowerradius]="300" [scaleExp]="0.2" [sticks]="useSticks" [flowerfinal]="stockWeights" [flowerinitial]="stockInitial" [flowernames]="stockNames"></app-flower>
+    <app-flower style="--back:blue" [flowerTitle]="flowerTitle" smallgreytitle="Portfolio Comparison" [flowerradius]="300" [scaleExp]="0.2" [sticks]="useSticks" [flowerfinal]="stockWeights" [flowerinitial]="stockInitial" [flowernames]="stockNames"></app-flower>
 </div>
 <p id="stockdata"></p>

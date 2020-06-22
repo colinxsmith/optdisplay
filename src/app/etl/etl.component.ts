@@ -28,7 +28,7 @@ export class EtlComponent implements OnInit {
   RETURN: number;
   MESSAGE: string;
   cols = -1;
-  sendLabel = 'SEND';
+  sendLabel = 'OPTIMISE';
   noRiskModel = true;
   revise = 1;
   delta = -1;
