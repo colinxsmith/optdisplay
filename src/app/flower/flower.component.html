@@ -7,12 +7,12 @@
                 (mouseleave)="petal($event,false)">
                 <text [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim+20">Current</text>
                 <path (mouseenter)="petal($event,true)" (mouseleave)="petal($event,false)"
-                    [attr.d]="radarLine(flower2)+radarLineZ(flower2)+flowerLabel(20)"></path>
+                    [attr.d]="radarLine(flower2)+flowerLabel(20)"></path>
             </g>
             <g id="PetalP" [style.font-size]="flowerradius/400*20+'px'" (mouseenter)="petal($event,true)"
                 (mouseleave)="petal($event,false)">
                 <text [attr.x]="-flowerradius+25" [attr.y]="-flowerradius+flowerRim">Proposed</text>
-                <path [attr.d]="radarLine(flower1)+radarLineZ(flower1)+flowerLabel(0)"></path>
+                <path [attr.d]="radarLine(flower1)+flowerLabel(0)"></path>
             </g>
         </g>
         <g [attr.transform]="translatehack(flowerradius+flowerRim/2,flowerradius+flowerRim/2)">
