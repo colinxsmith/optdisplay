@@ -16,6 +16,7 @@ export class FlowerComponent implements OnChanges {
   @Input() sticks = true;
   @Input() flowerId = 'flowerchart';
   @Input() flowerTitle = 'Optimised Portfolio Changes';
+  negativeValues = false;
   flower1: Array<AXISDATA>;
   flower2: Array<AXISDATA>;
   neworder: number[] = [];
@@ -69,7 +70,7 @@ export class FlowerComponent implements OnChanges {
     });
     let interim = [], findZero = -1;
     this.neworder.forEach((x, i) => {
-      if (findZero === -1 && (this.flower1[this.neworder[i]].value < 1e-12)) {
+      if (findZero === -1 && (Math.abs(this.flower1[this.neworder[i]].value) < 1e-12)) {
         findZero = i;
       }
       interim.push(this.flower1[this.neworder[i]]);
@@ -83,7 +84,7 @@ export class FlowerComponent implements OnChanges {
     if (findZero === -1) {
       findZero = this.neworder.length - 1;
     }
-    findZero = Math.max(findZero, 20);
+    findZero = Math.max(findZero, 4);
     interim = [];
     this.neworder.forEach((x, i) => {
       interim.push(this.flower2[this.neworder[i]]);
@@ -98,6 +99,7 @@ export class FlowerComponent implements OnChanges {
       findZero *= 2;
     }
     this.angleTop = findZero;
+    this.negativeValues = this.rScale.domain()[0] < 0;
     this.angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
     setTimeout(() => {
       this.update();
