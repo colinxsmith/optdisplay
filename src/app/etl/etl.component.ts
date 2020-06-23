@@ -26,6 +26,7 @@ export class EtlComponent implements OnInit {
   ETL: number;
   back: number;
   scaleExp = 0.2;
+  maxZ = 4;
   scale = 1e4;
   RETURN: number;
   MESSAGE: string;
@@ -557,7 +558,6 @@ export class EtlComponent implements OnInit {
         field.node().value = here.textContent;
         field.on('change', (dd, ii, jj) => {
           const val = +jj[ii].value;
-          console.log(val, this.stockNames[this.tableOrder[stock - 1]]);
           if (id === 1) {
             this.stockLower[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;
@@ -583,8 +583,8 @@ export class EtlComponent implements OnInit {
     /*d3.select(this.mainScreen.nativeElement).select('#message').append('text')
       .style('color', 'darkgreen')
       .text(this.MESSAGE);*/
-    d3.select(this.mainScreen.nativeElement).select('#valuesback')
-      .call(d => { const here = (d.node() as HTMLParagraphElement); here.scrollTop = here.scrollHeight; });
+    /*    d3.select(this.mainScreen.nativeElement).select('#valuesback')
+          .call(d => { const here = (d.node() as HTMLParagraphElement); here.scrollTop = here.scrollHeight; });*/
     /*    const plotData: { axis: string, value: number }[][] = [];
         const p1: { axis: string, value: number }[] = [];
         this.stockNames.forEach((d, i) => {
@@ -598,17 +598,17 @@ export class EtlComponent implements OnInit {
         plotData.push(p2);
         this.flowers(plotData);*/
 
-    d3.select(this.mainScreen.nativeElement).select('#chart')
-      .call(d => {
-        const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
-        // This will allow us to scroll left for ever
-        ((d.node() as HTMLDivElement).parentNode as HTMLDivElement)
-          .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length)}px`);
-        // This will scroll to the start of the second to last figure so that the last 2 are always seen
-        if (((d.node() as HTMLDivElement).children.length) > 2) {
-          here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
-        }
-      });
+    /*    d3.select(this.mainScreen.nativeElement).select('#chart')
+          .call(d => {
+            const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
+            // This will allow us to scroll left for ever
+            ((d.node() as HTMLDivElement).parentNode as HTMLDivElement)
+              .setAttribute('style', `width:${500 * ((d.node() as HTMLDivElement).children.length)}px`);
+            // This will scroll to the start of the second to last figure so that the last 2 are always seen
+            if (((d.node() as HTMLDivElement).children.length) > 2) {
+              here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
+            }
+          });*/
     this.stockNames = this.reOrderArray(this.stockNames, this.tableOrderInverse);
     this.stockLower = this.reOrderArray(this.stockLower, this.tableOrderInverse);
     this.stockUpper = this.reOrderArray(this.stockUpper, this.tableOrderInverse);
@@ -649,6 +649,11 @@ export class EtlComponent implements OnInit {
   newscale(b: Event) {
     const back = b.target as HTMLInputElement;
     this.scaleExp = +back.value / this.scale;
+    this.anim = false;
+  }
+  newmaxZ(b: Event) {
+    const back = b.target as HTMLInputElement;
+    this.maxZ = +back.value;
     this.anim = false;
   }
 }
