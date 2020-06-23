@@ -25,6 +25,8 @@ export class EtlComponent implements OnInit {
   Return_gamma = 0.5;
   ETL: number;
   back: number;
+  scaleExp = 0.1;
+  scale = 1e4;
   RETURN: number;
   MESSAGE: string;
   cols = -1;
@@ -38,6 +40,7 @@ export class EtlComponent implements OnInit {
   CVar_constraint = 0;
   CVarMax = 0;
   CVarMin = 0;
+  anim = true;
   stockBasket = -1;
   stockTrades = -1;
   stockMinHold = -1;
@@ -53,28 +56,14 @@ export class EtlComponent implements OnInit {
   constructor(private dataService: DataService, private mainScreen: ElementRef) { }
 
   ngOnInit() {
+    this.anim = true;
     d3.select(this.mainScreen.nativeElement).attr('greentitle', 'ETL Optimisation');
     (d3.select(this.mainScreen.nativeElement).select('#sticks').select('input').node() as HTMLInputElement).checked = this.useSticks;
     this.chooser();
   }
-  clear() {
-    d3.select('#valuesback').selectAll('div').remove();
-  }
   stickFlowers() {
     this.useSticks = (d3.select(this.mainScreen.nativeElement).select('#sticks').select('input').node() as HTMLInputElement).checked;
-  }
-  clearChartN(N = 0) {
-    d3.select(d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg').nodes()[N] as SVGElement).remove();
-    d3.select(this.mainScreen.nativeElement).select('#chart')
-      .call(d => {
-        const here = (((d.node() as HTMLDivElement).parentNode as HTMLDivElement).parentNode as HTMLParagraphElement);
-        //      console.log(here.scrollLeft, ((d.node() as HTMLDivElement).children.length), here.scrollWidth);
-        if (((d.node() as HTMLDivElement).children.length) > 1) {
-          here.scrollLeft = 500 * ((d.node() as HTMLDivElement).children.length - 2);
-          ((d.node() as HTMLDivElement).parentNode as HTMLDivElement).setAttribute('style', `width:${(d.node() as HTMLDivElement)
-            .children.length * 500}px`);
-        }
-      });
+    this.anim = true;
   }
   sendData() {
     this.chooser();
@@ -272,6 +261,10 @@ export class EtlComponent implements OnInit {
       this.relEtl = DAT.relEtl;
       this.flowerTitle = !DAT.message.length ? this.flowerTitle :
         (DAT.back !== 6 ? 'Optimal Changes to Portfolio' : 'Changes to Portfolio');
+      if (!DAT.message.length) {
+        this.CVarMax = DAT.ETL;
+        this.CVarMin = DAT.ETL;
+      }
     }
     /*
     if (this.stockNames === undefined || this.stockNames.length === 0) {
@@ -624,10 +617,6 @@ export class EtlComponent implements OnInit {
     this.stockInitial = this.reOrderArray(this.stockInitial, this.tableOrderInverse);
     this.stockBuy = this.reOrderArray(this.stockBuy, this.tableOrderInverse);
     this.stockSell = this.reOrderArray(this.stockSell, this.tableOrderInverse);
-    d3.select(this.mainScreen.nativeElement).select('#chart').selectAll('svg')
-      .on('click', (d, i) => {
-        this.clearChartN(i);
-      });
   }
   chooser() {
     d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('div').remove();
@@ -647,6 +636,7 @@ export class EtlComponent implements OnInit {
           }[],
           back: number, ETL: number, RETURN: number, message: string, gamma: number, relEtl: boolean
         }) => {
+          this.anim = true;
           this.tableOrder = Array(DAT.port.length);
           this.tableOrderInverse = Array(DAT.port.length);
           for (let i = 0; i < this.tableOrder.length; ++i) {
@@ -655,5 +645,10 @@ export class EtlComponent implements OnInit {
           }
           this.myDisplay(DAT);
         });
+  }
+  newscale(b: Event) {
+    const back = b.target as HTMLInputElement;
+    this.scaleExp = +back.value / this.scale;
+    this.anim = false;
   }
 }

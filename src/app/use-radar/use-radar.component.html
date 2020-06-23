@@ -1,4 +1,5 @@
-<div >
-        <input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale"  (input)="newscale($event,false)">
-    </div>
-    <app-radar [attr.title]="'Scale is '+scl" [smallgreytitle]="'Using radar plot'" [labelLength]="15" [scale]="scl"></app-radar>
+<div>
+    <input type="range" min="0" [attr.max]="scale" [attr.value]="scl*scale" (input)="newscale($event,false)">
+</div>
+<app-radar [attr.title]="'Scale is '+scl" [smallgreytitle]="'Using radar plot'" [labelLength]="15" [scale]="scl">
+</app-radar>

@@ -12,6 +12,7 @@ export class FlowerComponent implements OnChanges {
   @Input() flowerinitial: number[];
   @Input() flowerradius = 300;
   @Input() scaleExp = 0.1;
+  @Input() animate = true;
   @Input() sticks = true;
   @Input() flowerId = 'flowerchart';
   @Input() flowerTitle = 'Optimised Portfolio Changes';
@@ -107,12 +108,14 @@ export class FlowerComponent implements OnChanges {
   angleScale = (a: number) => this.angleScaleBase(a % this.angleTop);
   flowerLabel = (y1: number, x1 = -this.flowerradius, s1 = 20) => `M${x1},${y1 - this.flowerradius + this.flowerRim - s1 * 0.75}l0,${s1}l${s1},0l0,-${s1}z`;
   update() {
-    d3.select(this.element.nativeElement).selectAll('#PetalC')
-      .transition().duration(3000).ease(d3.easeBounce)
-      .attrTween('transform', () => t => `rotate(${-t * 360})`);
-    d3.select(this.element.nativeElement).selectAll('#PetalP')
-      .transition().duration(3000).ease(d3.easeBounce)
-      .attrTween('transform', () => t => `rotate(${t * 360})`);
+    if (this.animate) {
+      d3.select(this.element.nativeElement).selectAll('#PetalC')
+        .transition().duration(3000).ease(d3.easeBounce)
+        .attrTween('transform', () => t => `rotate(${-t * 360})`);
+      d3.select(this.element.nativeElement).selectAll('#PetalP')
+        .transition().duration(3000).ease(d3.easeBounce)
+        .attrTween('transform', () => t => `rotate(${t * 360})`);
+    }
   }
   petal(ee: MouseEvent, inout: boolean) {
     const here = d3.select(ee.target as SVGGElement);
