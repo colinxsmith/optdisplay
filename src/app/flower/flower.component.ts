@@ -83,7 +83,7 @@ export class FlowerComponent implements OnChanges {
     if (findZero === -1) {
       findZero = this.neworder.length - 1;
     }
-    findZero = Math.max(findZero, 4);
+    findZero = Math.max(findZero, 10);
     interim = [];
     this.neworder.forEach((x, i) => {
       interim.push(this.flower2[this.neworder[i]]);
