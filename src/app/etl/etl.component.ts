@@ -25,7 +25,7 @@ export class EtlComponent implements OnInit {
   Return_gamma = 0.5;
   ETL: number;
   back: number;
-  scaleExp = 0.1;
+  scaleExp = 0.2;
   scale = 1e4;
   RETURN: number;
   MESSAGE: string;
