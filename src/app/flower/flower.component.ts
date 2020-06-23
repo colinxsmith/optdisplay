@@ -16,6 +16,7 @@ export class FlowerComponent implements OnChanges {
   @Input() sticks = true;
   @Input() flowerId = 'flowerchart';
   @Input() flowerTitle = 'Optimised Portfolio Changes';
+  @Input() maxFindZero = -1;
   negativeValues = false;
   flower1: Array<AXISDATA>;
   flower2: Array<AXISDATA>;
@@ -83,7 +84,8 @@ export class FlowerComponent implements OnChanges {
     if (findZero === -1) {
       findZero = this.neworder.length - 1;
     }
-    findZero = Math.max(findZero, 10);
+    findZero = Math.max(findZero, this.maxFindZero);
+    console.log(this.maxFindZero, findZero);
     interim = [];
     this.neworder.forEach((x, i) => {
       interim.push(this.flower2[this.neworder[i]]);
