@@ -40,7 +40,6 @@ export class FlowerComponent implements OnChanges {
     this.Init();
   }
   Init() {
-    console.log(this.flowernames);
     this.neworder = [];
     this.flower1 = this.flowernames.map((x, i) => {
       return { axis: x, value: this.flowerfinal[i] };
@@ -100,6 +99,7 @@ export class FlowerComponent implements OnChanges {
     }
     this.angleTop = findZero;
     this.negativeValues = this.rScale.domain()[0] < 0;
+    console.log(this.negativeValues);
     this.angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
     setTimeout(() => {
       this.update();
