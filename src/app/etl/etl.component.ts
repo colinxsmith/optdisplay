@@ -50,6 +50,7 @@ export class EtlComponent implements OnInit {
   propLabels: string[];
   propData = [];
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
+  scaleFormat = (i: number) => d3.format('0.2f')(i);
   tableFormat = (i: number | string) =>
     isString(i as string) ? i as string : d3.format('0.8f')(i as number)
   etlFormat = (i: number | string) =>
@@ -266,6 +267,7 @@ export class EtlComponent implements OnInit {
         this.CVarMax = DAT.ETL;
         this.CVarMin = DAT.ETL;
       }
+      this.maxZ = this.stockWeights.length;
     }
     /*
     if (this.stockNames === undefined || this.stockNames.length === 0) {

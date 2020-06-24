@@ -3,7 +3,7 @@
 <button style="color:inherit" (click)="zeroInitial()">Zero Initial</button>
 <button style="color:inherit" (click)="negateAlpha()">Negate Alpha</button>
 <div style="color:rgb(18, 234, 18)">
-    <input type="range" min="0" [attr.max]="scale" [attr.value]="scaleExp*scale" (input)="newscale($event)">Flower Scale {{scaleExp}}
+    <input type="range" min="1e-8" [attr.max]="scale" [attr.value]="scaleExp*scale" (input)="newscale($event)">Flower Scale {{scaleFormat(scaleExp)}}
 </div>
 <div style="color:rgb(18, 234, 18)">
     <input type="range" min="0" [attr.max]="stockWeights.length-1" [attr.value]="maxZ" (input)="newmaxZ($event)">Number of Rays {{maxZ}}
