@@ -69,7 +69,7 @@ export class DartboardComponent implements OnChanges {
       ;
     this.picdata.forEach(d => {
       this.maxdepth = Math.max(d.depth, this.maxdepth);
-      this.driller = this.maxdepth
+      this.driller = this.maxdepth;
     });
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
