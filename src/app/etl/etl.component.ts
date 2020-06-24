@@ -27,6 +27,7 @@ export class EtlComponent implements OnInit {
   back: number;
   scaleExp = 0.2;
   maxZ = 4;
+  minRangeMaxZ = 0;
   scale = 1e4;
   RETURN: number;
   MESSAGE: string;
@@ -267,7 +268,7 @@ export class EtlComponent implements OnInit {
         this.CVarMax = DAT.ETL;
         this.CVarMin = DAT.ETL;
       }
-      this.maxZ = this.stockWeights.length;
+      this.minRangeMaxZ = this.maxZ = this.stockWeights.length;
     }
     /*
     if (this.stockNames === undefined || this.stockNames.length === 0) {
@@ -464,6 +465,7 @@ export class EtlComponent implements OnInit {
     const t1 = this.basket(this.stockWeights, this.stockInitial);
     const minHolding = h1.holding;
     const minTrade = t1.holding;
+    this.minRangeMaxZ = Math.max(h1.number > 0 ? h1.number : 0, t1.number > 0 ? t1.number : 0);
     const basketHolding = `${h1.number}`;
     const basketTrade = `${t1.number}`;
     this.propLabels = ['ETL', 'RETURN', 'Non-zero weights', 'Min. holding'];
