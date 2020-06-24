@@ -54,7 +54,7 @@ export class FlowerComponent implements OnChanges {
     this.rScale = d3.scalePow()
       .exponent(this.scaleExp)
       .domain([
-        Math.max(d3.min(this.flower1.map(x => x.value)),
+        Math.min(0, d3.min(this.flower1.map(x => x.value)),
           d3.min(this.flower2.map(x => x.value))),
         Math.max(d3.max(this.flower1.map(x => x.value)),
           d3.max(this.flower2.map(x => x.value)))
