@@ -6,7 +6,7 @@
     <input type="range" min="1e-8" [attr.max]="scale" [attr.value]="scaleExp*scale" (input)="newscale($event)">Flower Scale {{scaleFormat(scaleExp)}}
 </div>
 <div style="color:rgb(18, 234, 18)">
-    <input type="range" [attr.min]="minRangeMaxZ" [attr.max]="stockWeights.length" [attr.value]="maxZ" (input)="newmaxZ($event)">Number of Rays {{maxZ}}
+    <input type="range" [attr.min]="minRangeMaxZ" [attr.max]="maxNonZero" [attr.value]="maxZ" (input)="newmaxZ($event)">Number of Rays {{maxZ}}
 </div>
 <div id="sticks" style="color:blue">STICKS<input type="checkbox" (click)="stickFlowers()"></div>
 <div id="message" style="width:1000px;text-align:start;color: darkgreen">Status: {{MESSAGE}}</div>
