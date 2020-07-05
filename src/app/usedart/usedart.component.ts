@@ -909,8 +909,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         .style('--back', 'rgb(183, 119, 23)');
       d3.select(this.element.nativeElement).selectAll('div')
         .style('--back', 'rgb(183, 119, 23)');
-      d3.select(this.element.nativeElement).selectAll('app-flower')
-        .style('--back', 'lightgreen');
     });
   }
   processData(rawData: string, reverse = false) {

@@ -33,3 +33,7 @@ text.title {
 #PetalC text {
     opacity: 1;
 }
+/deep/ .dotcircle {
+    color: rgb(238, 91, 152);
+    background-image: linear-gradient(to bottom right, blue, cyan);
+}

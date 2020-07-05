@@ -12,8 +12,12 @@ export class FlowerComponent implements OnChanges {
   @Input() flowerinitial: number[];
   @Input() flowerradius = 300;
   @Input() scaleExp = 0.1;
+  @Input() animate = true;
   @Input() sticks = true;
   @Input() flowerId = 'flowerchart';
+  @Input() flowerTitle = 'Optimised Portfolio Changes';
+  @Input() maxFindZero = -1;
+  negativeValues = false;
   flower1: Array<AXISDATA>;
   flower2: Array<AXISDATA>;
   neworder: number[] = [];
@@ -37,7 +41,6 @@ export class FlowerComponent implements OnChanges {
     this.Init();
   }
   Init() {
-    console.log(this.flowernames);
     this.neworder = [];
     this.flower1 = this.flowernames.map((x, i) => {
       return { axis: x, value: this.flowerfinal[i] };
@@ -51,7 +54,7 @@ export class FlowerComponent implements OnChanges {
     this.rScale = d3.scalePow()
       .exponent(this.scaleExp)
       .domain([
-        Math.max(d3.min(this.flower1.map(x => x.value)),
+        Math.min(0, d3.min(this.flower1.map(x => x.value)),
           d3.min(this.flower2.map(x => x.value))),
         Math.max(d3.max(this.flower1.map(x => x.value)),
           d3.max(this.flower2.map(x => x.value)))
@@ -67,7 +70,7 @@ export class FlowerComponent implements OnChanges {
     });
     let interim = [], findZero = -1;
     this.neworder.forEach((x, i) => {
-      if (findZero === -1 && (this.flower1[this.neworder[i]].value < 1e-12)) {
+      if (findZero === -1 && (Math.abs(this.flower1[this.neworder[i]].value) < 1e-12)) {
         findZero = i;
       }
       interim.push(this.flower1[this.neworder[i]]);
@@ -81,7 +84,8 @@ export class FlowerComponent implements OnChanges {
     if (findZero === -1) {
       findZero = this.neworder.length - 1;
     }
-    findZero = Math.max(findZero, 20);
+    findZero = Math.max(findZero, this.maxFindZero);
+    console.log(this.maxFindZero, findZero);
     interim = [];
     this.neworder.forEach((x, i) => {
       interim.push(this.flower2[this.neworder[i]]);
@@ -96,6 +100,8 @@ export class FlowerComponent implements OnChanges {
       findZero *= 2;
     }
     this.angleTop = findZero;
+    this.negativeValues = this.rScale.domain()[0] < 0;
+    console.log(this.negativeValues);
     this.angleScaleBase = d3.scaleLinear().domain([0, this.angleTop - 1]).range([0, Math.PI * 2]);
     setTimeout(() => {
       this.update();
@@ -106,12 +112,14 @@ export class FlowerComponent implements OnChanges {
   angleScale = (a: number) => this.angleScaleBase(a % this.angleTop);
   flowerLabel = (y1: number, x1 = -this.flowerradius, s1 = 20) => `M${x1},${y1 - this.flowerradius + this.flowerRim - s1 * 0.75}l0,${s1}l${s1},0l0,-${s1}z`;
   update() {
-    d3.select(this.element.nativeElement).selectAll('#PetalC')
-      .transition().duration(3000).ease(d3.easeBounce)
-      .attrTween('transform', () => t => `rotate(${-t * 360})`);
-    d3.select(this.element.nativeElement).selectAll('#PetalP')
-      .transition().duration(3000).ease(d3.easeBounce)
-      .attrTween('transform', () => t => `rotate(${t * 360})`);
+    if (this.animate) {
+      d3.select(this.element.nativeElement).selectAll('#PetalC')
+        .transition().duration(3000).ease(d3.easeBounce)
+        .attrTween('transform', () => t => `rotate(${-t * 360})`);
+      d3.select(this.element.nativeElement).selectAll('#PetalP')
+        .transition().duration(3000).ease(d3.easeBounce)
+        .attrTween('transform', () => t => `rotate(${t * 360})`);
+    }
   }
   petal(ee: MouseEvent, inout: boolean) {
     const here = d3.select(ee.target as SVGGElement);
