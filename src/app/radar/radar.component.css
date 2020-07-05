@@ -1,6 +1,7 @@
 :host {
     font-size: 30px;
-    font-family: Calibri, sans-serif;
+    font-family: Open Sans, sans-serif;
+    font-family: Open Sans, sans-serif;
 }
 
 circle.gridCircle {
@@ -75,6 +76,7 @@ text.mouseover {
     text-anchor: middle;
     font-weight: bold;
     font-size: 20px;
-    font-family: Calibri, sans-serif;
+    font-family: Open Sans, sans-serif;
+    font-family: Open Sans, sans-serif;
     opacity: 0;
 }

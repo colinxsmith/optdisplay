@@ -10,7 +10,8 @@ div.mainTip {
     bottom: inherit;
     box-shadow: 1px 1px 3px #222222;
     font-weight: bold;
-    font-family: Calibri, sans-serif;
+    font-family: Open Sans, sans-serif;
+    font-family: Open Sans, sans-serif;
     pointer-events: none;
     overflow: auto;
     z-index: 3;
