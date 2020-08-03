@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
-
+interface HIERACH { children: HIERACH[]; name: string; index: number; size: number; }
 @Component({
   selector: 'app-dartboard',
   templateUrl: './dartboard.component.html',
@@ -33,12 +33,7 @@ export class DartboardComponent implements OnChanges {
   formatNumber = d3.format('0.2f');
   x = d3.scaleLinear().range([0, 2 * Math.PI]);
   y = d3.scaleLinear().range([0, this.radius]);
-  @Input() picdata: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
+  @Input() picdata: d3.HierarchyRectangularNode<HIERACH>[];
   constructor(private element: ElementRef) { }
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
   abshack = (q: number) => Math.abs(q);
@@ -72,12 +67,7 @@ export class DartboardComponent implements OnChanges {
       this.driller = this.maxdepth;
     });
   }
-  mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>, inout: true) {
+  mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<HIERACH>, inout: true) {
     if (inout) {
       d3.select('app-root').select('div.mainTip')
         .style('opacity', 1)
@@ -93,12 +83,7 @@ export class DartboardComponent implements OnChanges {
         .style('display', 'none');
     }
   }
-  clicker(event: MouseEvent, d: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>) {
+  clicker(event: MouseEvent, d: d3.HierarchyRectangularNode<HIERACH>) {
     this.driller = d.height;
     console.log(this.driller);
     this.x.domain([d.x0, d.x1]);
@@ -107,12 +92,7 @@ export class DartboardComponent implements OnChanges {
       .range([d.y0 ? 10 : 0, this.radius]);
     this.update();
   }
-  arcCentroid(d: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>) {
+  arcCentroid(d: d3.HierarchyRectangularNode<HIERACH>) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
     return ARC.centroid({
       innerRadius: Math.max(0, this.y(d.y0) + 1),
@@ -122,12 +102,7 @@ export class DartboardComponent implements OnChanges {
       padAngle: 2e-2 / (2 * Math.PI)
     });
   }
-  arcPath(d: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>, t = 1) {
+  arcPath(d: d3.HierarchyRectangularNode<HIERACH>, t = 1) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
     return ARC({
       innerRadius: Math.max(0, this.y(d.y0) + 1),

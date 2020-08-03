@@ -1,5 +1,7 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
+interface BASICDATA { gac: string; tac: string; sac: string; name: string; weight: number; }
+interface HIERACH { children: HIERACH[]; name: string; index: number; size: number; }
 
 @Component({
   selector: 'app-usedart',
@@ -21,36 +23,11 @@ export class UsedartComponent implements OnInit {
     .interpolate(d3.interpolateRgb.gamma(0.75))
     .range([d3.rgb('orange'), d3.rgb(50, 144, 255)])
     ;
-  picdata1: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
-  picdata2: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
-  picdata3: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
-  picdata4: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
-  picdata5: d3.HierarchyRectangularNode<{
-    children: any[];
-    name: string;
-    index: number;
-    size: number;
-  }>[];
+  picdata1: d3.HierarchyRectangularNode<HIERACH>[];
+  picdata2: d3.HierarchyRectangularNode<HIERACH>[];
+  picdata3: d3.HierarchyRectangularNode<HIERACH>[];
+  picdata4: d3.HierarchyRectangularNode<HIERACH>[];
+  picdata5: d3.HierarchyRectangularNode<HIERACH>[];
   esgColour = {
     0: d3.rgb(255, 59, 48),
     1: d3.rgb(255, 149, 0),
@@ -912,7 +889,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     });
   }
   processData(rawData: string, reverse = false) {
-    const data = [];
+    const data: BASICDATA[] = [];
     let gac = '';
     let tac = '';
     let sac = '';
@@ -926,7 +903,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       if (i === 0) {
         items = line.split(',');
       } else {
-        const obj = {};
+        const obj: BASICDATA = { gac: undefined, tac: undefined, sac: undefined, weight: undefined, name: undefined };
         const here = line.split(',');
         if (here.length === items.length) {
           for (let j = 0; j < items.length; ++j) {
@@ -948,33 +925,20 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       const bg = '' + b.gac as string;
       return (ag + at).localeCompare(bg + bt);
     });
-    const datas = {
+    const datas: HIERACH = {
       children: [],
       name: '',
       index: 0,
       size: 0
     };
-    let dtac: {
-      children: any[];
-      name: string;
-      index: number;
-      size: number;
-    }, dsac: {
-      children: any[];
-      name: string;
-      index: number;
-      size: number;
-    }, dgac: {
-      children: any[];
-      name: string;
-      index: number;
-      size: number;
-    }, ig = 0, it = 0, is = 0, iii = 1;
+    let dtac: HIERACH, dsac: HIERACH, dgac: HIERACH, ig = 0, it = 0, is = 0, iii = 1;
     data.forEach(d => {
       if (d.gac !== undefined && gac !== d.gac) {
         datas.children.push({
           children: [],
           name: d.gac,
+          size: undefined,
+          index: undefined
         });
         dgac = datas.children[ig];
         ig++;
@@ -986,6 +950,8 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         pushHere.push({
           children: [],
           name: d.tac,
+          size: undefined,
+          index: undefined
         });
         dtac = dgac !== undefined ? dgac.children[it] : datas.children[it];
         it++;
@@ -996,6 +962,8 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         pushHere.push({
           children: [],
           name: d.sac,
+          size: undefined,
+          index: undefined
         });
         dsac = dtac !== undefined ? dtac.children[is] : dgac !== undefined ? dgac.children[is] : datas.children[is];
         is++;
@@ -1049,12 +1017,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     /*    if (sortData) {
           dnew.sort((a, b) => (a.value - b.value));
         }*/
-    return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<{
-      children: any[];
-      name: string;
-      index: number;
-      size: number;
-    }>[]);
+    return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<HIERACH>[]);
   }
   newgamma(ev: MouseEvent) {
     this.colourgamma = +(ev.target as HTMLInputElement).value / 10000;
