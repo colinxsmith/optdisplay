@@ -934,13 +934,14 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     let dtac: HIERACH, dsac: HIERACH, dgac: HIERACH, ig = 0, it = 0, is = 0, iii = 1;
     data.forEach(d => {
       if (d.gac !== undefined && gac !== d.gac) {
+        const pushHere = datas.children;
         datas.children.push({
           children: [],
           name: d.gac,
           size: undefined,
           index: undefined
         });
-        dgac = datas.children[ig];
+        dgac = pushHere[ig];
         ig++;
         it = 0;
         is = 0;
@@ -953,7 +954,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
           size: undefined,
           index: undefined
         });
-        dtac = dgac !== undefined ? dgac.children[it] : datas.children[it];
+        dtac = pushHere[it];
         it++;
         is = 0;
       }
@@ -965,7 +966,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
           size: undefined,
           index: undefined
         });
-        dsac = dtac !== undefined ? dtac.children[is] : dgac !== undefined ? dgac.children[is] : datas.children[is];
+        dsac = pushHere[is];
         is++;
       }
       const lastPush = dsac !== undefined ? dsac : dtac !== undefined ? dtac : dgac;
@@ -979,37 +980,23 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       tac = d.tac;
       sac = d.sac;
     });
-    let dSTGdef = 0;
-    if (dgac !== undefined) {
-      dSTGdef++;
-    }
-    if (dsac !== undefined) {
-      dSTGdef++;
-    }
-    if (dtac !== undefined) {
-      dSTGdef++;
-    }
-    if (dSTGdef === 3) {
-      datas.children.forEach((d) => {
+
+    datas.children.forEach((d) => {
+      if (d.children.length) {
         d.children.forEach(e => {
-          e.children.forEach(f => {
-            f.index = iii++;
-          });
+          if (e.children.length) {
+            e.children.forEach(f => {
+              f.index = iii++;
+            });
+          } else {
+            e.index = iii++;
+          }
         });
-      });
-    }
-    if (dSTGdef >= 2) {
-      datas.children.forEach(d => {
-        d.children.forEach(e => {
-          e.index = iii++;
-        });
-      });
-    }
-    if (dSTGdef >= 1) {
-      datas.children.forEach((d) => {
+      } else {
         d.index = iii++;
-      });
-    }
+      }
+    });
+
     console.log(datas);
     const dnew = d3.hierarchy(datas);
     iii = 0;
