@@ -928,8 +928,8 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     const datas: HIERACH = {
       children: [],
       name: '',
-      index: 0,
-      size: 0
+      index: undefined,
+      size: undefined
     };
     let dtac: HIERACH, dsac: HIERACH, dgac: HIERACH, ig = 0, it = 0, is = 0, iii = 1;
     data.forEach(d => {
@@ -980,22 +980,13 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       tac = d.tac;
       sac = d.sac;
     });
-
-    datas.children.forEach((d) => {
-      if (d.children.length) {
-        d.children.forEach(e => {
-          if (e.children.length) {
-            e.children.forEach(f => {
-              f.index = iii++;
-            });
-          } else {
-            e.index = iii++;
-          }
-        });
-      } else {
-        d.index = iii++;
+    const setIndex = (dts: HIERACH) => {
+      if (dts.index === undefined) {
+        dts.children.forEach(d1 => setIndex(d1));
+        dts.index = iii++;
       }
-    });
+    };
+    setIndex(datas);
 
     console.log(datas);
     const dnew = d3.hierarchy(datas);
