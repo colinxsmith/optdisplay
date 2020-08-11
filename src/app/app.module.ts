@@ -22,6 +22,7 @@ import { VertBarChartComponent } from './vert-bar-chart/vert-bar-chart.component
 import { DartboardComponent } from './dartboard/dartboard.component';
 import { UsedartComponent } from './usedart/usedart.component';
 import { FlowerComponent } from './flower/flower.component';
+import { Pillar3Component } from './pillar3/pillar3.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -57,7 +58,8 @@ const appRoutes: Routes = [
     VertBarChartComponent,
     DartboardComponent,
     UsedartComponent,
-    FlowerComponent
+    FlowerComponent,
+    Pillar3Component
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(
