@@ -17,11 +17,10 @@ export class Pillar3Component implements OnInit {
   @Input() leftlabel = false;
   ESG: string[];
   plotP: number[][];
-  Classes = ['bad', 'poor', 'mediocre', 'average', 'good', 'excellent', 'nodata'];
+  @Input() Classes = ['bad', 'poor', 'mediocre', 'average', 'good', 'excellent', 'nodata'];
   constructor(private element: ElementRef) { }
   scaleX = d3.scaleLinear().domain([0, 3]);
   scaleY = d3.scaleLinear().domain([0, 1]);
-  @Input() classes = (i: number, k: string) => this.Classes[i]; // Change to implememt definition of goodness band
 
   ngOnInit() {
     this.plotP = Array(3);
@@ -38,7 +37,7 @@ export class Pillar3Component implements OnInit {
     });
     this.scaleX.range([100, this.ww - 50]);
     this.scaleY.range([this.hh, 15]);
-
+console.log(this.Classes);
     this.update();
   }
   update() {

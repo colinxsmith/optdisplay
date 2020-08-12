@@ -11,7 +11,7 @@
     </g>
     <g *ngFor="let pillar of plotP.length?plotP:[];let i=index">
         <g *ngFor="let j of [0,1,2,3,4,5,6]">
-            <rect [attr.class]="classes(j,ESG[i])" [attr.x]="scaleX(i)" [attr.y]="scaleY(pillar[j+1])"
+            <rect [attr.class]="Classes[j]" [attr.x]="scaleX(i)" [attr.y]="scaleY(pillar[j+1])"
                 [attr.height]="scaleY(pillar[j])-scaleY(pillar[j+1])" [attr.width]="scaleX(i+1)-scaleX(i)">
             </rect>
         </g>
