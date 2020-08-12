@@ -4,7 +4,7 @@
         <text [attr.y]="scaleY(0.5)+5" [attr.x]="scaleX(0)">50%</text>
         <text [attr.y]="scaleY(0)" [attr.x]="scaleX(0)">0%</text>
     </g>
-    <g stroke="white" stroke-width="2px">
+    <g stroke="white" stroke-width="2px" *ngIf="!nolines">
         <line [attr.y1]="scaleY(1)" [attr.y2]="scaleY(1)" x1="0" [attr.x2]="ww"></line>
         <line [attr.y1]="scaleY(0.5)" [attr.y2]="scaleY(0.5)" x1="0" [attr.x2]="ww"></line>
         <line [attr.y1]="scaleY(0)" [attr.y2]="scaleY(0)" x1="0" [attr.x2]="ww"></line>

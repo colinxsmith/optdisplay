@@ -9,6 +9,7 @@ export class Pillar3Component implements OnInit {
 
   @Input() ww = 500;
   @Input() hh = 500;
+  @Input() nolines = false;
   @Input() pillars = {
     E: [1, 1, 1, 0, 1, 1, 1],
     S: [1, 1, 1, 1, 1, 1, 0],
@@ -37,7 +38,7 @@ export class Pillar3Component implements OnInit {
     });
     this.scaleX.range([100, this.ww - 50]);
     this.scaleY.range([this.hh, 15]);
-console.log(this.Classes);
+    console.log(this.Classes);
     this.update();
   }
   update() {
