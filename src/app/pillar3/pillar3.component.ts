@@ -9,6 +9,10 @@ export class Pillar3Component implements OnInit {
 
   @Input() ww = 500;
   @Input() hh = 500;
+  @Input() left = 100;
+  @Input() right = 50;
+  @Input() top = 15;
+  @Input() bottom = 0;
   @Input() nolines = false;
   @Input() pillars = {
     E: [1, 1, 1, 0, 1, 1, 1],
@@ -36,8 +40,8 @@ export class Pillar3Component implements OnInit {
         this.plotP[j].push(y);
       });
     });
-    this.scaleX.range([100, this.ww - 50]);
-    this.scaleY.range([this.hh, 15]);
+    this.scaleX.range([this.left, this.ww - this.right]);
+    this.scaleY.range([this.hh - this.bottom, this.top]);
     console.log(this.Classes);
     this.update();
   }
