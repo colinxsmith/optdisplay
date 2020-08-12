@@ -21,28 +21,30 @@ export class Pillar3Component implements OnInit {
   };
   @Input() leftlabel = false;
   ESG: string[];
-  plotP: number[][];
+  plotP: number[][] = [];
   @Input() Classes = ['bad', 'poor', 'mediocre', 'average', 'good', 'excellent', 'nodata'];
   constructor(private element: ElementRef) { }
   scaleX = d3.scaleLinear().domain([0, 3]);
   scaleY = d3.scaleLinear().domain([0, 1]);
 
   ngOnInit() {
-    this.plotP = Array(3);
-    this.ESG = Object.keys(this.pillars);
-    this.ESG.forEach((pp, j) => {
-      const tot = d3.sum(this.pillars[pp]);
-      let y = 0;
-      this.plotP[j] = [];
-      this.plotP[j].push(0);
-      this.pillars[pp].forEach((d, i) => {
-        y += this.pillars[pp][i] / tot;
-        this.plotP[j].push(y);
-      });
-    });
+    console.log(this.Classes);
     this.scaleX.range([this.left, this.ww - this.right]);
     this.scaleY.range([this.hh - this.bottom, this.top]);
-    console.log(this.Classes);
+    this.ESG = Object.keys(this.pillars);
+    this.plotP = [];
+    this.ESG.forEach(pp => {
+      const tot = d3.sum(this.pillars[pp]);
+      let y = 0;
+      const ppp: number[] = [];
+      ppp.push(0);
+      this.pillars[pp].forEach((d, i: number) => {
+        y += this.pillars[pp][i] / tot;
+        ppp.push(y);
+      });
+      this.plotP.push(ppp);
+    });
+    console.log(this.plotP);
     this.update();
   }
   update() {
@@ -53,21 +55,22 @@ export class Pillar3Component implements OnInit {
       d3.select(this.element.nativeElement).selectAll('rect')
         .transition().duration(5000)
         .attrTween('width', (d, ij) => t => {
-          const i = Math.floor(ij / 7);
+          const i = Math.floor(ij / this.Classes.length);
           return `${(this.scaleX(i + 1) - this.scaleX(i)) * t}`;
         })
         .attrTween('x', (d, ij) => t => {
-          const i = Math.floor(ij / 7);
+          const i = Math.floor(ij / this.Classes.length);
           return `${(this.scaleX(i)) * t}`;
         })
-        .attrTween('height', (d, ij) => t => {
-          const i = Math.floor(ij / 7);
-          const j = Math.floor(ij % 7);
+       .attrTween('height', (d, ij) => t => {
+          const i = Math.floor(ij / this.Classes.length);
+          const j = Math.floor(ij % this.Classes.length);
+//          console.log(i,j,ij,t,t * (this.scaleY(this.plotP[i][j]) - this.scaleY(this.plotP[i][j + 1])));
           return `${t * (this.scaleY(this.plotP[i][j]) - this.scaleY(this.plotP[i][j + 1]))}`;
         })
         .attrTween('y', (d, ij) => t => {
-          const i = Math.floor(ij / 7);
-          const j = Math.floor(ij % 7);
+          const i = Math.floor(ij / this.Classes.length);
+          const j = Math.floor(ij % this.Classes.length);
           return `${t * (this.scaleY(this.plotP[i][j + 1]))}`;
         });
     });

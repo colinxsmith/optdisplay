@@ -9,11 +9,13 @@
         <line [attr.y1]="scaleY(0.5)" [attr.y2]="scaleY(0.5)" x1="0" [attr.x2]="ww"></line>
         <line [attr.y1]="scaleY(0)" [attr.y2]="scaleY(0)" x1="0" [attr.x2]="ww"></line>
     </g>
-    <g *ngFor="let pillar of plotP.length?plotP:[];let i=index">
-        <g *ngFor="let j of [0,1,2,3,4,5,6]">
-            <rect [attr.class]="Classes[j]" [attr.x]="scaleX(i)" [attr.y]="scaleY(pillar[j+1])"
-                [attr.height]="scaleY(pillar[j])-scaleY(pillar[j+1])" [attr.width]="scaleX(i+1)-scaleX(i)">
-            </rect>
+    <g *ngIf="plotP&&plotP[0]">
+        <g *ngFor="let pillar of plotP;let i=index;">
+            <g *ngFor="let cl of Classes;let j=index">
+                <rect [attr.class]="cl" [attr.x]="scaleX(i)" [attr.y]="scaleY(pillar[j+1])"
+                    [attr.height]="scaleY(pillar[j])-scaleY(pillar[j+1])" [attr.width]="scaleX(i+1)-scaleX(i)">
+                </rect>
+            </g>
         </g>
     </g>
 </svg>
