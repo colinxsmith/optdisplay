@@ -1,0 +1,22 @@
+<div class="tooltp">
+</div><svg [attr.height]="hh" [attr.width]="ww">
+    <text  [style.text-anchor]="'middle'" [attr.y]="top*0.75" [attr.x]="ww/2">Preference Status</text>
+    <g [attr.transform]="translatehack(left,top)">
+        <rect [style.fill]="'white'" [attr.x]="0" [attr.y]="0" [attr.width]="ww-left-right" [attr.height]="hh-top-bottom"></rect>
+        <g *ngFor="let data of DATA;let i=index">
+            <rect [attr.class]="'bad'" [attr.x]="scaleX(data.name)" [attr.y]="scaleY(1)-scaleY(data.below)" [attr.width]="bw" [attr.height]="scaleY(data.below)"></rect>
+            <rect [attr.class]="'good'" [attr.x]="scaleX(data.name)" [attr.y]="scaleY(1)-scaleY(data.below+data.above)" [attr.width]="bw" [attr.height]="scaleY(data.above)"></rect>
+            <rect [attr.class]="'nodata'" [attr.x]="scaleX(data.name)" [attr.y]="scaleY(1)-scaleY(data.below+data.above+data.nodata)" [attr.width]="bw" [attr.height]="scaleY(data.nodata)"></rect>
+            <g (mouseenter)="fname($event,data.name,true)" (mouseleave)="fname($event,data.name,false)">
+                <circle [attr.class]="'good'" [attr.cx]="scaleX(data.name)+bw/2" [attr.cy]="scaleY(1)+bottom/2" [attr.r]="scaleYR(data.restricting)"></circle>
+                <text  [style.text-anchor]="'middle'"  [attr.x]="scaleX(data.name)+bw/2" [attr.y]="scaleY(1)+bottom/2">{{i+1}}</text>
+            </g>
+        </g>
+        <line [style.stroke]="'black'" [style.stroke-dasharray]="'1 ,2'" [attr.x1]="-left/2" [attr.x2]="ww-left-right" [attr.y1]="scaleY(0)" [attr.y2]="scaleY(0)" ></line>
+        <line [style.stroke]="'black'" [style.stroke-dasharray]="'1 ,2'" [attr.x1]="-left/2" [attr.x2]="ww-left-right" [attr.y1]="scaleY(0.5)" [attr.y2]="scaleY(0.5)" ></line>
+        <line [style.stroke]="'black'" [style.stroke-dasharray]="'1 ,2'" [attr.x1]="-left/2" [attr.x2]="ww-left-right" [attr.y1]="scaleY(1)" [attr.y2]="scaleY(1)" ></line>
+        <text [style.text-anchor]="'middle'" [attr.x]="-left/2" [attr.y]="scaleY(0)+10">100%</text>
+        <text [style.text-anchor]="'middle'"  [attr.x]="-left/2" [attr.y]="scaleY(0.5)+10">50%</text>
+        <text  [style.text-anchor]="'middle'" [attr.x]="-left/2" [attr.y]="scaleY(1)+10">0%</text>
+    </g>
+</svg>

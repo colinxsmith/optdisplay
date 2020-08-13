@@ -23,6 +23,7 @@ import { DartboardComponent } from './dartboard/dartboard.component';
 import { UsedartComponent } from './usedart/usedart.component';
 import { FlowerComponent } from './flower/flower.component';
 import { Pillar3Component } from './pillar3/pillar3.component';
+import { PreferenceComponent } from './preference/preference.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -59,7 +60,8 @@ const appRoutes: Routes = [
     DartboardComponent,
     UsedartComponent,
     FlowerComponent,
-    Pillar3Component
+    Pillar3Component,
+    PreferenceComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(

@@ -1,0 +1,40 @@
+.bad {
+    fill: rgb(192, 0, 0);
+}
+
+.poor {
+    fill: rgb(255, 159, 63);
+}
+
+.mediocre {
+    fill: rgb(255, 204, 102);
+}
+
+.average {
+    fill: rgb(204, 255, 153);
+}
+
+.good {
+    fill: rgb(146, 208, 80);
+}
+
+.excellent {
+    fill: rgb(0, 176, 80);
+}
+
+.nodata {
+    fill: rgb(118, 113, 113);
+}
+
+.tooltp {
+    background: black;
+    color: white;
+    position: absolute;
+    padding: 1px 5px 2px 5px;
+    border: 8px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 12px;
+    pointer-events: none;
+    overflow: auto;
+}
