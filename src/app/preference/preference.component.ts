@@ -49,7 +49,7 @@ export class PreferenceComponent implements OnInit {
     });
     console.log(this.DATA.map(d => d.below));
     this.scaleX.domain(domain);
-    this.bw = (this.ww - this.right - this.left) / (this.DATA.length + 1);
+    this.bw = (this.ww - this.right - this.left) / (this.DATA.length * 2);
     this.scaleY.range([0, this.hh - this.bottom - this.top]);
     this.scaleYR.range([0, this.bottom / 2]);
     this.scaleX.range([0, this.ww - this.right - this.left]);
