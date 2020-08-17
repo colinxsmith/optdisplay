@@ -24,6 +24,7 @@ import { UsedartComponent } from './usedart/usedart.component';
 import { FlowerComponent } from './flower/flower.component';
 import { Pillar3Component } from './pillar3/pillar3.component';
 import { PreferenceComponent } from './preference/preference.component';
+import { ExposuresComponent } from './exposures/exposures.component';
 const appRoutes: Routes = [
   { path: 'optlog', component: DispComponent },
   { path: 'etl', component: EtlComponent },
@@ -61,7 +62,8 @@ const appRoutes: Routes = [
     UsedartComponent,
     FlowerComponent,
     Pillar3Component,
-    PreferenceComponent
+    PreferenceComponent,
+    ExposuresComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(

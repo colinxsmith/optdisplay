@@ -1,0 +1,66 @@
+import { Component, OnInit, Input } from '@angular/core';
+import * as d3 from 'd3';
+interface FACDATA { bad: number; poor: number; mediocre: number; average: number; good: number; excellent: number; 'no data': number; }
+@Component({
+  selector: 'app-exposures',
+  templateUrl: './exposures.component.html',
+  styleUrls: ['./exposures.component.css']
+})
+export class ExposuresComponent implements OnInit {
+  @Input() DATA: { factorname: string, factordata: FACDATA }[];
+  @Input() FACNAMES: string[];
+  @Input() ESGscores: string[];
+  @Input() portFolioType: string;
+  keys: string[];
+  ww = 500;
+  hh = 500;
+  top = 50;
+  bottom = 150;
+  right = 0;
+  left = 230;
+  xScale = d3.scaleBand();
+  yScale = d3.scaleLinear();
+  rScale = d3.scaleLinear();
+  esgScale = d3.scaleLinear();
+  constructor() { }
+  translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
+  ngOnInit() {
+    let dMax = 0;
+    this.portFolioType = 'Current';
+    this.ESGscores = ['E2.4', 'S1.6', 'G3.4'];
+    this.FACNAMES = ['Pollution Prevention', 'Environmental Transparency', 'Resource Efficiency', 'Compensation & Satisfaction', 'Diversity & Flights', 'Education & Work Conditions', 'Community & Charity', 'Human Rights', 'Sustainability Integration', 'Board Effectiveness', 'Management Ethics', 'Disclosure & Accountability'];
+    this.DATA = [];
+    this.FACNAMES.forEach(d => {
+      const dd: {
+        factorname: string;
+        factordata: FACDATA;
+      } = {
+        factorname: d,
+        factordata: {
+          bad: Math.random(),
+          poor: Math.random(),
+          mediocre: Math.random(),
+          average: Math.random(),
+          good: Math.random(),
+          excellent: Math.random(),
+          'no data': Math.random() * 8 < 1 ? -Math.random() : Math.random()
+        }
+      };
+      this.keys = Object.keys(dd.factordata);
+      dMax = Math.max(dMax, d3.max(this.keys.map(kk => Math.abs(dd.factordata[kk]))));
+      this.DATA.push(dd);
+    });
+    this.yScale
+      .domain([0, this.FACNAMES.length])
+      .range([this.top + (this.hh - this.top - this.bottom) / this.FACNAMES.length,
+      this.hh - this.bottom]);
+    this.xScale
+      .domain(this.keys)
+      .range([this.left + (this.ww - this.left - this.right) / this.keys.length,
+      this.ww - this.right]);
+    this.rScale.domain([0, dMax]).range([0, (this.ww - this.left - this.right) / (this.DATA.length + 1)]);
+    this.esgScale
+      .domain([0, 3])
+      .range([this.left, this.ww - this.right]);
+  }
+}
