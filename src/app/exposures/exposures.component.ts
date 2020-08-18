@@ -12,12 +12,12 @@ export class ExposuresComponent implements OnInit {
   @Input() ESGscores: string[];
   @Input() portFolioType: string;
   keys: string[];
-  ww = 500;
-  hh = 500;
-  top = 50;
-  bottom = 150;
-  right = 0;
-  left = 230;
+  @Input() ww = 500;
+  @Input() hh = 500;
+  @Input() top = 50;
+  @Input() bottom = 150;
+  @Input() right = 0;
+  @Input() left = 230;
   xScale = d3.scaleBand();
   yScale = d3.scaleLinear();
   rScale = d3.scaleLinear();
