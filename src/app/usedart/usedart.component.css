@@ -33,3 +33,7 @@ text.LL4 {
     text-anchor: middle;
     font-size: 12px;
 }
+
+th {
+    font-weight: normal;
+}
