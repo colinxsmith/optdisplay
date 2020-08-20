@@ -52,6 +52,8 @@
 <div style="display:inline-block;" [style.background-color]="'gainsboro'">
     <app-preference></app-preference>
 </div>
-<div style="display:inline-block;" [style.background-color]="'darkorchid'">
-    <app-exposures hh="700"></app-exposures>
+<div style="display:inline-block;" [style.background-color]="'white'">
+    <app-exposures [left]="230" [ww]="500" [hh]="700" portFolioType="Current"></app-exposures>
+    <app-exposures portFolioType="Proposed" [hh]="700" [left]="0" [ww]="270" [labelleft]="false"></app-exposures>
+    <app-exposures portFolioType="Benchmark" [hh]="700" [left]="0" [ww]="270" [labelleft]="false"></app-exposures>
 </div>

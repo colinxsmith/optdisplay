@@ -8,9 +8,9 @@ interface FACDATA { bad: number; poor: number; mediocre: number; average: number
 })
 export class ExposuresComponent implements OnInit {
   @Input() DATA: { factorname: string, factordata: FACDATA }[];
-  @Input() FACNAMES: string[];
-  @Input() ESGscores: string[];
-  @Input() portFolioType: string;
+  @Input() FACNAMES = ['Pollution Prevention', 'Environmental Transparency', 'Resource Efficiency', 'Compensation & Satisfaction', 'Diversity & Flights', 'Education & Work Conditions', 'Community & Charity', 'Human Rights', 'Sustainability Integration', 'Board Effectiveness', 'Management Ethics', 'Disclosure & Accountability'];
+  @Input() ESGscores = ['E2.4', 'S1.6', 'G3.4'];
+  @Input() portFolioType = 'Current';
   keys: string[];
   @Input() ww = 500;
   @Input() hh = 500;
@@ -18,6 +18,7 @@ export class ExposuresComponent implements OnInit {
   @Input() bottom = 150;
   @Input() right = 0;
   @Input() left = 230;
+  @Input() labelleft = true;
   xScale = d3.scaleBand();
   yScale = d3.scaleLinear();
   rScale = d3.scaleLinear();
@@ -26,9 +27,6 @@ export class ExposuresComponent implements OnInit {
   translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   ngOnInit() {
     let dMax = 0;
-    this.portFolioType = 'Current';
-    this.ESGscores = ['E2.4', 'S1.6', 'G3.4'];
-    this.FACNAMES = ['Pollution Prevention', 'Environmental Transparency', 'Resource Efficiency', 'Compensation & Satisfaction', 'Diversity & Flights', 'Education & Work Conditions', 'Community & Charity', 'Human Rights', 'Sustainability Integration', 'Board Effectiveness', 'Management Ethics', 'Disclosure & Accountability'];
     this.DATA = [];
     this.FACNAMES.forEach(d => {
       const dd: {

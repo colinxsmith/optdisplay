@@ -5,8 +5,10 @@
         <g *ngIf="j%2===1">
             <rect  [attr.y]="yScale(j-1.5)" [attr.height]="(hh-top-bottom)/(DATA.length+1)" 
             [attr.x]="left" [attr.width]="ww-left-right" [style.fill]="'rgb(226,226,226)'"></rect>
-            <rect  [attr.y]="yScale(j-1.5)" [attr.height]="(hh-top-bottom)/(DATA.length+1)" 
-            [attr.x]="10" [attr.width]="left-20" [style.fill]="'rgb(226,226,226)'"></rect>
+            <ng-container *ngIf="labelleft">
+                <rect  [attr.y]="yScale(j-1.5)" [attr.height]="(hh-top-bottom)/(DATA.length+1)" 
+                [attr.x]="10" [attr.width]="left-20" [style.fill]="'rgb(226,226,226)'"></rect>
+            </ng-container>
         </g>
     </g> 
     <g *ngFor="let dd of DATA;let j=index;">
@@ -19,19 +21,23 @@
                 <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(-dd.factordata[key])" [style.fill]="'white'"></circle>
             </ng-container>
         </g>
-        <text [attr.y]="yScale(j)+5" [attr.x]="left/2" [style.text-anchor]="'middle'">{{dd.factorname}}</text>
+        <ng-container *ngIf="labelleft">
+            <text [attr.y]="yScale(j)+5" [attr.x]="left/2" [style.text-anchor]="'middle'">{{dd.factorname}}</text>
+        </ng-container>
     </g>
-    <g *ngFor="let key of keys">
-        <text [style.text-anchor]="'middle'" [attr.transform]="translatehack(xScale(key),(hh-bottom/1.5),-90)" x="0.2em" y="0.25em" >{{key}}</text>
-    </g>
+        <g *ngFor="let key of keys">
+            <text [style.text-anchor]="'middle'" [attr.transform]="translatehack(xScale(key),(hh-bottom/1.5),-90)" x="0.2em" y="0.25em" >{{key}}</text>
+        </g>
     <rect style="fill:slategrey" [attr.x]="esgScale(0)" [attr.y]="hh-bottom*0.2+0.5" [attr.height]="bottom*0.1+1" [attr.width]="ww-right"></rect>
     <g *ngFor="let score of ESGscores;let i=index;">
         <text [attr.class]="score.substr(0,1)" [attr.x]="esgScale(i)" [attr.y]="hh-bottom*0.1">{{score}}</text>
     </g>
-    <circle [attr.cx]="left/4" [attr.cy]="hh-bottom*0.75" r="30" [attr.class]="'nodata'"></circle>
-    <circle [attr.cx]="left/4" [attr.cy]="hh-bottom*0.75" r="20" style="fill:white"></circle>
-    <text [attr.y]="hh-bottom*0.75" [attr.x]="left*0.4">Reduction</text>
-    <text [attr.y]="hh-bottom*0.25" [attr.x]="left*0.4">Increase</text>
-    <rect [attr.x]="left/4-30" [attr.y]="hh-bottom*0.25-30" height="60" width="60" [style.fill]="'rgb(226,226,226)'"></rect>
-    <circle [attr.cx]="left/4" [attr.cy]="hh-bottom*0.25" r="20" [attr.class]="'poor'"></circle>
+    <ng-container *ngIf="labelleft">
+        <circle [attr.cx]="left/4" [attr.cy]="hh-bottom*0.75" r="30" [attr.class]="'nodata'"></circle>
+        <circle [attr.cx]="left/4" [attr.cy]="hh-bottom*0.75" r="20" style="fill:white"></circle>
+        <text [attr.y]="hh-bottom*0.75" [attr.x]="left*0.4">Reduction</text>
+        <text [attr.y]="hh-bottom*0.25" [attr.x]="left*0.4">Increase</text>
+        <rect [attr.x]="left/4-30" [attr.y]="hh-bottom*0.25-30" height="60" width="60" [style.fill]="'rgb(226,226,226)'"></rect>
+        <circle [attr.cx]="left/4" [attr.cy]="hh-bottom*0.25" r="20" [attr.class]="'poor'"></circle>
+    </ng-container>
 </svg>
