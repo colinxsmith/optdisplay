@@ -18,7 +18,7 @@
             </ng-container>
             <ng-container *ngIf="dd.factordata[key]<0">
                 <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale.range()[1]" [attr.class]="'exposed '+'nodata'"></circle>
-                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(-dd.factordata[key])" [attr.class]="'exposed '" [style.fill]="'white'"></circle>
+                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(-dd.factordata[key])" [style.fill]="'white'"></circle>
             </ng-container>
         </g>
         <ng-container *ngIf="labelleft">
