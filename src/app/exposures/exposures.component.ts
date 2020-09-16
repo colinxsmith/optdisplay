@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 interface FACDATA { bad: number; poor: number; mediocre: number; average: number; good: number; excellent: number; 'no data': number; }
 @Component({
@@ -23,7 +23,7 @@ export class ExposuresComponent implements OnInit {
   yScale = d3.scaleLinear();
   rScale = d3.scaleLinear();
   esgScale = d3.scaleLinear();
-  constructor() { }
+  constructor(private element: ElementRef) { }
   translatehack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   ngOnInit() {
     let dMax = 0;
@@ -60,5 +60,17 @@ export class ExposuresComponent implements OnInit {
     this.esgScale
       .domain([0, 3])
       .range([this.left, this.ww - this.right]);
+      setTimeout(() => {
+        this.update();
+      });
+  }
+  update() {
+    const circle = d3.select(this.element.nativeElement).selectAll('circle.exposed');
+    circle
+      .each((d, i, j) => {
+        d3.select(j[i] as SVGCircleElement)
+          .transition().duration(1000)
+          .attrTween('cy', () => t => `${this.yScale((1 - t) * this.FACNAMES.length / 2 + Math.floor(t * i / this.keys.length))}`);
+      });
   }
 }
