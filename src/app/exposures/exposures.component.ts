@@ -68,10 +68,11 @@ export class ExposuresComponent implements OnInit {
     const circle = d3.select(this.element.nativeElement).selectAll('circle.exposed');
     circle
       .each((d, i, j) => {
+      const y=  parseFloat   (d3.select(j[i] as SVGCircleElement).attr('hy'));
         d3.select(j[i] as SVGCircleElement)
           .transition().duration(1000)
           .attrTween('cy', () => t => `${(1 - t) * this.yScale(this.FACNAMES.length / 2) +
-            t * this.yScale(Math.floor(i / this.keys.length))}`);
+            t * y}`);
       });
   }
 }
