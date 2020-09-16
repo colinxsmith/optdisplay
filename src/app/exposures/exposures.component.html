@@ -14,11 +14,11 @@
     <g *ngFor="let dd of DATA;let j=index;">
         <g *ngFor="let key of keys;">
             <ng-container *ngIf="dd.factordata[key]>=0">
-                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(dd.factordata[key])" [attr.hy]="yScale(y)" [attr.class]="'exposed '+key.replace(' ','')"></circle>
+                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(dd.factordata[key])" [attr.hy]="yScale(j)" [attr.class]="'exposed '+key.replace(' ','')"></circle>
             </ng-container>
             <ng-container *ngIf="dd.factordata[key]<0">
-                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale.range()[1]" [attr.hy]="yScale(y)" [attr.class]="'exposed '+'nodata'"></circle>
-                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(-dd.factordata[key])" [attr.hy]="yScale(y)" [attr.class]="'exposed '" [style.fill]="'white'"></circle>
+                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale.range()[1]" [attr.hy]="yScale(j)" [attr.class]="'exposed '+'nodata'"></circle>
+                <circle [attr.cx]="xScale(key)" [attr.cy]="yScale(j)" [attr.r]="rScale(-dd.factordata[key])" [attr.hy]="yScale(j)" [attr.class]="'exposed '" [style.fill]="'white'"></circle>
             </ng-container>
         </g>
         <ng-container *ngIf="labelleft">
