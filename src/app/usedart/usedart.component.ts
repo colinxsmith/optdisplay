@@ -932,53 +932,219 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       size: undefined
     };
     let dtac: HIERACH, dsac: HIERACH, dgac: HIERACH, ig = 0, it = 0, is = 0, iii = 1;
-    data.forEach(d => {
-      if (d.gac !== undefined && gac !== d.gac) {
-        const pushHere = datas.children;
-        datas.children.push({
-          children: [],
-          name: d.gac,
-          size: undefined,
-          index: undefined
+    /*    data.forEach(d => {
+          if (d.gac !== undefined && gac !== d.gac) {
+            const pushHere = datas.children;
+            datas.children.push({
+              children: [],
+              name: d.gac,
+              size: undefined,
+              index: undefined
+            });
+            dgac = pushHere[ig];
+            ig++;
+            it = 0;
+            is = 0;
+          }
+          if (d.tac !== undefined && tac !== d.tac) {
+            const pushHere = dgac !== undefined ? dgac.children : datas.children;
+            pushHere.push({
+              children: [],
+              name: d.tac,
+              size: undefined,
+              index: undefined
+            });
+            dtac = pushHere[it];
+            it++;
+            is = 0;
+          }
+          if (d.sac !== undefined && sac !== d.sac) {
+            const pushHere = dtac !== undefined ? dtac.children : dgac !== undefined ? dgac.children : datas.children;
+            pushHere.push({
+              children: [],
+              name: d.sac,
+              size: undefined,
+              index: undefined
+            });
+            dsac = pushHere[is];
+            is++;
+          }
+          const lastPush = dsac !== undefined ? dsac : dtac !== undefined ? dtac : dgac;
+          lastPush.children.push({
+            children: [],
+            name: d.name,
+            size: d.weight,
+            index: iii++
+          });
+          gac = d.gac;
+          tac = d.tac;
+          sac = d.sac;
         });
-        dgac = pushHere[ig];
-        ig++;
-        it = 0;
-        is = 0;
-      }
-      if (d.tac !== undefined && tac !== d.tac) {
-        const pushHere = dgac !== undefined ? dgac.children : datas.children;
-        pushHere.push({
-          children: [],
-          name: d.tac,
-          size: undefined,
-          index: undefined
+        const setIndex = (dts: HIERACH) => {
+          if (dts.index === undefined) {
+            dts.children.forEach(d1 => setIndex(d1));
+            dts.index = iii++;
+          }
+        };
+    
+        setIndex(datas);*/
+    data.forEach((d, index) => {
+      if (d.gac !== undefined) {
+        let gacfound = false;
+        datas.children.forEach(ch1 => {
+          if (ch1.name === d.gac) {
+            gacfound = true;
+            if (d.tac !== undefined) {
+              let tacfound = false;
+              ch1.children.forEach(ch2 => {
+                if (ch2.name === d.tac) {
+                  tacfound = true;
+                  if (d.sac !== undefined) {
+                    let sacfound = false;
+                    ch2.children.forEach(ch3 => {
+                      if (d.sac === ch3.name) {
+                        sacfound = true;
+                        ch3.children.push({
+                          name: d.name,
+                          index: index,
+                          children: [],
+                          size: d.weight
+                        })
+                      }
+                    });
+                    if (!sacfound) {
+                      const lastpush = {
+                        name: d.sac,
+                        children: [],
+                        index: undefined,
+                        size: undefined
+                      };
+                      lastpush.children.push({
+                        name: d.name,
+                        index: index,
+                        children: [],
+                        size: d.weight
+                      });
+                      ch2.children.push(lastpush);
+                    }
+                  }
+                  else {
+                    ch2.children.push({
+                      name: d.name,
+                      index: index,
+                      children: [],
+                      size: d.weight
+                    })
+                  }
+                }
+              });
+              if (!tacfound) {
+                if (d.sac !== undefined) {
+                  const lastpush = {
+                    name: d.tac,
+                    children: [],
+                    index: undefined,
+                    size: undefined
+                  };
+                  const lastpush1 = {
+                    name: d.sac,
+                    children: [],
+                    index: undefined,
+                    size: undefined
+                  };
+                  lastpush1.children.push({
+                    name: d.name,
+                    size: d.weight,
+                    index: index,
+                    children: []
+                  });
+                  lastpush.children.push(lastpush1);
+                  ch1.children.push(lastpush);
+                }
+                else {
+                  const lastpush = {
+                    name: d.tac,
+                    children: [],
+                    index: undefined,
+                    size: undefined
+                  };
+                  lastpush.children.push({
+                    name: d.name,
+                    index: index,
+                    children: [],
+                    size: d.weight
+                  });
+                  ch1.children.push(lastpush);
+                }
+              }
+            } else if (d.sac !== undefined) {
+              let sacfound = false;
+              ch1.children.forEach(ch3 => {
+                if (d.sac === ch3.name) {
+                  sacfound = true;
+                  ch3.children.push({
+                    name: d.name,
+                    index: index,
+                    children: [],
+                    size: d.weight
+                  })
+                }
+              });
+              if (!sacfound) {
+                const lastpush = {
+                  name: d.sac,
+                  children: [],
+                  index: undefined,
+                  size: undefined
+                };
+                lastpush.children.push({
+                  name: d.name,
+                  index: index,
+                  children: [],
+                  size: d.weight
+                });
+                ch1.children.push(lastpush);
+              }
+            } else {
+              ch1.children.push({
+                name: d.name,
+                index: index,
+                children: [],
+                size: d.weight
+              });
+            }
+          }
         });
-        dtac = pushHere[it];
-        it++;
-        is = 0;
+        if (!gacfound) {
+          const lastpushg = {
+            name: d.gac,
+            children: [],
+            index: undefined,
+            size: undefined
+          };
+          const lastpusht = {
+            name: d.tac,
+            children: [],
+            index: undefined,
+            size: undefined
+          };
+          const lastpushs = {
+            name: d.tac,
+            children: [],
+            index: undefined,
+            size: undefined
+          };
+          lastpushs.children.push({
+            name: d.name,
+            size: d.weight,
+            index: index,
+            children: []
+          });
+          lastpusht.children.push(lastpushs);
+          lastpushg.children.push(lastpusht);
+          datas.children.push(lastpushg);
+        }
       }
-      if (d.sac !== undefined && sac !== d.sac) {
-        const pushHere = dtac !== undefined ? dtac.children : dgac !== undefined ? dgac.children : datas.children;
-        pushHere.push({
-          children: [],
-          name: d.sac,
-          size: undefined,
-          index: undefined
-        });
-        dsac = pushHere[is];
-        is++;
-      }
-      const lastPush = dsac !== undefined ? dsac : dtac !== undefined ? dtac : dgac;
-      lastPush.children.push({
-        children: [],
-        name: d.name,
-        size: d.weight,
-        index: iii++
-      });
-      gac = d.gac;
-      tac = d.tac;
-      sac = d.sac;
     });
     const setIndex = (dts: HIERACH) => {
       if (dts.index === undefined) {
@@ -986,8 +1152,8 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         dts.index = iii++;
       }
     };
-    setIndex(datas);
 
+    setIndex(datas);
     console.log(datas);
     const dnew = d3.hierarchy(datas);
     iii = 0;
