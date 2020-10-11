@@ -1013,19 +1013,19 @@ S,Work,8,GILEAD SCIENCES INC,0.1
                       }
                     });
                     if (!sacfound) {
-                      const lastpush = {
+                      const pushs = {
                         name: d.sac,
                         children: [],
                         index: undefined,
                         size: undefined
                       };
-                      lastpush.children.push({
+                      pushs.children.push({
                         name: d.name,
                         index: index,
                         children: [],
                         size: d.weight
                       });
-                      ch2.children.push(lastpush);
+                      ch2.children.push(pushs);
                     }
                   }
                   else {
@@ -1040,41 +1040,42 @@ S,Work,8,GILEAD SCIENCES INC,0.1
               });
               if (!tacfound) {
                 if (d.sac !== undefined) {
-                  const lastpush = {
+                  const pusht = {
                     name: d.tac,
                     children: [],
                     index: undefined,
                     size: undefined
                   };
-                  const lastpush1 = {
+                  const pushs = {
                     name: d.sac,
                     children: [],
                     index: undefined,
                     size: undefined
                   };
-                  lastpush1.children.push({
+                  const pushh = {
                     name: d.name,
                     size: d.weight,
                     index: index,
                     children: []
-                  });
-                  lastpush.children.push(lastpush1);
-                  ch1.children.push(lastpush);
+                  };
+                  pushs.children.push(pushh);
+                  pusht.children.push(pushs);
+                  ch1.children.push(pusht);
                 }
                 else {
-                  const lastpush = {
+                  const push = {
                     name: d.tac,
                     children: [],
                     index: undefined,
                     size: undefined
                   };
-                  lastpush.children.push({
+                  push.children.push({
                     name: d.name,
                     index: index,
                     children: [],
                     size: d.weight
                   });
-                  ch1.children.push(lastpush);
+                  ch1.children.push(push);
                 }
               }
             } else if (d.sac !== undefined) {
@@ -1091,61 +1092,78 @@ S,Work,8,GILEAD SCIENCES INC,0.1
                 }
               });
               if (!sacfound) {
-                const lastpush = {
+                const pushs = {
                   name: d.sac,
                   children: [],
                   index: undefined,
                   size: undefined
                 };
-                lastpush.children.push({
+                const pushh = {
                   name: d.name,
                   index: index,
                   children: [],
                   size: d.weight
-                });
-                ch1.children.push(lastpush);
+                };
+                pushs.children.push(pushh)
+                ch1.children.push(pushs);
               }
             } else {
-              ch1.children.push({
+              const pushh = {
                 name: d.name,
                 index: index,
                 children: [],
                 size: d.weight
-              });
+              };
+              ch1.children.push(pushh);
             }
           }
         });
         if (!gacfound) {
-          const lastpushg = {
+          const pushg = {
             name: d.gac,
             children: [],
             index: undefined,
             size: undefined
           };
-          const lastpusht = {
+          const pusht = {
             name: d.tac,
             children: [],
             index: undefined,
             size: undefined
           };
-          const lastpushs = {
-            name: d.tac,
+          const pushs = {
+            name: d.sac,
             children: [],
             index: undefined,
             size: undefined
           };
-          lastpushs.children.push({
+          const hold = {
             name: d.name,
             size: d.weight,
             index: index,
             children: []
-          });
-          lastpusht.children.push(lastpushs);
-          lastpushg.children.push(lastpusht);
-          datas.children.push(lastpushg);
+          };
+          if (d.sac !== undefined && d.tac !== undefined) {
+            pushs.children.push(hold);
+            pusht.children.push(pushs);
+            pushg.children.push(pusht);
+            datas.children.push(pushg);
+          } else if (d.sac !== undefined) {
+            pushs.children.push(hold);
+            pushg.children.push(pushs);
+            datas.children.push(pushg);
+          } else if (d.tac !== undefined) {
+            pusht.children.push(hold);
+            pushg.children.push(pusht);
+            datas.children.push(pushg);
+          } else {
+            pushg.children.push(hold);
+            datas.children.push(pushg);
+          }
         }
       }
     });
+    iii = 0;
     const setIndex = (dts: HIERACH) => {
       if (dts.index === undefined) {
         dts.children.forEach(d1 => setIndex(d1));
@@ -1153,7 +1171,27 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       }
     };
 
-    setIndex(datas);
+    setIndex(datas);  
+    const sortEnd = (d: HIERACH, prev: HIERACH = undefined) => {
+      if (d.children.length === 0) {
+        if (prev !== undefined) {
+          const data = prev.children.map(kw => kw.size);
+          const io: Array<number> = Array(data.length);
+          for (let i = 0; i < data.length; ++i) { io[i] = i; }
+          io.sort((i1, i2) => -(data[i1] - data[i2]));
+          const pcopy: Array<HIERACH> = Array(data.length);
+          for (let i = 0; i < data.length; ++i) {
+            pcopy[i] = prev.children[i];
+          }
+          for (let i = 0; i < data.length; ++i) {
+            prev.children[i] = pcopy[io[i]];
+          }
+        }
+      } else {
+        d.children.forEach(dd => sortEnd(dd, d));
+      }
+    }
+    sortEnd(datas);
     console.log(datas);
     const dnew = d3.hierarchy(datas);
     iii = 0;
@@ -1163,6 +1201,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         }*/
     return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<HIERACH>[]);
   }
+
   newgamma(ev: MouseEvent) {
     this.colourgamma = +(ev.target as HTMLInputElement).value / 10000;
     this.update();
