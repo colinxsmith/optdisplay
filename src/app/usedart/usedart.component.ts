@@ -931,63 +931,80 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       index: undefined,
       size: undefined
     };
-    let dtac: HIERACH, dsac: HIERACH, dgac: HIERACH, ig = 0, it = 0, is = 0, iii = 1;
-    data.forEach(d => {
-      if (d.gac !== undefined && gac !== d.gac) {
-        const pushHere = datas.children;
-        datas.children.push({
-          children: [],
-          name: d.gac,
-          size: undefined,
-          index: undefined
-        });
-        dgac = pushHere[ig];
-        ig++;
-        it = 0;
-        is = 0;
-      }
-      if (d.tac !== undefined && tac !== d.tac) {
-        const pushHere = dgac !== undefined ? dgac.children : datas.children;
-        pushHere.push({
-          children: [],
-          name: d.tac,
-          size: undefined,
-          index: undefined
-        });
-        dtac = pushHere[it];
-        it++;
-        is = 0;
-      }
-      if (d.sac !== undefined && sac !== d.sac) {
-        const pushHere = dtac !== undefined ? dtac.children : dgac !== undefined ? dgac.children : datas.children;
-        pushHere.push({
-          children: [],
-          name: d.sac,
-          size: undefined,
-          index: undefined
-        });
-        dsac = pushHere[is];
-        is++;
-      }
-      const lastPush = dsac !== undefined ? dsac : dtac !== undefined ? dtac : dgac;
-      lastPush.children.push({
+
+    const tiers: Array<string> = [];
+    if (data[0].gac !== undefined) { tiers.push('gac'); }
+    if (data[0].tac !== undefined) { tiers.push('tac'); }
+    if (data[0].sac !== undefined) { tiers.push('sac'); }
+    console.log('tiers', tiers);
+    const csvline2datas = (line: BASICDATA, datasHere: HIERACH, tier: Array<string>, ntier: number) => {
+      let tierfound = false;
+      let addSize = ntier === tier.length;
+      const newDatas: HIERACH = {
+        name: addSize ? line.name : line[tier[ntier]],
         children: [],
-        name: d.name,
-        size: d.weight,
-        index: iii++
-      });
-      gac = d.gac;
-      tac = d.tac;
-      sac = d.sac;
+        size: addSize ? line.weight : undefined,
+        index: undefined
+      }
+      if (datasHere.children.length === 0) {
+        if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1);
+        datasHere.children.push(newDatas);
+      } else {
+        datasHere.children.forEach(ch => {
+          if (ch.name === line[tier[ntier]]) {
+            tierfound = true;
+            if (!addSize) csvline2datas(line, ch, tier, ntier + 1);
+          }
+        });
+        if (!tierfound) {
+          if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1);
+          datasHere.children.push(newDatas);
+        }
+      }
+    };
+    data.forEach(d => {
+      csvline2datas(d, datas, tiers, 0);
     });
+
+    let iii = 1;
     const setIndex = (dts: HIERACH) => {
       if (dts.index === undefined) {
         dts.children.forEach(d1 => setIndex(d1));
         dts.index = iii++;
       }
     };
-    setIndex(datas);
 
+    setIndex(datas);
+    const reOrder = (n: number, order: Array<number>, x: Array<HIERACH>) => {
+      const marked: Array<boolean> = Array(n);
+      let k = 0;
+      for (let i = 0; i < n; ++i)marked[i] = false;
+      for (let i = 0; i < n; ++i) {
+        if (!marked[i]) {
+          for (let j = i, k = order[j]; k != i; k = order[j = k]) {
+            const l = x[k];
+            x[k] = x[j];
+            x[j] = l;
+            marked[k] = true;
+          }
+          marked[i] = true;
+        }
+      }
+    }
+    const sortEnd = (d: HIERACH, prev: HIERACH = undefined) => {
+      if (d.children.length === 0) {
+        if (prev !== undefined) {
+          const io: Array<number> = Array(prev.children.length);
+          for (let i = 0; i < prev.children.length; ++i) { io[i] = i; }
+          io.sort((i1, i2) => -(prev.children[i1].size - prev.children[i2].size));
+          //         io.sort((i1,i2)=>prev.children[i1].name.localeCompare(prev.children[i2].name));
+          reOrder(prev.children.length, io, prev.children);
+        }
+      } else {
+        d.children.forEach(dd => sortEnd(dd, d));
+      }
+    }
+    sortEnd(datas);
     console.log(datas);
     const dnew = d3.hierarchy(datas);
     iii = 0;
@@ -997,6 +1014,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
         }*/
     return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<HIERACH>[]);
   }
+
   newgamma(ev: MouseEvent) {
     this.colourgamma = +(ev.target as HTMLInputElement).value / 10000;
     this.update();

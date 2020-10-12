@@ -12,9 +12,9 @@
     <g *ngIf="plotP&&plotP[0]">
         <g *ngFor="let pillar of plotP;let i=index;">
             <g *ngFor="let cl of Classes;let j=index">
-                <rect [attr.class]="cl" [attr.x]="scaleX(i)" [attr.y]="scaleY(pillar[j+1])"
-                    [attr.height]="scaleY(pillar[j])-scaleY(pillar[j+1])" [attr.width]="scaleX(i+1)-scaleX(i)">
-                </rect>
+                <path [attr.class]="cl"
+                    [attr.d]="curvePath((scaleX(i+1)-scaleX(i)),(scaleY(pillar[j])-scaleY(pillar[j+1])),(scaleX(i)),(scaleY(pillar[j+1])))">
+            </path>
             </g>
         </g>
     </g>

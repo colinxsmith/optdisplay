@@ -49,30 +49,29 @@ export class Pillar3Component implements OnInit {
   }
   update() {
     setTimeout(() => {
+
       d3.select(this.element.nativeElement).selectAll('text')
-        .transition().duration(5000)
+        .transition().duration(3000)
         .attrTween('transform', () => t => `rotate(${(1 - t) * 90})`);
-      d3.select(this.element.nativeElement).selectAll('rect')
-        .transition().duration(5000)
-        .attrTween('width', (d, ij) => t => {
-          const i = Math.floor(ij / this.Classes.length);
-          return `${(this.scaleX(i + 1) - this.scaleX(i)) * t}`;
-        })
-        .attrTween('x', (d, ij) => t => {
-          const i = Math.floor(ij / this.Classes.length);
-          return `${(this.scaleX(i)) * t}`;
-        })
-       .attrTween('height', (d, ij) => t => {
+      d3.select(this.element.nativeElement).selectAll('path')
+        .transition().duration(3000)
+        .attrTween('d', (d, ij) => t => {
+          const tt = t * t * t;
           const i = Math.floor(ij / this.Classes.length);
           const j = Math.floor(ij % this.Classes.length);
-//          console.log(i,j,ij,t,t * (this.scaleY(this.plotP[i][j]) - this.scaleY(this.plotP[i][j + 1])));
-          return `${t * (this.scaleY(this.plotP[i][j]) - this.scaleY(this.plotP[i][j + 1]))}`;
-        })
-        .attrTween('y', (d, ij) => t => {
-          const i = Math.floor(ij / this.Classes.length);
-          const j = Math.floor(ij % this.Classes.length);
-          return `${t * (this.scaleY(this.plotP[i][j + 1]))}`;
+          const pillar = this.plotP[i];
+          const w = this.scaleX(i + 1) - this.scaleX(i);
+          const h = this.scaleY(pillar[j]) - this.scaleY(pillar[j + 1]);
+          const x = this.scaleX(i);
+          const y = this.scaleY(pillar[j + 1]);
+          return `${this.curvePath((w), (h), (x), (y), tt)}`;
         });
     });
   }
+  rectPath = (w: number, h: number, x: number, y: number) => `M${x},${y} l${w},0 l 0,${h} l${-w},0 z`;
+  curvePath = (w: number, h: number, x: number, y: number, t = 0) =>
+    `M${x},${y}
+  h ${w * t}
+  q ${w * (1 - t)},${0} ${w * (1 - t)},${h}
+  h${-w} z`
 }
