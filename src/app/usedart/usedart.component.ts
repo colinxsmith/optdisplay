@@ -916,7 +916,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     if (reverse) {
       data.reverse();
     }
-    data.sort((a, b) => {
+/*    data.sort((a, b) => {
       const as = '' + a.sac as string;
       const bs = '' + b.sac as string;
       const at = '' + a.tac as string;
@@ -924,7 +924,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       const ag = '' + a.gac as string;
       const bg = '' + b.gac as string;
       return (ag + at).localeCompare(bg + bt);
-    });
+    });*/
     const datas: HIERACH = {
       children: [],
       name: '',
