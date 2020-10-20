@@ -1,7 +1,6 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-interface BASICDATA { gac: string; tac: string; sac: string; name: string; weight: number; }
-interface HIERACH { children: HIERACH[]; name: string; index: number; size: number; }
+import { reOrder, BASICDATA, HIERACH, csvline2datas } from '../app.component';
 
 @Component({
   selector: 'app-usedart',
@@ -916,15 +915,6 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     if (reverse) {
       data.reverse();
     }
-/*    data.sort((a, b) => {
-      const as = '' + a.sac as string;
-      const bs = '' + b.sac as string;
-      const at = '' + a.tac as string;
-      const bt = '' + b.tac as string;
-      const ag = '' + a.gac as string;
-      const bg = '' + b.gac as string;
-      return (ag + at).localeCompare(bg + bt);
-    });*/
     const datas: HIERACH = {
       children: [],
       name: '',
@@ -937,31 +927,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     if (data[0].tac !== undefined) { tiers.push('tac'); }
     if (data[0].sac !== undefined) { tiers.push('sac'); }
     console.log('tiers', tiers);
-    const csvline2datas = (line: BASICDATA, datasHere: HIERACH, tier: Array<string>, ntier: number) => {
-      let tierfound = false;
-      let addSize = ntier === tier.length;
-      const newDatas: HIERACH = {
-        name: addSize ? line.name : line[tier[ntier]],
-        children: [],
-        size: addSize ? line.weight : undefined,
-        index: undefined
-      }
-      if (datasHere.children.length === 0) {
-        if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1);
-        datasHere.children.push(newDatas);
-      } else {
-        datasHere.children.forEach(ch => {
-          if (ch.name === line[tier[ntier]]) {
-            tierfound = true;
-            if (!addSize) csvline2datas(line, ch, tier, ntier + 1);
-          }
-        });
-        if (!tierfound) {
-          if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1);
-          datasHere.children.push(newDatas);
-        }
-      }
-    };
+
     data.forEach(d => {
       csvline2datas(d, datas, tiers, 0);
     });
@@ -975,22 +941,7 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     };
 
     setIndex(datas);
-    const reOrder = (n: number, order: Array<number>, x: Array<HIERACH>) => {
-      const marked: Array<boolean> = Array(n);
-      let k = 0;
-      for (let i = 0; i < n; ++i)marked[i] = false;
-      for (let i = 0; i < n; ++i) {
-        if (!marked[i]) {
-          for (let j = i, k = order[j]; k != i; k = order[j = k]) {
-            const l = x[k];
-            x[k] = x[j];
-            x[j] = l;
-            marked[k] = true;
-          }
-          marked[i] = true;
-        }
-      }
-    }
+
     const sortEnd = (d: HIERACH, prev: HIERACH = undefined) => {
       if (d.children.length === 0) {
         if (prev !== undefined) {

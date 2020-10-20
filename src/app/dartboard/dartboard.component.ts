@@ -1,11 +1,13 @@
 import { Component, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
-interface HIERACH { children: HIERACH[]; name: string; index: number; size: number; }
+import { HIERACH } from '../app.component';
+
 @Component({
   selector: 'app-dartboard',
   templateUrl: './dartboard.component.html',
   styleUrls: ['./dartboard.component.css']
 })
+
 export class DartboardComponent implements OnChanges {
   @Input() esgColour: {};
 
