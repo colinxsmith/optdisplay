@@ -956,6 +956,27 @@ S,Work,8,GILEAD SCIENCES INC,0.1
       }
     }
     sortEnd(datas);
+    const sortESG = (d: HIERACH, prev: HIERACH = undefined) => {
+      if (d.children.length === 3) {
+        const ESG: Array<string> = [];
+        d.children.forEach(esg => {
+          ESG.push(esg.name);
+        });
+        ESG.sort((e1, e2) => e1.localeCompare(e2));
+        if (ESG[0].toLocaleLowerCase() === 'e'
+          && ESG[1].toLocaleLowerCase() === 'g'
+          && ESG[2].toLocaleLowerCase() === 's') {
+          const esgOrder: Array<number> = [];
+          esgOrder[0] = 0;
+          esgOrder[1] = 2;
+          esgOrder[2] = 1;
+          reOrder(3, esgOrder, d.children);
+        }
+      } else {
+        d.children.forEach(dd => sortESG(dd, d));
+      }
+    }
+    sortESG(datas);
     console.log(datas);
     const dnew = d3.hierarchy(datas);
     iii = 0;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-export const reOrder =function (n: number, order: Array<number>, x: Array<any>) {
+export const reOrder = function (n: number, order: Array<number>, x: Array<any>) {
   const marked: Array<boolean> = Array(n);
   let k = 0;
   for (let i = 0; i < n; ++i)marked[i] = false;
@@ -15,27 +15,27 @@ export const reOrder =function (n: number, order: Array<number>, x: Array<any>) 
     }
   }
 }
-export const csvline2datas = (line: BASICDATA, datasHere: HIERACH, tier: Array<string>, ntier: number) => {
+export const csvline2datas = (line: any, datasHere: HIERACH, tier: Array<string>, ntier: number, name = 'name', attribute = 'weight') => {
   let tierfound = false;
   let addSize = ntier === tier.length;
   const newDatas: HIERACH = {
-    name: addSize ? line.name : line[tier[ntier]],
+    name: addSize ? line[name] : line[tier[ntier]],
     children: [],
-    size: addSize ? line.weight : undefined,
+    size: addSize ? line[attribute] : undefined,
     index: undefined
   }
   if (datasHere.children.length === 0) {
-    if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1);
+    if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1, name, attribute);
     datasHere.children.push(newDatas);
   } else {
     datasHere.children.forEach(ch => {
       if (ch.name === line[tier[ntier]]) {
         tierfound = true;
-        if (!addSize) csvline2datas(line, ch, tier, ntier + 1);
+        if (!addSize) csvline2datas(line, ch, tier, ntier + 1, name, attribute);
       }
     });
     if (!tierfound) {
-      if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1);
+      if (!addSize) csvline2datas(line, newDatas, tier, ntier + 1, name, attribute);
       datasHere.children.push(newDatas);
     }
   }
