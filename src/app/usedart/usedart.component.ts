@@ -981,9 +981,9 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     const dnew = d3.hierarchy(datas);
     iii = 0;
     dnew.sum(d => { iii++; return +d.size; });
-    /*    if (sortData) {
-          dnew.sort((a, b) => (a.value - b.value));
-        }*/
+    if (false) {
+      dnew.sort((a, b) => (a.value - b.value));
+    }
     return (d3.partition()(dnew).descendants() as d3.HierarchyRectangularNode<HIERACH>[]);
   }
 
