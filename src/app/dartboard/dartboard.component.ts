@@ -35,7 +35,7 @@ export class DartboardComponent {
   formatNumber = d3.format('0.2f');
   x = d3.scaleLinear().range([0, 2 * Math.PI]);
   y = d3.scaleLinear().range([0, this.radius]);
-  _picdata: d3.HierarchyRectangularNode<HIERACH>[];
+  private _picdata: d3.HierarchyRectangularNode<HIERACH>[];
   @Input() set picdata(k: d3.HierarchyRectangularNode<HIERACH>[]) {
     this._picdata = k;
     this.myChanges();
