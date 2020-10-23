@@ -19,6 +19,7 @@ export class DartboardComponent {
   @Input() title = 'DARTBOARD';
   @Input() smallgreytitle: string;
   @Input() ww = 600;
+  @Input() useOffset = true;
   offsetAngle: number;
   hh = this.ww;
   maxdepth = 0;
@@ -66,7 +67,7 @@ export class DartboardComponent {
     this.radius = (Math.min(this.width, this.height) / 2) - 10;
     this.x = d3.scaleLinear().range([0, 2 * Math.PI]);
     this.y = d3.scaleLinear().range([0, this.radius]);
-    this.offsetAngle = (this.x(this.picdata[0].children[0].x0) + this.x(this.picdata[0].children[0].x1)) / 2;
+    this.offsetAngle = !this.useOffset ? 0 : (this.x(this.picdata[0].children[0].x0) + this.x(this.picdata[0].children[0].x1)) / 2;
     this.colours = d3.scaleLinear<d3.RGBColor>()
       .domain([0, this.picdata.length + 100])
       .interpolate(d3.interpolateRgb.gamma(this.colourgamma))
@@ -100,15 +101,22 @@ export class DartboardComponent {
     this.y
       .domain([d.y0, 1])
       .range([d.y0 ? 10 : 0, this.radius]);
+    let nez = d;
+    if (nez.children === undefined || nez.children.length === 0) {
+      this.offsetAngle = 0;
+    } else {
+      nez = nez.children[0];
+      this.offsetAngle = !this.useOffset ? 0 : (this.x(nez.x0) + this.x(nez.x1)) / 2;
+    }
     this.update();
   }
-  arcCentroid(d: d3.HierarchyRectangularNode<HIERACH>) {
+  arcCentroid(d: d3.HierarchyRectangularNode<HIERACH>, offs = 0) {
     const ARC = d3.arc().cornerRadius(d.depth >= 3 ? 3 : 1);
     return ARC.centroid({
       innerRadius: Math.max(0, this.y(d.y0) + 1),
       outerRadius: Math.max(0, this.y(d.y1)),
-      startAngle: Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))),
-      endAngle: Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))),
+      startAngle: Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))) - offs,
+      endAngle: Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))) - offs,
       padAngle: 2e-2 / (2 * Math.PI)
     });
   }
@@ -117,8 +125,8 @@ export class DartboardComponent {
     return ARC({
       innerRadius: Math.max(0, this.y(d.y0) + 1),
       outerRadius: Math.max(0, t * this.y(d.y1)),
-      startAngle: Math.max(0, t * Math.min(2 * Math.PI, this.x(d.x0))),
-      endAngle: Math.max(0, t * Math.min(2 * Math.PI, this.x(d.x1))),
+      startAngle: Math.max(0, t * Math.min(2 * Math.PI, this.x(d.x0))) - this.offsetAngle,
+      endAngle: Math.max(0, t * Math.min(2 * Math.PI, this.x(d.x1))) - this.offsetAngle,
       padAngle: 2e-2 / (2 * Math.PI)
     });
   }
@@ -160,17 +168,20 @@ export class DartboardComponent {
               //         console.log(text, here.getComputedTextLength(), fixLength);
             }
           }
-          //const ang = +d3.select(here).attr('transform')
-          // .replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
-          const ang = (this.abshack(this.arcCentroid(d)[0]) < 1e-8 
-          && this.arcCentroid(d)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
+          //let ang = +d3.select(here).attr('transform')
+          //.replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
+          let ang = (this.abshack(this.arcCentroid(d)[0]) < 1e-8
+            && this.arcCentroid(d)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
+          //let ang = (((this.x(d.x0) + this.x(d.x1)) / 2) - this.offsetAngle) / this.piover180;
 
-          if (this.rotateok && ((side - 10) > boxLength)) {
-            // d3.select(here).attr('info', `${side} ${boxLength} ${ang} ${ang + (((ang + 360) % 360) > 270 ? 90 : -90)}`);
-            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/,
-              `rotate(${ang + (((ang + 360) % 360) > 270 ? 90 : -90)})`));
+          ang -= this.offsetAngle / this.piover180;
+          if (this.rotateok && (side - 10) > boxLength) {
+            ang += (((ang +this.offsetAngle / this.piover180 + 360) % 360) > 270 ? 90 : -90);
           }
-          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d)[0]) < 1e-8 && this.arcCentroid(d)[1] > 40) {
+          d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
+
+
+          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
             d3.select(here).style('font-size', `${oldfont}px`);
           }
