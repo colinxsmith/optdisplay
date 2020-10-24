@@ -31,12 +31,12 @@ export class DartboardComponent {
     bottom: 30,
     left: 90
   };
-  width = this.ww - this.margin.left - this.margin.right;
-  height = this.hh - this.margin.top - this.margin.bottom;
-  radius = (Math.min(this.width, this.height) / 2) - 10;
+  width: number;
+  height: number;
+  radius: number;
   formatNumber = d3.format('0.2f');
-  x = d3.scaleLinear().range([0, 2 * Math.PI]);
-  y = d3.scaleLinear().range([0, this.radius]);
+  x: d3.ScaleLinear<number, number>;
+  y: d3.ScaleLinear<number, number>;
   private _picdata: d3.HierarchyRectangularNode<HIERACH>[];
   @Input() set picdata(k: d3.HierarchyRectangularNode<HIERACH>[]) {
     this._picdata = k;
@@ -65,6 +65,7 @@ export class DartboardComponent {
     this.width = this.ww - this.margin.left - this.margin.right;
     this.height = this.hh - this.margin.top - this.margin.bottom;
     this.radius = (Math.min(this.width, this.height) / 2) - 10;
+    console.log('radius', this.radius);
     this.x = d3.scaleLinear().range([0, 2 * Math.PI]);
     this.y = d3.scaleLinear().range([0, this.radius]);
     this.offsetAngle = !this.useOffset ? 0 : (this.x(this.picdata[0].children[0].x0) + this.x(this.picdata[0].children[0].x1)) / 2;
@@ -154,7 +155,7 @@ export class DartboardComponent {
             fixLength = boxLength;
           }
           if ((this.maxdepth === d.depth) || tLength >= fixLength) {
-            let newLen = Math.floor(here.textContent.length * fixLength / (tLength));
+            let newLen = Math.floor(here.getComputedTextLength() * fixLength / (tLength))-1;
             if (this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
               console.log(d.depth, d.height, this.maxdepth, this.driller);
               newLen = 2;
@@ -162,8 +163,8 @@ export class DartboardComponent {
             let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
             text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
-            if (false && here.getComputedTextLength() >= fixLength) {
-              text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
+            while ((newLen>2) && here.getComputedTextLength() >= fixLength) {
+              text = '' + d.data.name.substring(0, newLen--).replace(/ *$/, '');
               here.textContent = '' + text;
               //         console.log(text, here.getComputedTextLength(), fixLength);
             }
@@ -176,17 +177,22 @@ export class DartboardComponent {
 
           ang -= this.offsetAngle / this.piover180;
           if (this.rotateok && (side - 10) > boxLength) {
-            ang += (((ang +this.offsetAngle / this.piover180 + 360) % 360) > 270 ? 90 : -90);
-          }
-          d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
+            if (Math.abs(this.arcCentroid(d,this.offsetAngle)[0]) < 1e-8)ang = 0;
+      //          ang += (((ang + this.offsetAngle / this.piover180 + 360) % 360) > 270 ? 90 : -90);
+    }
+          if (Math.abs(ang - 180) < 1e-6) ang = 0;
+    if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
+      d3.select(here).attr('transform', this.translatehack(this.arcCentroid(d)[0], this.arcCentroid(d)[1]));
+    }
+    else d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
 
 
-          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
-            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
-            d3.select(here).style('font-size', `${oldfont}px`);
-          }
-          return here.textContent;
-        });
-    });
+    if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
+      d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
+      d3.select(here).style('font-size', `${oldfont}px`);
+    }
+    return here.textContent;
+  });
+});
   }
 }

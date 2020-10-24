@@ -10,7 +10,8 @@
                         [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')"></path>
                     <text id="face" [attr.class]="d.depth<maxdepth?'dd':''"
                     y="0.4em"
-                        [style.visibility]="((d.x0===d.x1)||(arcCentroid(d)[1])<=6&&abshack(arcCentroid(d)[0])<1e-8)?'hidden':'visible'"
+                    [attr.deb]="x(d.x0)+','+x(d.x1)+','+y(d.y0)+','+y(d.y1)"
+                        [style.visibility]="((d.x0===d.x1)||(arcCentroid(d)[1])<=6*215/radius&&abshack(arcCentroid(d)[0])<1e-8)?'hidden':'visible'"
                         [attr.transform]="translatehack(arcCentroid(d,offsetAngle)[0],arcCentroid(d,offsetAngle)[1],(abshack(arcCentroid(d)[0])<1e-8&&arcCentroid(d)[1]>5?((d.children && d.children.length)?180-offsetAngle/piover180:90-offsetAngle/piover180):arcCentroid(d)[0]<0?90-offsetAngle/piover180:-90-offsetAngle/piover180)+((x(d.x0)+x(d.x1))/2)/piover180)">{{d.data.name}}</text>
                 </g>
             </ng-container>
