@@ -149,7 +149,6 @@ export class DartboardComponent {
           //         d3.select(here).style('font-size', `${thick}px`);
           d3.select(here).style('font-size', `${Math.max(5, thick)}px`);
           let tLength = here.getComputedTextLength();
-          tLength = here.getComputedTextLength();
           let fixLength = Math.max(side, boxLength);
           if (this.rotateok) {
             fixLength = boxLength;
