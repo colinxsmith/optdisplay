@@ -50,7 +50,7 @@ export class DartboardComponent {
   abshack = (q: number) => Math.abs(q);
 
   myChanges() {
-    console.log('changes');
+//    console.log('changes');
     this.init();
     this.update();
   }
@@ -146,53 +146,59 @@ export class DartboardComponent {
           d3.select(here).text(d.data.name);
           const oldfont = 12; // parseFloat(d3.select(here).style('font-size'));
           const thick = (Math.min(side, oldfont));
-          d3.select(here).style('font-size', `${thick}px`);
-          let tLength = here.getComputedTextLength();
+          //         d3.select(here).style('font-size', `${thick}px`);
           d3.select(here).style('font-size', `${Math.max(5, thick)}px`);
+          let tLength = here.getComputedTextLength();
           tLength = here.getComputedTextLength();
           let fixLength = Math.max(side, boxLength);
-          if (!this.rotateok) {
+          if (this.rotateok) {
             fixLength = boxLength;
           }
+          let ang = (this.abshack(this.arcCentroid(d)[0]) < 1e-8
+            && this.arcCentroid(d)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
+          0;
+          ang -= this.offsetAngle / this.piover180;
+
+          if (this.rotateok && (side - 10) > boxLength) {
+            if (Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8) ang = 0;
+            //          ang += (((ang + this.offsetAngle / this.piover180 + 360) % 360) > 270 ? 90 : -90);
+          }
+          if (Math.abs(ang - 180) < 1e-6) ang = 0;
+          if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
+            d3.select(here).attr('transform', this.translatehack(this.arcCentroid(d)[0], this.arcCentroid(d)[1]));
+  //          console.log('here');
+          }
+          else{
+//console.log('here');
+             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
+   //          console.log(d3.select(here).attr('transform'));
+             if(ang===0){
+               fixLength=side;
+             }
+          }
+
+   //       console.log(ang,d.data.name, here.textContent, 'tlength', here.getComputedTextLength(), 'fixLength', fixLength);
           if ((this.maxdepth === d.depth) || tLength >= fixLength) {
-            let newLen = Math.floor(here.getComputedTextLength() * fixLength / (tLength))-1;
+            let newLen = Math.floor(d.data.name.length * fixLength / (here.getComputedTextLength()));
             if (this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
-              console.log(d.depth, d.height, this.maxdepth, this.driller);
+           //   console.log(d.depth, d.height, this.maxdepth, this.driller);
               newLen = 2;
             }
             let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
-            text = '' + d.data.name.substring(0, newLen - 1).replace(/ *$/, '');
-            while ((newLen>2) && here.getComputedTextLength() >= fixLength) {
+   //         console.log(d.data.name, here.textContent, 'tlength', here.getComputedTextLength(), 'fixLength', fixLength);
+            while ((newLen > 2) && here.getComputedTextLength() >= fixLength) {
               text = '' + d.data.name.substring(0, newLen--).replace(/ *$/, '');
               here.textContent = '' + text;
               //         console.log(text, here.getComputedTextLength(), fixLength);
             }
           }
-          //let ang = +d3.select(here).attr('transform')
-          //.replace(/.*rotate/, '').replace(/[\(,\)]/g, '');
-          let ang = (this.abshack(this.arcCentroid(d)[0]) < 1e-8
-            && this.arcCentroid(d)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
-          //let ang = (((this.x(d.x0) + this.x(d.x1)) / 2) - this.offsetAngle) / this.piover180;
-
-          ang -= this.offsetAngle / this.piover180;
-          if (this.rotateok && (side - 10) > boxLength) {
-            if (Math.abs(this.arcCentroid(d,this.offsetAngle)[0]) < 1e-8)ang = 0;
-      //          ang += (((ang + this.offsetAngle / this.piover180 + 360) % 360) > 270 ? 90 : -90);
-    }
-          if (Math.abs(ang - 180) < 1e-6) ang = 0;
-    if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
-      d3.select(here).attr('transform', this.translatehack(this.arcCentroid(d)[0], this.arcCentroid(d)[1]));
-    }
-    else d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
-
-
-    if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
-      d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
-      d3.select(here).style('font-size', `${oldfont}px`);
-    }
-    return here.textContent;
-  });
-});
+          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
+            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
+            d3.select(here).style('font-size', `${oldfont}px`);
+          }
+          return here.textContent;
+        });
+    });
   }
 }
