@@ -163,14 +163,16 @@ export class DartboardComponent {
           if (Math.abs(ang - 180) < 1e-6) ang = 0;
           if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
             d3.select(here).attr('transform', this.translatehack(this.arcCentroid(d)[0], this.arcCentroid(d)[1]));
-          }
-          else {
+          } else {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
           }
-          if (ang === 0) {
+          if (ang === 0 && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-5) {
             fixLength = side;
           } else {
             fixLength = boxLength;
+            if (this.x(d.x1) - this.x(d.x0) === Math.PI * 2) {
+              fixLength = side;
+            }
           }
           if ((this.maxdepth === d.depth) || here.getComputedTextLength() >= fixLength) {
             let newLen = Math.floor(d.data.name.length * fixLength / (here.getComputedTextLength())) - 0.5;
