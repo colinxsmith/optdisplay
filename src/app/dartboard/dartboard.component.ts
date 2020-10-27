@@ -145,9 +145,8 @@ export class DartboardComponent {
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
           d3.select(here).text(d.data.name);
-          const oldfont = 12; // parseFloat(d3.select(here).style('font-size'));
+          const oldfont = 12;
           const thick = (Math.min(side, oldfont));
-          //         d3.select(here).style('font-size', `${thick}px`);
           d3.select(here).style('font-size', `${Math.max(5, thick)}px`);
           let fixLength = Math.min(side, boxLength);
           if (this.rotateok) {
@@ -160,7 +159,6 @@ export class DartboardComponent {
 
           if (this.rotateok && (side - 10) > boxLength) {
             if (Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8) ang = 0;
-            //          ang += (((ang + this.offsetAngle / this.piover180 + 360) % 360) > 270 ? 90 : -90);
           }
           if (Math.abs(ang - 180) < 1e-6) ang = 0;
           if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
@@ -168,14 +166,14 @@ export class DartboardComponent {
           }
           else {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
-            if (ang === 0) {
-              fixLength = side;
-            } else {
-              fixLength = boxLength;
-            }
+          }
+          if (ang === 0) {
+            fixLength = side;
+          } else {
+            fixLength = boxLength;
           }
           if ((this.maxdepth === d.depth) || here.getComputedTextLength() >= fixLength) {
-            let newLen = Math.floor(d.data.name.length * fixLength / (here.getComputedTextLength()))-0.5;
+            let newLen = Math.floor(d.data.name.length * fixLength / (here.getComputedTextLength())) - 0.5;
             if (this.useTwoChars && this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
               newLen = 2;
             }
