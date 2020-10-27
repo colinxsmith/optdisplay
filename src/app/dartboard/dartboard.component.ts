@@ -14,6 +14,7 @@ export class DartboardComponent {
   colours: d3.ScaleLinear<d3.RGBColor, string>;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
   @Input() rotateok = true;
+  @Input() useTwoChars = false;
   @Input() topcolour = 'red';
   @Input() colourgamma = 0.75;
   @Input() title = 'DARTBOARD';
@@ -50,7 +51,7 @@ export class DartboardComponent {
   abshack = (q: number) => Math.abs(q);
 
   myChanges() {
-//    console.log('changes');
+    //    console.log('changes');
     this.init();
     this.update();
   }
@@ -148,13 +149,12 @@ export class DartboardComponent {
           const thick = (Math.min(side, oldfont));
           //         d3.select(here).style('font-size', `${thick}px`);
           d3.select(here).style('font-size', `${Math.max(5, thick)}px`);
-          let tLength = here.getComputedTextLength();
-          let fixLength = Math.max(side, boxLength);
+          let fixLength = Math.min(side, boxLength);
           if (this.rotateok) {
             fixLength = boxLength;
           }
-          let ang = (this.abshack(this.arcCentroid(d)[0]) < 1e-8
-            && this.arcCentroid(d)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
+          let ang = (this.abshack(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8
+            && this.arcCentroid(d, this.offsetAngle)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d, this.offsetAngle)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
           0;
           ang -= this.offsetAngle / this.piover180;
 
@@ -165,32 +165,22 @@ export class DartboardComponent {
           if (Math.abs(ang - 180) < 1e-6) ang = 0;
           if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
             d3.select(here).attr('transform', this.translatehack(this.arcCentroid(d)[0], this.arcCentroid(d)[1]));
-  //          console.log('here');
           }
-          else{
-//console.log('here');
-             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
-   //          console.log(d3.select(here).attr('transform'));
-             if(ang===0){
-               fixLength=side;
-             }
+          else {
+            d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, `rotate(${ang})`));
+            if (ang === 0) {
+              fixLength = side;
+            } else {
+              fixLength = boxLength;
+            }
           }
-
-   //       console.log(ang,d.data.name, here.textContent, 'tlength', here.getComputedTextLength(), 'fixLength', fixLength);
-          if ((this.maxdepth === d.depth) || tLength >= fixLength) {
-            let newLen = Math.floor(d.data.name.length * fixLength / (here.getComputedTextLength()));
-            if (this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
-           //   console.log(d.depth, d.height, this.maxdepth, this.driller);
+          if ((this.maxdepth === d.depth) || here.getComputedTextLength() >= fixLength) {
+            let newLen = Math.floor(d.data.name.length * fixLength / (here.getComputedTextLength()))-0.5;
+            if (this.useTwoChars && this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
               newLen = 2;
             }
             let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
-   //         console.log(d.data.name, here.textContent, 'tlength', here.getComputedTextLength(), 'fixLength', fixLength);
-            while ((newLen > 2) && here.getComputedTextLength() >= fixLength) {
-              text = '' + d.data.name.substring(0, newLen--).replace(/ *$/, '');
-              here.textContent = '' + text;
-              //         console.log(text, here.getComputedTextLength(), fixLength);
-            }
           }
           if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
