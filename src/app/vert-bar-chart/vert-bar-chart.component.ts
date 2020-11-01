@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 export class VertBarChartComponent implements OnInit, OnChanges {
   @Output() selectAsset = new EventEmitter<{ index: number, axis: string, value: number, alpha: number, inout: boolean }>();
   @Input() DATA: { index: number, axis: string, value: number, alpha: number }[];
-  @Input() maxsplit=8;
+  @Input() maxsplit = 8;
   @Input() scaleHere = 1;
   @Input() ww: number;
   @Input() hh: number;
@@ -29,8 +29,8 @@ export class VertBarChartComponent implements OnInit, OnChanges {
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
   bandfiddle = 10000;
   rim = 5 * this.scaleHere;
-  width = this.ww * this.scaleHere - this.margin.left - this.margin.right;
-  height = this.hh * this.scaleHere - this.margin.top - this.margin.bottom;
+  width: number;
+  height: number;
   y: d3.ScaleLinear<number, number>;
   niceTop = 0;
   niceBot = 0;
@@ -130,7 +130,7 @@ export class VertBarChartComponent implements OnInit, OnChanges {
       back[1] = '';
       words.forEach(d => {
         if (back[0] === '') {
-          back[0] = d+' ';
+          back[0] = d + ' ';
         } else if (back[0].length + d.length < maxl) {
           back[0] += d + ' ';
         } else if (back[1].length + d.length < maxl) {
