@@ -943,39 +943,49 @@ S,Work,8,GILEAD SCIENCES INC,0.1
     setIndex(datas);
 
     const sortEnd = (d: HIERACH, prev: HIERACH = undefined) => {
-      if (d.children.length === 0) {
-        if (prev !== undefined) {
-          const io: Array<number> = Array(prev.children.length);
-          for (let i = 0; i < prev.children.length; ++i) { io[i] = i; }
-          io.sort((i1, i2) => -(prev.children[i1].size - prev.children[i2].size));
-          //         io.sort((i1,i2)=>prev.children[i1].name.localeCompare(prev.children[i2].name));
-          reOrder(prev.children.length, io, prev.children);
+        if (d.children.length === 0) {
+          if (prev !== undefined) {
+            const io: Array<number> = Array(prev.children.length);
+            for (let i = 0; i < prev.children.length; ++i) { io[i] = i; }
+            io.sort((i1, i2) => -(prev.children[i1].size - prev.children[i2].size));
+            //         io.sort((i1,i2)=>prev.children[i1].name.localeCompare(prev.children[i2].name));
+            reOrder(prev.children.length, io, prev.children);
+          }
+        } else {
+          d.children.forEach(dd => sortEnd(dd, d));
         }
-      } else {
-        d.children.forEach(dd => sortEnd(dd, d));
-      }
-    }
+      };
     sortEnd(datas);
     const sortESG = (d: HIERACH, prev: HIERACH = undefined) => {
-      if (d.children.length === 3) {
         const ESG: Array<string> = [];
+        const esgOrder: Array<number> = [];
+        for (let i = 0; i < d.children.length; ++i) { esgOrder[i] = i; }
         d.children.forEach(esg => {
           ESG.push(esg.name);
         });
-        ESG.sort((e1, e2) => e1.localeCompare(e2));
-        if (ESG[0].toLocaleLowerCase() === 'e'
-          && ESG[1].toLocaleLowerCase() === 'g'
-          && ESG[2].toLocaleLowerCase() === 's') {
-          const esgOrder: Array<number> = [];
-          esgOrder[0] = 0;
-          esgOrder[1] = 2;
-          esgOrder[2] = 1;
+        esgOrder.sort((e1, e2) => ESG[e1].localeCompare(ESG[e2]));
+        if (d.children.length === 3) {
           reOrder(3, esgOrder, d.children);
+          if (ESG[esgOrder[0]].toLocaleLowerCase() === 'e'
+            && ESG[esgOrder[1]].toLocaleLowerCase() === 'g'
+            && ESG[esgOrder[2]].toLocaleLowerCase() === 's') {
+            esgOrder[0] = 0;
+            esgOrder[1] = 2;
+            esgOrder[2] = 1;
+            reOrder(3, esgOrder, d.children);
+          }
+        } else if (d.children.length === 2) {
+          reOrder(2, esgOrder, d.children);
+          if (ESG[0].toLocaleLowerCase() === 'g'
+            && ESG[1].toLocaleLowerCase() === 's') {
+            esgOrder[0] = 1;
+            esgOrder[1] = 0;
+            reOrder(2, esgOrder, d.children);
+          }
+        } else {
+          d.children.forEach(dd => sortESG(dd, d));
         }
-      } else {
-        d.children.forEach(dd => sortESG(dd, d));
-      }
-    }
+      };
     sortESG(datas);
     console.log(datas);
     const dnew = d3.hierarchy(datas);

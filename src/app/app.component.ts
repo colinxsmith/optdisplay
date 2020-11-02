@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 export const reOrder = function (n: number, order: Array<number>, x: Array<any>) {
   const marked: Array<boolean> = Array(n);
-  let k = 0;
   for (let i = 0; i < n; ++i)marked[i] = false;
   for (let i = 0; i < n; ++i) {
     if (!marked[i]) {
-      for (let j = i, k = order[j]; k != i; k = order[j = k]) {
+      for (let j = i, k = order[j]; k !== i; k = order[j = k]) {
         const l = x[k];
         x[k] = x[j];
         x[j] = l;
