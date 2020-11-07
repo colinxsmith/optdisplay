@@ -13,6 +13,7 @@ export class DartboardComponent {
 
   colours: d3.ScaleLinear<d3.RGBColor, string>;
   eps = Math.abs((4 / 3 - 1) * 3 - 1);
+  gran = 0;//Math.PI/180;
   @Input() rotateok = true;
   @Input() useTwoChars = false;
   @Input() topcolour = 'red';
@@ -137,13 +138,17 @@ export class DartboardComponent {
     setTimeout(() => {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
         .transition().duration(2000)
-        .attrTween('d', d => t => this.arcPath(d, t));
+        .attrTween('d', d => t => this.x(d.x1) - this.x(d.x0) <= 1e-4 ? '' : this.arcPath(d, t));
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
         .text((d, i, j) => {
           const boxLength = this.y(d.y1) - this.y(d.y0) - 1;
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
           const here = j[i] as SVGTextElement;
+          if (this.x(d.x1) - this.x(d.x0) < this.gran) {
+            console.log('here', d.data.name,(this.x(d.x1) - this.x(d.x0))*180/Math.PI);
+            return ' ';
+          }
           d3.select(here).text(d.data.name);
           const oldfont = 12;
           const thick = (Math.min(side, oldfont));
