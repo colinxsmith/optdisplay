@@ -153,7 +153,7 @@ export class DartboardComponent {
         .attrTween('d', (_, i, j) => t => {
           const propperI = +d3.select((j[i] as SVGTextElement).parentElement).attr('pindex');
           const d = this.picdata[propperI];
-          return this.x(d.x1) - this.x(d.x0) <= 1e-4 ? '' : this.arcPath(d, t);
+          return this.x(d.x1) - this.x(d.x0) <= this.gran ? '' : this.arcPath(d, t);
         });
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
