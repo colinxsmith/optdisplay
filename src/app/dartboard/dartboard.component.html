@@ -5,7 +5,7 @@
         <ng-container *ngIf="picdata.length">
             <ng-container *ngFor="let d of picdata;let i=index">
                 <g *ngIf="(x(d.x1)-x(d.x0)>=gran)" (mouseenter)="mouser($event,i,d,true)" (mouseleave)="mouser($event,i,d,false)"
-                    (click)="clicker($event,d)">
+                    (click)="clicker($event,d)" [attr.pindex]="i">
                     <path id="face" [attr.d]="arcPath(d)"
                         [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')"></path>
                     <text id="face" [attr.class]="d.depth<maxdepth?'dd':''"
@@ -18,3 +18,4 @@
         </ng-container>
     </g>
 </svg>
+Granularity<button [attr.smallgreytitle]="'Granularity: '+formatG(gran/piover180)+'&deg;'" (click)="setgran()">{{formatG(gran/piover180)}}&deg;</button>

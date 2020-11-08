@@ -1,7 +1,8 @@
+import { digest } from '@angular/compiler/src/i18n/digest';
 import { Component, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
 import { HIERACH } from '../app.component';
-
+export const eps = Math.abs((4 / 3 - 1) * 3 - 1);
 @Component({
   selector: 'app-dartboard',
   templateUrl: './dartboard.component.html',
@@ -12,8 +13,10 @@ export class DartboardComponent {
   @Input() esgColour: {};
 
   colours: d3.ScaleLinear<d3.RGBColor, string>;
-  eps = Math.abs((4 / 3 - 1) * 3 - 1);
-  gran = 0;//Math.PI/180;
+  gran = 0;
+  piOver180 = Math.PI / 180;
+  formatG=(n:number)=>d3.format('0.1f')(n);
+  dg = 0.1 * Math.PI / 180;
   @Input() rotateok = true;
   @Input() useTwoChars = false;
   @Input() topcolour = 'red';
@@ -134,19 +137,34 @@ export class DartboardComponent {
     });
   }
   boxDiag = (x: number, y: number) => Math.sqrt((x * x + y * y) / 2);
+  setgran() {
+    console.log(this.gran);
+    if (this.gran === 0) {
+      this.gran = this.dg;
+    } else {
+      this.gran += this.dg;
+    }
+    this.update();
+  }
   update() {
     setTimeout(() => {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
         .transition().duration(2000)
-        .attrTween('d', d => t => this.x(d.x1) - this.x(d.x0) <= 1e-4 ? '' : this.arcPath(d, t));
+        .attrTween('d', (_, i, j) => t => {
+          const propperI = +d3.select((j[i] as SVGTextElement).parentElement).attr('pindex');
+          const d = this.picdata[propperI];
+          return this.x(d.x1) - this.x(d.x0) <= 1e-4 ? '' : this.arcPath(d, t);
+        });
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
-        .text((d, i, j) => {
+        .text((_, i, j) => {
+          const here = j[i] as SVGTextElement;
+          const propperI = +d3.select(here.parentElement).attr('pindex');
+          const d = this.picdata[propperI];
           const boxLength = this.y(d.y1) - this.y(d.y0) - 1;
           const side = (this.x(d.x1) - this.x(d.x0)) * (this.y(d.y0) + this.y(d.y1)) / 2;
-          const here = j[i] as SVGTextElement;
           if (this.x(d.x1) - this.x(d.x0) < this.gran) {
-            console.log('here', d.data.name,(this.x(d.x1) - this.x(d.x0))*180/Math.PI);
+            console.log('here', d.data.name, (this.x(d.x1) - this.x(d.x0)) * 180 / Math.PI);
             return ' ';
           }
           d3.select(here).text(d.data.name);
