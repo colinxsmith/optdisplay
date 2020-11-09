@@ -1,5 +1,4 @@
-import { digest } from '@angular/compiler/src/i18n/digest';
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges } from '@angular/core';
 import * as d3 from 'd3';
 import { HIERACH } from '../app.component';
 export const eps = Math.abs((4 / 3 - 1) * 3 - 1);
@@ -9,14 +8,14 @@ export const eps = Math.abs((4 / 3 - 1) * 3 - 1);
   styleUrls: ['./dartboard.component.css']
 })
 
-export class DartboardComponent {
-  @Input() esgColour: {};
-
-  colours: d3.ScaleLinear<d3.RGBColor, string>;
+export class DartboardComponent implements OnChanges {
+  piover180 = Math.PI / 180;
   gran = 0;
-  piOver180 = Math.PI / 180;
-  formatG=(n:number)=>d3.format('0.1f')(n);
-  dg = 0.1 * Math.PI / 180;
+  dg = 0.1 * this.piover180;
+  glow = 0;
+  @Input() esgColour: {};
+  colours: d3.ScaleLinear<d3.RGBColor, string>;
+  @Input() picdata: d3.HierarchyRectangularNode<HIERACH>[];
   @Input() rotateok = true;
   @Input() useTwoChars = false;
   @Input() topcolour = 'red';
@@ -29,7 +28,6 @@ export class DartboardComponent {
   hh = this.ww;
   maxdepth = 0;
   driller = -1;
-  piover180 = Math.PI / 180;
   margin = {
     top: 20,
     right: 90,
@@ -42,19 +40,12 @@ export class DartboardComponent {
   formatNumber = d3.format('0.2f');
   x: d3.ScaleLinear<number, number>;
   y: d3.ScaleLinear<number, number>;
-  private _picdata: d3.HierarchyRectangularNode<HIERACH>[];
-  @Input() set picdata(k: d3.HierarchyRectangularNode<HIERACH>[]) {
-    this._picdata = k;
-    this.myChanges();
-  }
-  get picdata() {
-    return this._picdata;
-  }
   constructor(private element: ElementRef) { }
+  formatG = (n: number) => d3.format('0.1f')(n);
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
   abshack = (q: number) => Math.abs(q);
 
-  myChanges() {
+  ngOnChanges() {
     //    console.log('changes');
     this.init();
     this.update();
@@ -83,6 +74,7 @@ export class DartboardComponent {
       this.maxdepth = Math.max(d.depth, this.maxdepth);
       this.driller = this.maxdepth;
     });
+    this.getGlow();
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<HIERACH>, inout: true) {
     if (inout) {
@@ -140,11 +132,18 @@ export class DartboardComponent {
   setgran() {
     console.log(this.gran);
     if (this.gran === 0) {
-      this.gran = this.dg;
+      this.gran = this.glow;
     } else {
       this.gran += this.dg;
     }
-    this.update();
+    //    this.update();
+  }
+  getGlow() {
+    this.glow = 1e22;
+    this.picdata.forEach(d => {
+      if ((this.x(d.x1) - this.x(d.x0)) > 0) { this.glow = Math.min(this.x(d.x1) - this.x(d.x0), this.glow); }
+    });
+    this.dg = Math.max(this.dg, this.glow * 0.1);
   }
   update() {
     setTimeout(() => {
@@ -176,14 +175,18 @@ export class DartboardComponent {
             fixLength = boxLength;
           }
           let ang = (this.abshack(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8
-            && this.arcCentroid(d, this.offsetAngle)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) : this.arcCentroid(d, this.offsetAngle)[0] < 0 ? 90 : -90) + ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
-          0;
+            &&
+            this.arcCentroid(d, this.offsetAngle)[1] > 5 ? ((d.children && d.children.length) ? 180 : 90) :
+            this.arcCentroid(d, this.offsetAngle)[0] < 0 ? 90 : -90) +
+            ((this.x(d.x0) + this.x(d.x1)) / 2) / this.piover180;
+
+
           ang -= this.offsetAngle / this.piover180;
 
           if (this.rotateok && (side - 10) > boxLength) {
-            if (Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8) ang = 0;
+            if (Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8) { ang = 0; }
           }
-          if (Math.abs(ang - 180) < 1e-6) ang = 0;
+          if (Math.abs(ang - 180) < 1e-6) { ang = 0; }
           if (Math.abs(this.x(d.x1) - this.x(d.x0) - Math.PI * 2) < 1e-8) {
             d3.select(here).attr('transform', this.translatehack(this.arcCentroid(d)[0], this.arcCentroid(d)[1]));
           } else {
@@ -202,10 +205,11 @@ export class DartboardComponent {
             if (this.useTwoChars && this.maxdepth === d.depth && this.driller > this.maxdepth - 2) {
               newLen = 2;
             }
-            let text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
+            const text = '' + d.data.name.substring(0, newLen).replace(/ *$/, '');
             here.textContent = '' + text;
           }
-          if (here.getComputedTextLength() < side && Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
+          if (here.getComputedTextLength() < side &&
+            Math.abs(this.arcCentroid(d, this.offsetAngle)[0]) < 1e-8 && this.arcCentroid(d, this.offsetAngle)[1] > 40) {
             d3.select(here).attr('transform', d3.select(here).attr('transform').replace(/rotate.*$/, 'rotate(0)'));
             d3.select(here).style('font-size', `${oldfont}px`);
           }
