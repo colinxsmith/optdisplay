@@ -106,6 +106,10 @@ export class DartboardComponent implements OnChanges {
       nez = nez.children[0];
       this.offsetAngle = !this.useOffset ? 0 : (this.x(nez.x0) + this.x(nez.x1)) / 2;
     }
+    d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
+      .style('opacity', 0);
+    d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
+      .style('opacity', 0);
     this.update();
   }
   arcCentroid(d: d3.HierarchyRectangularNode<HIERACH>, offs = 0) {
@@ -149,6 +153,7 @@ export class DartboardComponent implements OnChanges {
     setTimeout(() => {
       d3.select(this.element.nativeElement).selectAll('path#face').data(this.picdata)
         .transition().duration(2000)
+        .styleTween('opacity', () => t => `${t}`)
         .attrTween('d', (_, i, j) => t => {
           const propperI = +d3.select((j[i] as SVGTextElement).parentElement).attr('pindex');
           const d = this.picdata[propperI];
@@ -156,6 +161,7 @@ export class DartboardComponent implements OnChanges {
         });
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
+        .styleTween('opacity', () => t => `${t}`)
         .text((_, i, j) => {
           const here = j[i] as SVGTextElement;
           const propperI = +d3.select(here.parentElement).attr('pindex');
