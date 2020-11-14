@@ -1,21 +1,17 @@
 <div class="tipper"></div>
 <svg [attr.width]="ww" [attr.height]="hh">
     <text class="heading" y="25" [attr.x]="ww/2">{{title}}</text>
-    <g [attr.transform]="translatehack(ww/2,hh/2)">
-        <ng-container *ngIf="picdata.length">
-            <ng-container *ngFor="let d of picdata;let i=index">
-                <g *ngIf="(x(d.x1)-x(d.x0)>=gran)"  (mouseenter)="mouser($event,i,d,true)" (mouseleave)="mouser($event,i,d,false)"
-                    (click)="clicker($event,d)" [attr.pindex]="i">
-                    <path id="face" [style.opacity]="0" [attr.d]="arcPath(d)"
-                        [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')"></path>
-                    <text id="face" [style.opacity]="0" [attr.class]="d.depth<maxdepth?'dd':''"
-                    y="0.4em"
-                    [attr.deb]="x(d.x0)+','+x(d.x1)+','+y(d.y0)+','+y(d.y1)"
-                        [style.visibility]="((d.x0===d.x1)||(arcCentroid(d)[1])<=6*215/radius&&abshack(arcCentroid(d)[0])<1e-8)?'hidden':'visible'"
-                        [attr.transform]="translatehack(arcCentroid(d,offsetAngle)[0],arcCentroid(d,offsetAngle)[1],(abshack(arcCentroid(d,offsetAngle)[0])<1e-8&&arcCentroid(d,offsetAngle)[1]>5?((d.children && d.children.length)?180-offsetAngle/piover180:90-offsetAngle/piover180):arcCentroid(d,offsetAngle)[0]<0?90-offsetAngle/piover180:-90-offsetAngle/piover180)+((x(d.x0)+x(d.x1))/2)/piover180)">{{d.data.name}}</text>
-                </g>
-            </ng-container>
-        </ng-container>
+    <g [attr.transform]="translatehack(ww/2,hh/2)" *ngFor="let d of picdata;let i=index">
+        <g *ngIf="(x(d.x1)-x(d.x0)>=gran)" (mouseenter)="mouser($event,i,d,true)"
+            (mouseleave)="mouser($event,i,d,false)" (click)="clicker($event,d)" [attr.pindex]="i">
+            <path id="face" [style.opacity]="0" [attr.d]="arcPath(d)"
+                [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')">
+            </path>
+            <text id="face" [style.opacity]="0" [attr.class]="d.depth<maxdepth?'dd':''" y="0.4em"
+                [attr.deb]="x(d.x0)+','+x(d.x1)+','+y(d.y0)+','+y(d.y1)"
+                [style.visibility]="((d.x0===d.x1)||(arcCentroid(d)[1])<=6*215/radius&&abshack(arcCentroid(d)[0])<1e-8)?'hidden':'visible'"
+                [attr.transform]="translatehack(arcCentroid(d,offsetAngle)[0],arcCentroid(d,offsetAngle)[1],(abshack(arcCentroid(d,offsetAngle)[0])<1e-8&&arcCentroid(d,offsetAngle)[1]>5?((d.children && d.children.length)?180-offsetAngle/piover180:90-offsetAngle/piover180):arcCentroid(d,offsetAngle)[0]<0?90-offsetAngle/piover180:-90-offsetAngle/piover180)+((x(d.x0)+x(d.x1))/2)/piover180)">{{d.data.name}}</text>
+        </g>
     </g>
 </svg>
 <button (click)="setgran()">Granularity:</button> {{formatG(gran/piover180)}}&deg;
