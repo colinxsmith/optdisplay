@@ -297,8 +297,8 @@ export class NewgaugeComponent implements OnInit {
       .attr('height', (side - gap) / 3 / barChartData.length)
       .attr('x', d => d.outlier < 0 ? barScale(d.outlier) - barScale(0) : 0)
       .attr('width', d => d.outlier < 0 ? barScale(0) - barScale(d.outlier) : barScale(d.outlier))
-      .on('mousemove', d => {
-        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+      .on('mousemove', (e: MouseEvent, d) => {
+        this.toolTipObj.attr('style', `left:${e.pageX + 20}px;top:${e.pageY + 20}px;display:inline-block`)
           .html(`${title}<br>${d.name}<br>${d.outlier}`);
       })
       .on('mouseout', () => {
@@ -318,8 +318,8 @@ export class NewgaugeComponent implements OnInit {
       .attr('height', (side - gap) / 3 / barChartData.length)
       .attr('x', d => d.compliant < 0 ? barScale(d.compliant) - barScale(0) : 0)
       .attr('width', d => d.compliant < 0 ? barScale(0) - barScale(d.compliant) : barScale(d.compliant))
-      .on('mousemove', d => {
-        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+      .on('mousemove', (e: MouseEvent, d) => {
+        this.toolTipObj.attr('style', `left:${e.pageX + 20}px;top:${e.pageY + 20}px;display:inline-block`)
           .html(`${title}<br>${d.name}<br>${d.compliant}`);
       })
       .on('mouseout', () => {
@@ -339,8 +339,8 @@ export class NewgaugeComponent implements OnInit {
       .attr('height', (side - gap) / 3 / barChartData.length)
       .attr('x', d => d.almostOutlier < 0 ? barScale(d.almostOutlier) - barScale(0) : 0)
       .attr('width', d => d.almostOutlier < 0 ? barScale(0) - barScale(d.almostOutlier) : barScale(d.almostOutlier))
-      .on('mousemove', d => {
-        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+      .on('mousemove', (e: MouseEvent, d) => {
+        this.toolTipObj.attr('style', `left:${e.pageX + 20}px;top:${e.pageY + 20}px;display:inline-block`)
           .html(`${title}<br>${d.name}<br>${d.almostOutlier}`);
       })
       .on('mouseout', () => {
@@ -397,8 +397,8 @@ export class NewgaugeComponent implements OnInit {
           default: return 'casered';
         }
       })
-      .on('mousemove', d => {
-        this.toolTipObj.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+      .on('mousemove', (e: MouseEvent, d) => {
+        this.toolTipObj.attr('style', `left:${e.pageX + 20}px;top:${e.pageY + 20}px;display:inline-block`)
           .html(`${title}<br>${d.outlierStatusType}<br>${d.value}`);
       })
       .on('mouseout', () => {

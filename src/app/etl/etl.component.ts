@@ -190,11 +190,11 @@ export class EtlComponent implements OnInit {
       .attr('class', (d, i) => i === 0 ? 'portfolioflower zero' : 'portfolioflower one')
       .attr('d', (d, i) => radarLine(d) + radarLineZ(d) + lineLable(i * 20 - hh / 2))
       .style('fill-opacity', 1)
-      .on('mouseover', (d, i, jj) => {
+      .on('mouseover', (e: Event) => {
         svg.selectAll('path.portfolioflower')
           .transition().duration(200)
           .style('fill-opacity', 0.1);
-        d3.select(jj[i] as SVGPathElement)
+        d3.select(e.currentTarget as SVGPathElement)
           .transition().duration(200)
           .style('fill-opacity', 0.7);
       })
@@ -217,10 +217,10 @@ export class EtlComponent implements OnInit {
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI * 0.5))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI * 0.5))
       .attr('r', (d, i) => this.useSticks ? (i % 2 === 0 ? '3px' : '0px') : '3px')
-      .on('mouseover', (d, i, j) => {
-        this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+      .on('mouseover', (e: MouseEvent, d) => {
+        this.tTip.attr('style', `left:${e.pageX + 20}px;top:${e.pageY + 20}px;display:inline-block`)
           .html(`<i class='fa fa-weibo leafy'></i>
-          ${+(j[i].parentNode as SVGGElement).getAttribute('d_index') === 0 ? 'Optimised' : 'Initial'}
+          ${+((e.currentTarget as SVGCircleElement).parentNode as SVGGElement).getAttribute('d_index') === 0 ? 'Optimised' : 'Initial'}
           <br>${d.axis}<br>${this.etlFormat(d.value)}`);
       })
       .on('mouseout', () => {
@@ -396,16 +396,18 @@ export class EtlComponent implements OnInit {
       .style('background-color', 'burlywood')
       .styleTween('float', () => (t) => t < 0.95 ? 'right' : 'left')
       .style('width', `${fixedTableWidth / ftCols}px`);
-    inputFields.append('text') // actually uses width:auto;float:right in the css
+    const inputInputs = inputFields.append('text') // actually uses width:auto;float:right in the css
       .style('color', this.colourT(1))
       .text(d => d)
-      .append('input')
+      .append('input');
+    inputInputs
       .attr('type', (d, i) => i < 3 ? 'checkbox' : '')
       .style('color', (d, i) => i < 3 ? 'auto' : this.colourT(0.5))
       .style('width', (d, i) => i < 3 ? 'auto' : `inherit`)
       .style('background-color', (d, i) => i < 3 ? 'auto' : 'chartreuse')
-      .on('change', (d, i, j) => {
-        const here = j[i];
+      .on('change', (e: Event) => {
+        const i = inputInputs.nodes().indexOf(e.currentTarget as HTMLInputElement);
+        const here = e.currentTarget as HTMLInputElement;
         if (i === 0) {
           this.noRiskModel = here.checked;
         } else if (i === 1) {
@@ -506,8 +508,9 @@ export class EtlComponent implements OnInit {
          .style('color', (d, i) => `${this.colourT(i / (this.propLabels.length - 1))}`)
          .text((d, i) => `${this.propLabels[i]}: ${this.etlFormat(d)}  `)
          ;*/
-    d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
-      .on('click', (d, i, j) => {
+    const tSpans = d3.select(this.mainScreen.nativeElement).select('#stockdata').selectAll('tspan')
+      .on('click', (e: Event) => {
+        const i = tSpans.nodes().indexOf(e.currentTarget as SVGTSpanElement);
         const id = i % this.cols;
         const stock = Math.floor(i / this.cols);
         if (stock === 0) {
@@ -561,14 +564,14 @@ export class EtlComponent implements OnInit {
         if (!(id === 1 || id === 2 || id === 4 || id === 5 || id === 6 || id === 7)) {
           return;
         }
-        const here = (j[i] as SVGTSpanElement);
+        const here = (e.currentTarget as SVGTSpanElement);
         const field = d3.select(this.mainScreen.nativeElement).select('#stockdata').append('input')
           .attr('class', 'inputField');
         field.attr('x', here.getAttribute('x'));
         field.attr('y', here.getAttribute('y'));
         field.node().value = here.textContent;
-        field.on('change', (dd, ii, jj) => {
-          const val = +jj[ii].value;
+        field.on('change', (ee: Event) => {
+          const val = +(ee.currentTarget as HTMLInputElement).value;
           if (id === 1) {
             this.stockLower[this.tableOrder[stock - 1]] = val;
             here.textContent = `${val}`;

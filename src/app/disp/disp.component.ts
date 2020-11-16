@@ -189,31 +189,23 @@ export class DispComponent implements OnInit {
     // -------------------------------------Data for Radar Plot End
     this.RadarChart('.divradar2', radarData2, config, plotKeys2);
     d3.select('app-disp').select('.innerScrolled').selectAll('text')
-      .on('mouseover', (d, i, j) => {
-        /*        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
-                here.scrollTo(0, i * hhh); Only do this if we use dispatch from the other mouserover instead of classed*/
-        d3.select(j[i]).classed('touch', true);
-      })
-      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+      .on('mouseover', (d: Event) => d3.select((d.target as SVGTextElement).parentElement).classed('touch', true))
+      .on('mouseout', (d: Event) => d3.select((d.target as SVGTextElement).parentElement).classed('touch', false));
 
     d3.select('app-disp').select('.iDivRisk').selectAll('text')
-      .on('mouseover', (d, i, j) => {
-        /*        const here = ((j[i]) as SVGElement).parentElement.parentElement.parentElement;
-                here.scrollTo(0, i * hhh); Only do this if we use dispatch from the other mouserover instead of classed*/
-        d3.select(j[i]).classed('touch', true);
-      })
-      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+      .on('mouseover', d => d3.select((d.target as SVGTextElement).parentElement).classed('touch', true))
+      .on('mouseout', d => d3.select((d.target as SVGTextElement).parentElement).classed('touch', false));
 
 
     d3.select('app-disp').select('.notScrolled').selectAll('text')
-      .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
-      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+      .on('mouseover', d => d3.select(d.target).classed('touch', true))
+      .on('mouseout', d => d3.select(d.target).classed('touch', false));
     d3.select('app-disp').select('.nsDivRisk').selectAll('text')
-      .on('mouseover', (d, i, j) => d3.select(j[i]).classed('touch', true))
-      .on('mouseout', (d, i, j) => d3.select(j[i]).classed('touch', false));
+      .on('mouseover', d => d3.select(d.target).classed('touch', true))
+      .on('mouseout', d => d3.select(d.target).classed('touch', false));
     ['.divradar', '.divradar2'].forEach(cls => {
       d3.select('app-disp').selectAll(cls).selectAll('text')
-        .on('mouseover', (d: string, i, j) => {
+        .on('mouseover', (e: Event, d: string) => {
           const divScrolled = d3.select('app-disp').select('.innerScrolled');
           d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', true); // Highlight in the table
           /*        const next = d3.select(d3.select('app-disp').select('.innerScrolled')
@@ -228,16 +220,16 @@ export class DispComponent implements OnInit {
                     .selectAll('text').nodes()[nameInvert[d]]).node();
                   (next as SVGAElement).parentElement.parentElement.
                     parentElement.scrollTo(0, hhh * nameInvert[d]); First attempt that worked*/
-          d3.select(j[i]).classed('touch', true);
+          d3.select((e.target as SVGTextElement).parentElement).classed('touch', true);
           //        (riskScrolled.node()).scrollTo(0, hhh * nameInvert[d]); // Scroll table so we see the highlighted part
           (riskScrolled.node() as HTMLDivElement).scrollTop = hhh * (nameInvert[d] + this.extraScroll);
         })
-        .on('mouseout', (d: string, i, j) => {
+        .on('mouseout', (e: Event, d: string) => {
           const divScrolled = d3.select('app-disp').select('.innerScrolled');
           d3.select(divScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
           const riskScrolled = d3.select('app-disp').select('.iDivRisk');
           d3.select(riskScrolled.selectAll('text').nodes()[nameInvert[d]]).classed('touch', false);
-          d3.select(j[i]).classed('touch', false);
+          d3.select((e.target as SVGTextElement).parentElement).classed('touch', false);
         });
     });
 
@@ -287,8 +279,8 @@ export class DispComponent implements OnInit {
         .attr('class', 'gauge')
         .attr('transform', `translate(${gaugeR / 2},${gaugeR / 2})`)
         .style('fill', (d, i) => rimColours[i])
-        .on('mousemove', d => {
-          this.tTip.attr('style', `left:${d3.event.pageX + 20}px;top:${d3.event.pageY + 20}px;display:inline-block`)
+        .on('mousemove', (e: MouseEvent, d) => {
+          this.tTip.attr('style', `left:${e.pageX + 20}px;top:${e.pageY + 20}px;display:inline-block`)
             .html(`<i class='fa fa-weibo leafy'></i> ${d}`);
         })
         .on('mouseout', () => {
@@ -335,10 +327,12 @@ export class DispComponent implements OnInit {
     pHH.scrollTop = pHH.scrollHeight;
     pHH = (d3.select('#SB').node() as HTMLParagraphElement);
     pHH.scrollLeft = pHH.scrollWidth;
-    d3.selectAll('.trades').selectAll('tspan')
-      .on('click', (d, iii, jjj) => {
-        const topper = (jjj[iii] as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode;
-        const keyDef = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()[iii] as SVGTSpanElement);
+    const tSelect = d3.selectAll('.trades').selectAll('tspan')
+      .on('click', (e: Event) => {
+        const topper = (e.target as SVGTSpanElement).parentNode.parentNode.parentNode.parentNode.parentNode;
+        const kL = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()).length;
+        const lab = d3.select(e.target as SVGTSpanElement).attr('keynumber');
+        const keyDef = (d3.select(topper.previousSibling as HTMLDivElement).selectAll('tspan').nodes()[lab] as SVGTSpanElement);
         (topper.parentNode as HTMLElement).scrollLeft = 0;
         const labH = d3.select(topper)
           .insert('svg')
@@ -352,16 +346,16 @@ export class DispComponent implements OnInit {
           .attr('size', '10')
           .style('background-color', d3.select(topper).select('rect').style('fill'))
           .style('text-align', 'right')
-          .attr('value', (jjj[iii] as SVGTSpanElement).textContent)
-          .on('change', (dk, i, j) => {
-            (jjj[iii] as SVGTSpanElement).textContent = (j[i]).value;
+          .attr('value', (e.target as SVGTSpanElement).textContent)
+          .on('change', (ee: Event) => {
+            (e.target as SVGTSpanElement).textContent = (ee.target as HTMLInputElement).value;
             delete this.sendBack[keyDef.textContent];
-            this.sendBack[keyDef.textContent] = (j[i]).value;
+            this.sendBack[keyDef.textContent] = (ee.target as HTMLInputElement).value;
             if (keyDef.textContent === 'Beta') {
               delete this.sendBack[keyDef.textContent + 'vec'];
               this.sendBack[keyDef.textContent + 'vec'] = this.displayData.beta;
             }
-            d3.select(j[i]).remove();
+            d3.select(ee.target as HTMLInputElement).remove();
             labH.remove();
           });
       });
@@ -487,13 +481,13 @@ export class DispComponent implements OnInit {
       .attr('class', 'portfolioFlower')
       .attr('d', (d, i) => (pMin < 0 ? radarLine(d) + radarLineZ(d) : radarLine(d)) + blobChooser(i))
       .style('fill', (d, i) => cfg.colour(i))
-      .on('mouseover', (d, i, jj) => {
+      .on('mouseover', (e: Event) => {
         // Dim all blobs
         d3.selectAll('.portfolioFlower')
           .transition().duration(2)
           .attr('class', 'portfolioFlower dim');
         // Bring back the hovered over blob
-        d3.select(jj[i])
+        d3.select(e.target as SVGPathElement)
           .transition().duration(2)
           .attr('class', 'portfolioFlower over');
       })
@@ -528,19 +522,22 @@ export class DispComponent implements OnInit {
       .enter().append('g')
       .attr('data-index', (d, i) => i)
       .attr('class', 'radarCircleWrapper');
-    blobCircleWrapper.selectAll('.radarInvisibleCircle')
+    const blobCircles = blobCircleWrapper.selectAll('.radarInvisibleCircle')
       .data(d => d)
       .enter().append('circle')
       .attr('class', 'radarInvisibleCircle')
       .attr('r', cfg.dotRadius * 1.1)
       .attr('lineindex', d => d.axis)
+      .attr('circle-index', (d, i) => i)
       .attr('cx', (d, i) => rScale(d.value) * Math.cos(angleScale(i) - Math.PI / 2))
       .attr('cy', (d, i) => rScale(d.value) * Math.sin(angleScale(i) - Math.PI / 2))
       .style('fill', (d, i, j) => cfg.colour(+((j[i].parentNode) as SVGGElement).getAttribute('data-index')))
       .style('fill-opacity', 0)
       .style('pointer-events', 'all')
-      .on('mouseover', (d, i, j) => {
+      .on('mouseover', (e: Event, d) => {
+        const i = +d3.select(e.target as SVGCircleElement).attr('circle-index');
         const divScrolled = d3.select('app-disp').select('.innerScrolled');
+        console.log(i, divScrolled.selectAll('text').nodes().length);
         d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', true);
         d3.select(axis.selectAll('text').nodes()[i])
           .classed('touch', true);
@@ -556,15 +553,16 @@ export class DispComponent implements OnInit {
           //  .scrollTo(0, (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * i);
           .scrollTop = (riskScrolled.node() as HTMLDivElement).scrollHeight / data[0].length * (i + this.extraScroll);
         localTiptool
-          .attr('x', +((j[i]).getAttribute('cx')) - 10)
-          .attr('y', +((j[i]).getAttribute('cy')) - 10)
+          .attr('x', +((e.target as SVGCircleElement).getAttribute('cx')) - 10)
+          .attr('y', +((e.target as SVGCircleElement).getAttribute('cy')) - 10)
           .style('fill', 'none')
           .style('opacity', 1)
           .text(tradeFormat(+d.value))
           .transition().duration(200)
-          .style('fill', (j[i]).style['fill']);
+          .style('fill', (e.target as SVGCircleElement).style['fill']);
       })
-      .on('mouseout', (d, i) => {
+      .on('mouseout', (e: Event) => {
+        const i = +d3.select(e.target as SVGCircleElement).attr('circle-index');
         const divScrolled = d3.select('app-disp').select('.innerScrolled');
         d3.select(divScrolled.selectAll('text').nodes()[i]).classed('touch', false);
         d3.select(axis.selectAll('text').nodes()[i]).classed('touch', false);
@@ -640,8 +638,9 @@ export class DispComponent implements OnInit {
     })
   tableDisplay = (ww: number, hh: number, picData: {}[], fontSize = 12, innerScrolled = '.innerScrolled',
     notScrolled = '.notScrolled') => {
+    let optKeys = 0;
     const tableFormat = (i: number | string) =>
-      isString(i as string) ? i as string : d3.format('0.5f')(i as number), picKeys = Object.keys(picData[0]);
+      typeof i === 'string' ? i as string : d3.format('0.5f')(i as number), picKeys = Object.keys(picData[0]);
     const svgs = d3.select(innerScrolled).append('svg');
     svgs.attr('width', ww)
       .attr('height', hh)
@@ -667,11 +666,13 @@ export class DispComponent implements OnInit {
         .attr('transform', `translate(${xPos(1)},${yPos(0.75)})`)
         .call(dd => {
           const here = dd;
+          optKeys += picKeys.length;
           for (let kk = 0; kk < picKeys.length; ++kk) {
             const t = (kk + 1) / picKeys.length;
             here.append('tspan')
               .attr('x', xPos(kk))
               .attr('y', yPos(0))
+              .attr('keynumber', kk)
               .attr('class', 'spacer')
               .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
               .text(tableFormat(picKeys[kk]));
@@ -698,6 +699,7 @@ export class DispComponent implements OnInit {
           here.append('tspan')
             .attr('x', xPos(kk))
             .attr('y', yPos(i))
+            .attr('keynumber', kk)
             .attr('class', 'spacer')
             .style('fill', `${d3.rgb(200 * (1 - t), t / 2 * 255, 200 * t)}`)
             .text(tableFormat(dd[picKeys[kk]]));
