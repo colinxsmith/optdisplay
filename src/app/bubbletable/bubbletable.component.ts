@@ -1,17 +1,18 @@
 import { Component, OnInit, OnChanges, Input, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
-import { isNumber } from 'util';
 import { RGBColor } from 'd3';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const minusInD3Format = '−'; // d3.format uses longer minus
+const minuscheck = (a: string) => {
+  const b = a.replace(minusInD3Format, '-');
+  return b;
+}
 @Component({
   selector: 'app-bubbletable',
   templateUrl: './bubbletable.component.html',
   styleUrls: ['./bubbletable.component.css']
 })
 export class BubbletableComponent implements OnInit, OnChanges {
-  @Input() DATA: any = [];
+  @Input() DATA = [];
   @Input() width = 1000;
   @Input() height = 1000;
   @Input() borderX = 100;
@@ -34,7 +35,6 @@ export class BubbletableComponent implements OnInit, OnChanges {
   leftLabelA: string[][] = [];
   radScale: d3.ScaleLinear<number, number>;
   radarLine: d3.LineRadial<number>;
-  format = d3.format('0.3');
   dataOrder: number[];
   updateCount = 0;
   A4w = 210;
@@ -43,78 +43,17 @@ export class BubbletableComponent implements OnInit, OnChanges {
   pathScale: (t: number) => string;
   circleScale: (t: number) => string;
   squareScale: (t: number) => string;
-  isNumberHack = isNumber;
   absHack = Math.abs;
   constructor(private element: ElementRef) {
   }
+  format = (a: number) => d3.format('0.3')(a);
+  isNumber = (a: number | string) => typeof (a) === 'number';
   vertexLine = (t: number) => [t, t / 3, t, t / 2, t, t / 2, t, t / 3];
   getIdHack = (x: number, y: number) => `${x},${y}`;
 
   translateHack = (x: number, y: number, r = 0) => `translate(${x},${y}) rotate(${r})`;
   transDATA = (ii: number) => this.DATA[this.dataOrder[ii]];
-  generatePdf(action = 'open') {
-    const svgDefine = {
-      pageSize: 'A4',
-      pageMargins: 1,
-      content: [
-        {
-          svg: `
-            <svg id="gauge"  viewBox="0 0 300 300" style="stroke-width:1px;stroke:orange;background-color:brown;">
-            <rect x="0" y="0" width="300" height="300"></rect>
-            <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
-            <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
-            <path transform="translate(150,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
-            <path transform="translate(150,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
-            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,90)" >34</text>
-            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,150)" >56</text>
-            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,210)" >67</text>
-            <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(150,291.25)">RISK</text></svg>
-       `,
-          width: this.A4w * this.A4fac
-        },
-        {
-          svg: `
-          <svg id="gauge"  viewBox="0 0 900 300" style="opacity:0.95;stroke-width:1px;stroke:orange;background-color:brown;">
-          <rect x="0" y="0" width="300" height="300"></rect>
-          <path transform="translate(150,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
-          <path transform="translate(150,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
-          <path transform="translate(150,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
-          <path transform="translate(150,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,90)" >34</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,150)" >56</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(150,210)" >67</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(150,291.25)">RISK</text>
-          <rect x="300" y="0" width="300" height="300"></rect>
-          <path transform="translate(450,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
-          <path transform="translate(450,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
-          <path transform="translate(450,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
-          <path transform="translate(450,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(450,90)" >34</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(450,150)" >56</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(450,210)" >67</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(450,291.25)">RISK</text>
-          <rect x="600" y="0" width="300" height="300"></rect>
-          <path transform="translate(750,150)" style="fill:red;" d="M-60.00000000000003,103.92304845413263A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-52.50000000000002,90.93266739736605Z"></path>
-          <path transform="translate(750,150)" style="fill:blue;" d="M-95.93313160842015,72.08907170855746A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-83.94149015736764,63.07793774498778Z"></path>
-          <path transform="translate(750,150)" style="fill:green;" d="M-68.16776960773862,-98.75806390723882A120,120,0,1,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,1,0,-59.64679840677129,-86.41330591883397Z"></path>
-          <path transform="translate(750,150)" style="fill:brown;" d="M95.93313160842011,72.0890717085575A120,120,0,0,1,59.999999999999964,103.92304845413265L52.49999999999997,90.93266739736607A105,105,0,0,0,83.9414901573676,63.077937744987814Z"></path>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(750,90)" >34</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(750,150)" >56</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:30px;text-anchor:middle;" transform="translate(750,210)" >67</text>
-          <text style="stroke:none;fill:rgb(87, 78, 78);font-size:35px;text-anchor:middle;" transform="translate(750,291.25)">RISK</text>
-          </svg>
-       `,
-          width: this.A4w * this.A4fac
-        }
-      ]
-    };
-    switch (action) {
-      case 'open': pdfMake.createPdf(svgDefine).open(); break;
-      case 'print': pdfMake.createPdf(svgDefine).print(); break;
-      case 'download': pdfMake.createPdf(svgDefine).download(); break;
-      default: pdfMake.createPdf(svgDefine).open(); break;
-    }
-  }
+
 
   ngOnInit() {
     console.log('init');
@@ -134,7 +73,9 @@ export class BubbletableComponent implements OnInit, OnChanges {
       for (let i = 0; i < 7; ++i) {
         this.DATA.push({
           name: `name${i + 1}`, x: i, y: i * i, z: i * i * (i - 5.5),
-          sin: +this.format(Math.sin(i) * 60), cos: +this.format(Math.cos(i) * 60), tan: +this.format(Math.tan(i) * 60)
+          sin: +minuscheck(this.format(Math.sin(i) * 60)),
+          cos: +minuscheck(this.format(Math.cos(i) * 60)),
+          tan: +minuscheck(this.format(Math.tan(i) * 60))
         });
       }
       this.DATA.forEach((d, i) => {
@@ -156,7 +97,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
     let dm = 0, dM = 0, am = 0, aM = 0;
     this.DATA.forEach(d => {
       this.getKeys(d).forEach(dd => {
-        if (this.isNumberHack(d[dd])) {
+        if (this.isNumber(d[dd])) {
           dm = Math.min(dm, d[dd]);
           dM = Math.max(dM, d[dd]);
           am = Math.min(am, Math.abs(d[dd]));
@@ -258,7 +199,15 @@ export class BubbletableComponent implements OnInit, OnChanges {
       });
   }
   textEnter(i: number, col: string, ev: MouseEvent) {
-    this.tip.attr('style', `left:${ev.x + 20}px;top:${ev.y + 20}px;display:inline-block`)
+    const origin = (ev.currentTarget as SVGTextElement)
+      .parentElement
+      .parentElement
+      .parentElement
+      .parentElement
+      .parentElement
+      .getBoundingClientRect();
+    console.log(origin);
+    this.tip.attr('style', `left:${ev.pageX + origin.left}px;top:${ev.pageY + origin.top}px;display:inline-block`)
       .html(`${this.dataOrder[i] + 1}<br>${col}<br>${this.DATA[this.dataOrder[i]][col]}`)
       .transition().duration(200)
       .styleTween('opacity', () => t => `${t * t}`);
@@ -284,7 +233,7 @@ export class BubbletableComponent implements OnInit, OnChanges {
   textClick(xpos: number, ypos: number) {
     const textTable = d3.select(this.element.nativeElement).select('#BUBBLE').selectAll('text.table').nodes() as SVGTextElement[];
     const tspanTable = d3.select(textTable[ypos]).selectAll('tspan').nodes()[xpos] as SVGTSpanElement;
-    if (this.isNumberHack(this.DATA[ypos][d3.select(tspanTable).attr('class')])) {
+    if (this.isNumber(this.DATA[ypos][d3.select(tspanTable).attr('class')])) {
       const key = d3.select(tspanTable).attr('class');
       for (let i = 0; i < this.dataOrder.length; ++i) {
         this.dataOrder[i] = i;

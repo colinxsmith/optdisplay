@@ -1,4 +1,3 @@
-<button smallgreytitle="print" (click)="generatePdf()">Open PDF</button>
 <svg id="BUBBLE" [attr.width]="'100%'" [attr.height]="height">
 <g [attr.transform]="translateHack(borderX,borderY)">
 <rect (click)="rectClick($event)"   [attr.width]="width-borderX*2" [attr.height]="height-borderY*2"  class="border"></rect>
@@ -13,25 +12,25 @@
 
 
 <ng-container *ngFor="let coll of getKeys(row); let j=index">
-<ng-container *ngIf="isNumberHack(DATA[dataOrder[i]][coll])">
+<ng-container *ngIf="isNumber(DATA[dataOrder[i]][coll])">
 
 <ng-container *ngIf="paths">
 <path (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" 
 class="table" [attr.ij]="getIdHack(j,i)" [attr.d]="radarLine(vertexLine(radScale(absHack(DATA[dataOrder[i]][coll]))))"
- [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?pathScale(DATA[dataOrder[i]][coll]):'none'"
+ [style.fill]="isNumber(DATA[dataOrder[i]][coll])?pathScale(DATA[dataOrder[i]][coll]):'none'"
 [attr.transform]="translateHack(xScale(j+1),yScale(i+1)-fontSize/4,pathRotate)">
   </path>
 </ng-container>
 
 <ng-container *ngIf="circles">
 <circle (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" 
-class="table"  [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?circleScale(DATA[dataOrder[i]][coll]):'none'"
+class="table"  [attr.ij]="getIdHack(j,i)" [style.fill]="isNumber(DATA[dataOrder[i]][coll])?circleScale(DATA[dataOrder[i]][coll]):'none'"
  [attr.cx]="xScale(j+1)" [attr.cy]="yScale(i+1)-fontSize/4"  [attr.r]="radScale(absHack(DATA[dataOrder[i]][coll]))"></circle>
 </ng-container>
 
 <ng-container *ngIf="squares">
 <rect (click)="textClick(j,i)" (mouseenter)="textEnter(i,coll,$event)" (mouseleave)="textLeave()" 
-class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumberHack(DATA[dataOrder[i]][coll])?squareScale(DATA[dataOrder[i]][coll]):'none'"
+class="table" [attr.ij]="getIdHack(j,i)" [style.fill]="isNumber(DATA[dataOrder[i]][coll])?squareScale(DATA[dataOrder[i]][coll]):'none'"
  [attr.x]="-radScale(absHack(DATA[dataOrder[i]][coll]))" 
 [attr.y]="-radScale(absHack(DATA[dataOrder[i]][coll]))"
 [attr.height]="radScale(absHack(DATA[dataOrder[i]][coll]))*2"
