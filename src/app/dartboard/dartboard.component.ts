@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as d3 from 'd3';
 import { HIERACH } from '../app.component';
 export const eps = Math.abs((4 / 3 - 1) * 3 - 1);
@@ -45,10 +45,12 @@ export class DartboardComponent implements OnChanges {
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
   abshack = (q: number) => Math.abs(q);
 
-  ngOnChanges() {
+  ngOnChanges(aaa:SimpleChanges) {
     //    console.log('changes');
+if(aaa.picdata!==undefined) {
     this.init();
     this.update();
+} 
   }
   init() {
     this.hh = 500;
