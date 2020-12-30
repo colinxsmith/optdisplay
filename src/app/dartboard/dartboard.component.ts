@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import * as d3 from 'd3';
 import { HIERACH } from '../app.component';
 export const eps = Math.abs((4 / 3 - 1) * 3 - 1);
@@ -8,7 +8,7 @@ export const eps = Math.abs((4 / 3 - 1) * 3 - 1);
   styleUrls: ['./dartboard.component.css']
 })
 
-export class DartboardComponent implements OnChanges {
+export class DartboardComponent implements OnChanges, OnInit {
   piover180 = Math.PI / 180;
   gran = 0;
   dg = 0.1 * this.piover180;
@@ -45,12 +45,18 @@ export class DartboardComponent implements OnChanges {
   translatehack = (a: number, b: number, r = 0) => `translate(${a},${b}) rotate(${r})`;
   abshack = (q: number) => Math.abs(q);
 
-  ngOnChanges(aaa:SimpleChanges) {
+  ngOnChanges(aaa: SimpleChanges) {
     //    console.log('changes');
-if(aaa.picdata!==undefined) {
-    this.init();
-    this.update();
-} 
+    if (aaa.picdata !== undefined) {
+      this.init();
+      this.update();
+    }
+  }
+  ngOnInit() {
+    if (this.picdata !== undefined) {
+      this.init();
+      this.update();
+    }
   }
   init() {
     this.hh = 500;
@@ -63,7 +69,7 @@ if(aaa.picdata!==undefined) {
     this.width = this.ww - this.margin.left - this.margin.right;
     this.height = this.hh - this.margin.top - this.margin.bottom;
     this.radius = (Math.min(this.width, this.height) / 2) - 10;
-    console.log('radius', this.radius);
+    //   console.log('radius', this.radius);
     this.x = d3.scaleLinear().range([0, 2 * Math.PI]);
     this.y = d3.scaleLinear().range([0, this.radius]);
     this.offsetAngle = !this.useOffset ? 0 : (this.x(this.picdata[0].children[0].x0) + this.x(this.picdata[0].children[0].x1)) / 2;
@@ -159,7 +165,7 @@ if(aaa.picdata!==undefined) {
         .attrTween('d', (_, i, j) => t => {
           const propperI = +d3.select((j[i] as SVGTextElement).parentElement).attr('pindex');
           const d = this.picdata[propperI];
-          return this.x(d.x1) - this.x(d.x0) <= this.gran ? '' : this.arcPath(d, t);
+          return (d===undefined || (this.x(d.x1) - this.x(d.x0) <= this.gran)) ? '' : this.arcPath(d, t);
         });
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
@@ -223,6 +229,6 @@ if(aaa.picdata!==undefined) {
           }
           return here.textContent;
         });
-    });
+    }, 100);
   }
 }

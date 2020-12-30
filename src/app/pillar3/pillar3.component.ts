@@ -1,11 +1,11 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-pillar3',
   templateUrl: './pillar3.component.html',
   styleUrls: ['./pillar3.component.css']
 })
-export class Pillar3Component implements OnInit {
+export class Pillar3Component implements OnInit, OnChanges {
 
   @Input() ww = 500;
   @Input() hh = 500;
@@ -14,11 +14,7 @@ export class Pillar3Component implements OnInit {
   @Input() top = 15;
   @Input() bottom = 0;
   @Input() nolines = false;
-  @Input() pillars = {
-    E: [1, 1, 1, 0, 1, 1, 1],
-    S: [1, 1, 1, 1, 1, 1, 0],
-    G: [1, 1, 4, 1, 1, 1, 1]
-  };
+  @Input() pillars: {};
   @Input() leftlabel = false;
   ESG: string[];
   plotP: number[][] = [];
@@ -28,7 +24,18 @@ export class Pillar3Component implements OnInit {
   scaleY = d3.scaleLinear().domain([0, 1]);
 
   ngOnInit() {
-    console.log(this.Classes);
+    //   console.log(this.Classes);
+    if (this.pillars !== undefined) {
+      this.setup();
+    }
+  }
+  ngOnChanges(aaa: SimpleChanges) {
+    //   console.log(this.Classes,aaa.Classes&&aaa.Classes.firstChange);
+    if (aaa.pillars !== undefined) {
+      this.setup();
+    }
+  }
+  setup() {
     this.scaleX.range([this.left, this.ww - this.right]);
     this.scaleY.range([this.hh - this.bottom, this.top]);
     this.ESG = Object.keys(this.pillars);
@@ -44,7 +51,7 @@ export class Pillar3Component implements OnInit {
       });
       this.plotP.push(ppp);
     });
-    console.log(this.plotP);
+    //   console.log(this.plotP);
     this.update();
   }
   update() {
