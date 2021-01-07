@@ -3,7 +3,7 @@
     <text class="heading" y="25" [attr.x]="ww/2">{{title}}</text>
     <g [attr.transform]="translatehack(ww/2,hh/2)" *ngFor="let d of picdata;let i=index">
         <g *ngIf="(x(d.x1)-x(d.x0)>=gran)" (mouseenter)="mouser($event,i,d,true)"
-            (mouseleave)="mouser($event,i,d,false)" (click)="clicker($event,d)" [attr.pindex]="i">
+            [style.cursor]="'pointer'" (mouseleave)="mouser($event,i,d,false)" (click)="clicker($event,d)" [attr.pindex]="i">
             <path id="face" [style.opacity]="0" [attr.d]="arcPath(d)"
                 [style.fill]="esgColour[d.data.name]?esgColour[d.data.name]:d.data.name===''?'white':esgColour[d.parent.data.name]?esgColour[d.parent.data.name]:(d.parent.parent?esgColour[d.parent.parent.data.name]:'green')">
             </path>
