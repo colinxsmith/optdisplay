@@ -85,17 +85,37 @@ export class DartboardComponent implements OnChanges, OnInit {
     this.getGlow();
   }
   mouser(ee: MouseEvent, i: number, data: d3.HierarchyRectangularNode<HIERACH>, inout: true) {
+    const tip = d3.select('app-root').select('div.mainTip');
     if (inout) {
-      d3.select('app-root').select('div.mainTip')
+      const here = (ee.target as HTMLInputElement)
+        .getBoundingClientRect();
+      const base = (ee.target as HTMLInputElement)
+        .parentElement
+        .parentElement
+        .getBoundingClientRect();
+      const fiddle = Math.min(base.height, base.width) * 0.2;
+      const move = {} as { x: number, y: number };
+      if (here.left - base.left > base.width / 2) {
+        move.x = fiddle;
+      } else {
+        move.x = -fiddle;
+      }
+      if (here.top - base.top > base.height / 2) {
+        move.y = fiddle;
+      } else {
+        move.y = -fiddle;
+      }
+      console.log(move);
+      tip
         .style('opacity', 1)
         .style('display', 'inline-block')
-        .style('left', `${ee.pageX + 10}px`)
-        .style('top', `${ee.pageY + 10}px`)
+        .style('left', `${ee.pageX - 5 - move.x}px`)
+        .style('top', `${ee.pageY - 50 - move.y}px`)
         .html(() => (data.parent) ?
           `<i class='fa fa-dot-circle-o dotcircle'></i> ${data.parent.data.name === '' ? '' : data.parent.data.name + '<br>'}${data.data.name}<br>Value: ${this.formatNumber(data.value)}` :
           `<i class='fa fa-dot-circle-o dotcircle'></i> ${data.data.name === '' ? 'Total' : data.data.name}<br>Value:${this.formatNumber(data.value)}`);
     } else {
-      d3.select('app-root').select('div.mainTip')
+      tip
         .style('opacity', 0)
         .style('display', 'none');
     }
@@ -165,7 +185,7 @@ export class DartboardComponent implements OnChanges, OnInit {
         .attrTween('d', (_, i, j) => t => {
           const propperI = +d3.select((j[i] as SVGTextElement).parentElement).attr('pindex');
           const d = this.picdata[propperI];
-          return (d===undefined || (this.x(d.x1) - this.x(d.x0) <= this.gran)) ? '' : this.arcPath(d, t);
+          return (d === undefined || (this.x(d.x1) - this.x(d.x0) <= this.gran)) ? '' : this.arcPath(d, t);
         });
       d3.select(this.element.nativeElement).selectAll('text#face').data(this.picdata)
         .transition().duration(2000)
