@@ -105,7 +105,7 @@ export class DartboardComponent implements OnChanges, OnInit {
       } else {
         move.y = -fiddle;
       }
-     // console.log(move);
+      // console.log(move);
       tip
         .style('opacity', 1)
         .style('display', 'inline-block')
