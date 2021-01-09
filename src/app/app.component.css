@@ -16,6 +16,10 @@ div.mainTip {
     overflow: auto;
     z-index: 3;
     opacity: 0;
+    margin-left: -3px;
+    border-width: 3px;
+    border-style: solid;
+    border-color:orchid rgb(119, 247, 119) rgb(96, 96, 230) rgb(201, 81, 81) ;
 }
 
 nav {
