@@ -28,7 +28,7 @@ div.mainTip::after{
     margin-left: -0.5em;
     border-width: 0.5em;
     border-style:groove;
-    border-color:transparent black  transparent black
+    border-color:transparent black  transparent black;
   }
 
 .htmltip {

@@ -14,7 +14,7 @@ text.dd {
     font-size: 15px;
 }
 
-/deep/ .dotcircle {
+div /deep/ .dotcircle {
     color: rgb(238, 91, 152);
     background-image: linear-gradient(to bottom right, blue, cyan);
 }
